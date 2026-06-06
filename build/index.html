@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Fly on the Wall — Chapter I: The Shot That Started a War. An immersive WWI history quiz.">
+<title>Fly on the Wall — Chapter I</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#f0e9d6;--ink:#1a140d;--gold:#b8943f;--gold-l:#d4af6a}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#0a0806;overflow:hidden}
+body{font-family:'Crimson Text',Georgia,serif;color:var(--cream)}
+
+/* ── SCREENS ── */
+.screen{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center}
+.screen.active{display:flex}
+
+/* ── SPLASH ── */
+#splash{background:radial-gradient(ellipse at 50% 55%,#1e180e,#0a0806 70%);text-align:center;padding:2rem;z-index:10}
+.fly{font-size:44px;margin-bottom:.75rem;filter:grayscale(1)brightness(.6)}
+.ch-label{font-family:'Source Sans 3',sans-serif;font-size:10px;font-weight:600;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem}
+.main-title{font-family:'Playfair Display',serif;font-size:clamp(26px,5vw,46px);font-weight:700;color:var(--cream);line-height:1.1;margin-bottom:.35rem}
+.main-sub{font-family:'Crimson Text',serif;font-size:17px;font-style:italic;color:rgba(240,233,214,.52);max-width:400px;line-height:1.65;margin-bottom:1.5rem}
+.rule{width:50px;height:1px;background:var(--gold);margin:0 auto 1.5rem}
+.meta-row{display:flex;gap:2.5rem;margin-bottom:1.75rem}
+.mi .n{font-family:'Playfair Display',serif;font-size:26px;color:var(--cream)}
+.mi .l{font-family:'Source Sans 3',sans-serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(240,233,214,.28);margin-top:2px}
+
+.start-btn{width:100%;max-width:340px;font-family:'Source Sans 3',sans-serif;font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;background:transparent;border:1px solid var(--gold);color:var(--gold);padding:13px 40px;cursor:pointer;transition:all .25s}
+.start-btn:hover{background:var(--gold);color:var(--ink)}
+.snote{font-family:'Source Sans 3',sans-serif;font-size:10px;color:rgba(240,233,214,.18);margin-top:1rem;max-width:340px;text-align:center;line-height:1.6}
+
+/* ── GAME ── */
+#game{background:#0a0806;display:none;position:absolute;inset:0}
+#game.active{display:block}
+
+/* ── BACKGROUND SYSTEM ── */
+/* Two image layers for cross-dissolve pan transitions */
+#bg-layer{position:absolute;inset:0;overflow:hidden}
+.bg-slide{position:absolute;inset:-20%;width:140%;height:140%;background-size:cover;background-position:center;transform-origin:center center}
+#bg-a{z-index:1}
+#bg-b{z-index:2;opacity:0}
+#bg-overlay{position:absolute;inset:0;z-index:3;background:linear-gradient(to bottom,rgba(10,8,6,.52)0%,rgba(10,8,6,.1)38%,rgba(10,8,6,.1)55%,rgba(10,8,6,.94)100%)}
+#bg-vignette{position:absolute;inset:0;z-index:4;box-shadow:inset 0 0 180px rgba(10,8,6,.85)}
+#bg-grain{position:absolute;inset:0;z-index:5;opacity:.18;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");mix-blend-mode:overlay}
+#bg-sepia{position:absolute;inset:0;z-index:6;background:rgba(80,50,15,.1);mix-blend-mode:multiply;pointer-events:none}
+
+/* ── COLLAGE RECAP ── */
+#collage{position:absolute;inset:0;z-index:45;display:none;background:#0a0806}
+#collage.active{display:block}
+.collage-grid{position:absolute;inset:0;display:grid;gap:3px;padding:3px}
+.collage-cell{background-size:cover;background-position:center;opacity:0;transition:opacity .5s ease;filter:sepia(.4)brightness(.7)}
+.collage-cell.on{opacity:1}
+#collage-overlay{position:absolute;inset:0;background:rgba(10,8,6,.55)}
+#collage-text{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:2;text-align:center;padding:2rem}
+#collage-label{font-family:'Source Sans 3',sans-serif;font-size:9px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem;opacity:0;transition:opacity .5s .4s}
+#collage-title{font-family:'Playfair Display',serif;font-size:clamp(20px,4vw,36px);font-weight:700;color:var(--cream);margin-bottom:.75rem;opacity:0;transform:translateY(12px);transition:opacity .6s .5s,transform .6s .5s}
+#collage-sub{font-family:'Crimson Text',serif;font-size:15px;font-style:italic;color:rgba(240,233,214,.65);margin-bottom:1.5rem;opacity:0;transition:opacity .6s .7s}
+#collage-btn{font-family:'Source Sans 3',sans-serif;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;background:transparent;border:1px solid var(--gold);color:var(--gold);padding:11px 28px;cursor:pointer;transition:all .2s;opacity:0;transition:opacity .5s .9s}
+#collage-btn:hover{background:var(--gold);color:var(--ink)}
+#collage-label.in,#collage-title.in,#collage-sub.in,#collage-btn.in{opacity:1;transform:translateY(0)}
+
+/* ── HUD / PROGRESS ── */
+#pbar{position:absolute;top:0;left:0;right:0;height:3px;background:rgba(240,233,214,.07);z-index:30}
+#pfill{height:100%;background:linear-gradient(to right,var(--gold),var(--gold-l));transition:width .5s ease;box-shadow:0 0 8px rgba(184,148,63,.35)}
+#hud{position:absolute;top:0;left:0;right:0;z-index:20;padding:.9rem 1.5rem;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(to bottom,rgba(10,8,6,.7),transparent)}
+.hbrand{font-family:'Source Sans 3',sans-serif;font-size:10px;font-weight:300;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+.hscene{font-family:'Source Sans 3',sans-serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(240,233,214,.32)}
+.hscore{font-family:'Source Sans 3',sans-serif;font-size:11px;color:rgba(240,233,214,.4)}
+.hscore span{color:var(--cream);font-weight:600}
+#sdots{position:absolute;top:50px;left:50%;transform:translateX(-50%);display:flex;gap:7px;z-index:20}
+.sdot{width:5px;height:5px;border-radius:50%;background:rgba(240,233,214,.14);transition:all .3s}
+.sdot.done{background:rgba(184,148,63,.4)}
+.sdot.active{background:var(--gold);width:18px;border-radius:3px}
+
+/* ── QUESTION PANEL ── */
+#qpanel{position:absolute;bottom:0;left:0;right:0;z-index:20;padding:0 1.5rem 1.5rem;transition:opacity .35s,transform .35s}
+#qpanel.out{opacity:0;transform:translateY(10px);pointer-events:none}
+.qloc{font-family:'Source Sans 3',sans-serif;font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:.3rem}
+.qdate{font-family:'Playfair Display',serif;font-size:clamp(15px,2.5vw,22px);font-style:italic;color:var(--cream);margin-bottom:.5rem;line-height:1.2}
+.qprose{font-size:13.5px;line-height:1.78;color:rgba(240,233,214,.73);max-width:620px;margin-bottom:.85rem;text-shadow:0 1px 6px rgba(10,8,6,.95)}
+.qtext{font-family:'Playfair Display',serif;font-size:clamp(13px,2vw,16px);font-weight:600;color:var(--cream);margin-bottom:.8rem;max-width:620px;line-height:1.4;text-shadow:0 1px 8px rgba(10,8,6,1)}
+#cgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px;max-width:620px}
+.choice{background:rgba(5,3,1,.63);border:1px solid rgba(240,233,214,.14);padding:.65rem .9rem;font-family:'Crimson Text',serif;font-size:13.5px;color:rgba(240,233,214,.78);cursor:pointer;text-align:left;transition:border-color .13s,background .13s;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);line-height:1.4}
+.choice:hover:not(:disabled){border-color:var(--gold-l);background:rgba(184,148,63,.1);color:var(--cream)}
+.choice.correct{border-color:#4a9e5c;background:rgba(74,158,92,.15);color:#b8e8c0}
+.choice.wrong{border-color:#9e4a3a;background:rgba(158,74,58,.15);color:#e8b8b0}
+.choice:disabled{cursor:default}
+#fb{max-width:620px;margin-top:.6rem;background:rgba(5,3,1,.8);border-left:2px solid var(--gold);padding:.75rem 1rem;backdrop-filter:blur(12px);display:none}
+#fb.on{display:block}
+#fblabel{font-family:'Source Sans 3',sans-serif;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px}
+#fblabel.c{color:#4a9e5c}
+#fblabel.w{color:var(--gold-l)}
+#fbtext{font-size:13px;line-height:1.72;color:rgba(240,233,214,.76)}
+#nxtbtn{margin-top:.7rem;font-family:'Source Sans 3',sans-serif;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;background:transparent;border:1px solid rgba(240,233,214,.22);color:rgba(240,233,214,.82);padding:9px 22px;cursor:pointer;transition:all .2s;display:none}
+#nxtbtn.on{display:inline-block}
+#nxtbtn:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ── CINEMATIC ── */
+#cin{position:absolute;inset:0;z-index:50;background:#0a0806;display:none}
+#cin.active{display:block}
+#cpanels{position:absolute;inset:0}
+.cpanel{position:absolute;inset:-20%;width:140%;height:140%;opacity:0;transition:opacity 1.4s ease;background-size:cover;background-position:center;will-change:transform}
+.cpanel.on{opacity:1}
+/* Pan directions for transition feel */
+.cpanel.pan-left{animation:panL 18s linear forwards}
+.cpanel.pan-right{animation:panR 18s linear forwards}
+.cpanel.zoom-out{animation:zoomOut 12s ease-out forwards}
+@keyframes panL{from{transform:translateX(0) scale(1.15)}to{transform:translateX(-5%) scale(1.05)}}
+@keyframes panR{from{transform:translateX(-5%) scale(1.05)}to{transform:translateX(0) scale(1.15)}}
+@keyframes zoomOut{from{transform:scale(1.22)}to{transform:scale(1.05)}}
+.cpanel-dim{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(10,8,6,.35),rgba(10,8,6,.72))}
+#ccontent{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:2rem 2.5rem 4.5rem;z-index:5}
+#cscnum{font-family:'Source Sans 3',sans-serif;font-size:9px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:.35rem;opacity:0;transition:opacity .6s}
+#ctitle{font-family:'Playfair Display',serif;font-size:clamp(22px,5vw,50px);font-weight:700;color:var(--cream);line-height:1.1;margin-bottom:.8rem;opacity:0;transform:translateY(16px);transition:opacity .7s .15s,transform .7s .15s}
+#cnarr{font-family:'Crimson Text',serif;font-size:clamp(14px,2vw,19px);font-style:italic;color:rgba(240,233,214,.82);max-width:660px;line-height:1.82;min-height:70px}
+#ccursor{display:inline-block;width:2px;height:.9em;background:var(--gold);vertical-align:middle;animation:blink .75s step-end infinite;margin-left:2px}
+@keyframes blink{50%{opacity:0}}
+#cdots{position:absolute;bottom:1.75rem;left:50%;transform:translateX(-50%);display:flex;gap:7px;z-index:10}
+.cdot{width:5px;height:5px;border-radius:50%;background:rgba(240,233,214,.18)}
+.cdot.on{background:var(--gold)}
+#cbtns{position:absolute;bottom:1.5rem;right:1.5rem;display:flex;gap:9px;z-index:10}
+.cbtn{font-family:'Source Sans 3',sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:rgba(5,3,1,.6);border:1px solid rgba(240,233,214,.22);color:rgba(240,233,214,.58);padding:9px 18px;cursor:pointer;backdrop-filter:blur(4px);transition:all .2s;display:none}
+.cbtn.on{display:inline-block}
+.cbtn:hover{border-color:var(--gold);color:var(--gold)}
+#ccont{border-color:var(--gold);color:var(--gold)}
+#ccont:hover{background:var(--gold);color:var(--ink)}
+
+/* ── END ── */
+#endsc{position:absolute;inset:0;z-index:60;background:#0a0806;display:none;flex-direction:column;align-items:center;justify-content:center;padding:2rem}
+#endsc.active{display:flex}
+.einner{max-width:460px;text-align:center}
+.efly{font-size:34px;margin-bottom:.7rem;filter:grayscale(1)brightness(.55)}
+.ech{font-family:'Source Sans 3',sans-serif;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:.4rem}
+.etitle{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;color:var(--cream);margin-bottom:.2rem}
+.esub{font-size:16px;font-style:italic;color:rgba(240,233,214,.38);margin-bottom:1.5rem}
+.ering{width:104px;height:104px;border-radius:50%;border:1.5px solid var(--gold);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 1.1rem}
+.ebig{font-family:'Playfair Display',serif;font-size:34px;color:var(--cream);line-height:1}
+.eof{font-family:'Source Sans 3',sans-serif;font-size:10px;letter-spacing:.1em;color:rgba(240,233,214,.3)}
+.everdict{font-size:14px;line-height:1.75;color:rgba(240,233,214,.62);margin-bottom:1.5rem}
+.ebtns{display:flex;gap:9px;justify-content:center;flex-wrap:wrap}
+.ebtn{font-family:'Source Sans 3',sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:11px 26px;cursor:pointer;transition:all .2s}
+.ebtn-g{background:transparent;border:1px solid rgba(240,233,214,.22);color:rgba(240,233,214,.5)}
+.ebtn-g:hover{border-color:var(--gold);color:var(--gold)}
+.ebtn-gold{background:transparent;border:1px solid var(--gold);color:var(--gold)}
+.ebtn-gold:hover{background:var(--gold);color:var(--ink)}
+#toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(80px);background:rgba(184,148,63,.95);color:var(--ink);font-family:'Source Sans 3',sans-serif;font-size:12px;font-weight:600;padding:10px 20px;z-index:100;transition:transform .35s;pointer-events:none}
+#toast.show{transform:translateX(-50%) translateY(0)}
+
+/* ── INTRO VIDEO ── */
+#intro-screen{position:fixed;inset:0;z-index:200;background:#000;display:flex;align-items:center;justify-content:center;cursor:pointer}
+#intro-screen.hidden{display:none}
+#intro-video{width:100%;height:100%;object-fit:cover}
+#intro-skip{position:absolute;bottom:2rem;right:2rem;font-family:'Source Sans 3',sans-serif;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.25);background:rgba(0,0,0,.4);padding:9px 18px;cursor:pointer;transition:all .2s;backdrop-filter:blur(4px)}
+#intro-skip:hover{color:#fff;border-color:rgba(255,255,255,.6)}
+#intro-fly-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;transition:opacity .5s}
+#intro-fly-overlay span{font-size:80px;filter:drop-shadow(0 0 40px rgba(184,148,63,.8))}
+/* Feedback modal */
+#feedback-modal{position:fixed;inset:0;z-index:80;background:rgba(10,8,6,.85);display:none;align-items:center;justify-content:center;padding:1.5rem;backdrop-filter:blur(6px)}
+#feedback-modal.active{display:flex}
+#feedback-box{background:#121008;border:1px solid rgba(184,148,63,.3);border-radius:8px;padding:2rem;width:100%;max-width:420px;text-align:center}
+#feedback-box .fb-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--cream);margin-bottom:.3rem}
+#feedback-box .fb-sub{font-family:'Crimson Text',serif;font-size:14px;font-style:italic;color:rgba(240,233,214,.5);margin-bottom:1.5rem}
+.star-row{display:flex;justify-content:center;gap:10px;margin-bottom:1.5rem}
+.star{font-size:28px;cursor:pointer;opacity:.3;transition:opacity .15s,transform .15s;user-select:none}
+.star:hover,.star.on{opacity:1;transform:scale(1.15)}
+#fb-comment{width:100%;background:rgba(240,233,214,.05);border:1px solid rgba(240,233,214,.15);color:var(--cream);font-family:'Crimson Text',serif;font-size:14px;padding:.75rem 1rem;border-radius:4px;resize:none;height:80px;outline:none;margin-bottom:1.25rem}
+#fb-comment::placeholder{color:rgba(240,233,214,.25)}
+.fb-btns{display:flex;gap:10px;justify-content:center}
+.fb-skip{font-family:'Source Sans 3',sans-serif;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;background:transparent;border:1px solid rgba(240,233,214,.2);color:rgba(240,233,214,.45);padding:9px 20px;cursor:pointer;transition:all .2s}
+.fb-skip:hover{border-color:rgba(240,233,214,.4);color:rgba(240,233,214,.7)}
+.fb-submit{font-family:'Source Sans 3',sans-serif;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;background:transparent;border:1px solid var(--gold);color:var(--gold);padding:9px 24px;cursor:pointer;transition:all .2s}
+.fb-submit:hover{background:var(--gold);color:var(--ink)}
+.fb-thankyou{font-family:'Crimson Text',serif;font-size:15px;font-style:italic;color:rgba(240,233,214,.7);padding:1rem 0;display:none}
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<!-- INTRO VIDEO -->
+<div id="intro-screen">
+  <video id="intro-video" playsinline autoplay muted>
+    <source src="intro.mp4" type="video/mp4">
+  </video>
+  <div id="intro-fly-overlay"><span>🪰</span></div>
+  <button id="intro-skip" onclick="skipIntro()">Skip ↗</button>
+</div>
+
+<div class="screen" id="splash">
+  <div class="fly">🪰</div>
+  <div class="ch-label">Chapter I — Free</div>
+  <div class="main-title">The Shot That<br>Started a War</div>
+  <div class="main-sub">Sarajevo to Versailles — experience World War I from the inside</div>
+  <div class="rule"></div>
+  <div class="meta-row">
+    <div class="mi"><div class="n">50</div><div class="l">Questions</div></div>
+    <div class="mi"><div class="n">6</div><div class="l">Scenes</div></div>
+    <div class="mi"><div class="n">~25</div><div class="l">Minutes</div></div>
+  </div>
+  <button class="start-btn" onclick="startGame()">Enter the Story</button>
+  <div class="snote">Illustrated in the style of Le Petit Journal, 1914 · Narrated by George · Audio included</div>
+</div>
+
+<!-- GAME -->
+<div id="game">
+  <div id="pbar"><div id="pfill" style="width:0%"></div></div>
+  <div id="bg-layer">
+    <div class="bg-slide" id="bg-a"></div>
+    <div class="bg-slide" id="bg-b"></div>
+    <div id="bg-overlay"></div><div id="bg-vignette"></div>
+    <div id="bg-grain"></div><div id="bg-sepia"></div>
+  </div>
+
+  <!-- COLLAGE RECAP -->
+  <div id="collage">
+    <div class="collage-grid" id="collage-grid"></div>
+    <div id="collage-overlay"></div>
+    <div id="collage-text">
+      <div id="collage-label"></div>
+      <div id="collage-title"></div>
+      <div id="collage-sub"></div>
+      <button id="collage-btn" onclick="endCollage()">Begin Questions →</button>
+    </div>
+  </div>
+
+  <div id="hud">
+    <div class="hbrand">🪰 Fly on the Wall</div>
+    <div class="hscene" id="hscene"></div>
+    <div class="hscore">Score: <span id="hscore">0</span> / <span id="htotal">0</span></div>
+  </div>
+  <div id="sdots"></div>
+  <div id="qpanel">
+    <div style="display:flex;align-items:center;justify-content:space-between;max-width:620px;margin-bottom:.3rem"><div class="qloc" id="qloc"></div><div id="qcounter" style="font-family:'Source Sans 3',sans-serif;font-size:9px;font-weight:600;letter-spacing:.1em;color:rgba(240,233,214,.35)"></div></div>
+    <div class="qdate" id="qdate"></div>
+    <div class="qprose" id="qprose"></div>
+    <div class="qtext" id="qtext"></div>
+    <div id="cgrid"></div>
+    <div id="fb">
+      <div id="fblabel"></div><div id="fbtext"></div>
+      <button id="nxtbtn" onclick="handleNext()">Continue →</button>
+    </div>
+  </div>
+
+  <!-- CINEMATIC -->
+  <div id="cin">
+    <div id="cpanels"></div>
+    <div id="ccontent">
+      <div id="cscnum"></div><div id="ctitle"></div>
+      <div id="cnarr"><span id="cnarrtext"></span><span id="ccursor"></span></div>
+    </div>
+    <div id="cdots"></div>
+    <div id="cbtns">
+      <button class="cbtn" id="cskip" onclick="skipCin()">Skip</button>
+      <button class="cbtn" id="ccont" onclick="endCin()">Begin Scene →</button>
+    </div>
+  </div>
+
+  <!-- END -->
+  <!-- FEEDBACK MODAL -->
+  <div id="feedback-modal">
+    <div id="feedback-box">
+      <div class="fb-title">How was the experience?</div>
+      <div class="fb-sub">Your feedback shapes the next chapter</div>
+      <div class="star-row" id="star-row">
+        <span class="star" data-v="1">★</span>
+        <span class="star" data-v="2">★</span>
+        <span class="star" data-v="3">★</span>
+        <span class="star" data-v="4">★</span>
+        <span class="star" data-v="5">★</span>
+      </div>
+      <textarea id="fb-comment" placeholder="Any thoughts? (optional)"></textarea>
+      <div class="fb-btns">
+        <button class="fb-skip" onclick="skipFeedback()">Skip</button>
+        <button class="fb-submit" onclick="submitFeedback()">Submit →</button>
+      </div>
+      <div class="fb-thankyou" id="fb-thankyou">Thank you — it means a lot. ✦</div>
+    </div>
+  </div>
+
+  <div id="endsc">
+    <div class="einner">
+      <div class="efly">🪰</div>
+      <div class="ech">Chapter I Complete</div>
+      <div class="etitle">The world remade</div>
+      <div class="esub">From Sarajevo to the end of an era</div>
+      <div class="ering"><div class="ebig" id="end-score">0</div><div class="eof" id="end-of">/ 8</div></div>
+      <div class="everdict" id="end-verdict"></div>
+      <div class="ebtns">
+        <button class="ebtn ebtn-g" onclick="restartGame()">Play again</button>
+        <button class="ebtn ebtn-g" onclick="shareGame()">Share ↗</button>
+        <button class="ebtn ebtn-gold" onclick="alert('Chapter II — The Western Front — coming soon.')">Chapter II coming soon →</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="toast">Link copied!</div>
+
+<!-- Feedback via Google Sheets Apps Script -->
+
+<script>
+// Audio is pre-generated — see generate_audio.py to regenerate with a different voice
+
+// ── INTRO VIDEO ───────────────────────────────────────────────────────────────
+(function() {
+  const introScreen = document.getElementById('intro-screen');
+  const video = document.getElementById('intro-video');
+  const flyOverlay = document.getElementById('intro-fly-overlay');
+  const splash = document.getElementById('splash');
+
+  function endIntro() {
+    // Fly grows and fades into splash screen
+    flyOverlay.style.opacity = '1';
+    setTimeout(() => {
+      introScreen.style.transition = 'opacity .8s ease';
+      introScreen.style.opacity = '0';
+      setTimeout(() => {
+        introScreen.classList.add('hidden');
+        introScreen.style.opacity = '';
+        introScreen.style.transition = '';
+        splash.classList.add('active');
+      }, 800);
+    }, 400);
+  }
+
+  // Auto-end when video finishes
+  video.addEventListener('ended', endIntro);
+
+  // Also allow clicking anywhere on the video to skip to splash
+  // (skip button is separate)
+  video.addEventListener('click', endIntro);
+
+  // If video fails to load, skip straight to splash
+  video.addEventListener('error', () => {
+    introScreen.classList.add('hidden');
+  });
+
+  // Unmute after first user interaction (browser autoplay policy)
+  document.addEventListener('click', () => { video.muted = false; }, { once: true });
+})();
+
+function skipIntro() {
+  const introScreen = document.getElementById('intro-screen');
+  const video = document.getElementById('intro-video');
+  video.pause();
+  introScreen.style.transition = 'opacity .4s ease';
+  introScreen.style.opacity = '0';
+  setTimeout(() => {
+    introScreen.classList.add('hidden');
+    introScreen.style.opacity = '';
+    introScreen.style.transition = '';
+    document.getElementById('splash').classList.add('active');
+  }, 400);
+}
+
+// ── IMAGES ───────────────────────────────────────────────────────────────────────
+const IMGS = {
+  sarajevo_morning:  'images/sarajevo_morning.jpg',
+  sarajevo_crowd:    'images/sarajevo_crowd.jpg',
+  sarajevo_archduke: 'images/sarajevo_archduke.jpg',
+  sarajevo_shot:     'images/sarajevo_shot.jpg',
+  mobilisation:      'images/mobilisation.jpg',
+  berlin_telegram:   'images/berlin_telegram.jpg',
+  // Scenes 3-6 — add these images to your images/ folder
+  trenches:          'images/trenches.jpg',
+  somme:             'images/somme.jpg',
+  gallipoli:         'images/gallipoli.jpg',
+  naval:             'images/naval.jpg',
+  america_enters:    'images/america_enters.jpg',
+  versailles:        'images/versailles.jpg',
+};
+const FB = {
+  sarajevo_morning:  'linear-gradient(160deg,#2a1a08,#5a3a18 35%,#8a6030 65%,#4a3020)',
+  sarajevo_crowd:    'linear-gradient(170deg,#1a1408,#3a2810 45%,#5a3818 70%,#2a1a0c)',
+  sarajevo_archduke: 'linear-gradient(155deg,#1e1208,#4a3018 40%,#6a4820 65%,#3a2010)',
+  sarajevo_shot:     'linear-gradient(165deg,#220a08,#4a1810 40%,#6a2818 65%,#380e0a)',
+  mobilisation:      'linear-gradient(158deg,#0e1828,#1a2a40 40%,#2a3a50 65%,#101820)',
+  berlin_telegram:   'linear-gradient(162deg,#0a0e18,#1a1e2a 40%,#2a2a38 65%,#0e1018)',
+  trenches:          'linear-gradient(165deg,#1a2010,#2a3018 40%,#3a4028 65%,#151a10)',
+  somme:             'linear-gradient(168deg,#1e1a10,#2e2818 40%,#3a3420 65%,#181410)',
+  gallipoli:         'linear-gradient(160deg,#0e1820,#182838 40%,#203040 65%,#0a1018)',
+  naval:             'linear-gradient(162deg,#081018,#102030 40%,#183040 65%,#060c14)',
+  america_enters:    'linear-gradient(158deg,#0a0e20,#141a38 40%,#1e2848 65%,#080c18)',
+  versailles:        'linear-gradient(162deg,#100c08,#201810 40%,#302418 65%,#0c0806)',
+};
+
+// Pan animations cycle for cinematic variety
+const PAN_CLASSES = ['zoom-out','pan-left','pan-right','zoom-out','pan-left'];
+
+// ── CINEMATIC DATA ──────────────────────────────────────────────────────────────
+const CIN = [
+  { sceneNum:'Scene I · June 28, 1914', title:'Sarajevo',
+    collageLabel:'Setting the scene', collageTitle:'Sarajevo — June 28, 1914',
+    collageSub:'A warm Sunday morning. An open-top car. Six young men in the crowd.',
+    collageImgs:['sarajevo_morning','sarajevo_crowd','sarajevo_archduke','sarajevo_shot'],
+    panels:[
+      {img:'sarajevo_morning',nar:"Sarajevo. June 28th, 1914. A warm Sunday morning in the capital of Austrian-occupied Bosnia. Archduke Franz Ferdinand, heir to one of Europe's greatest empires, has come to visit with his wife Sophie."},
+      {img:'sarajevo_crowd',nar:"Somewhere in that crowd, six young men wait with weapons. Members of the Black Hand — Bosnian Serb nationalists who dream of liberation. One of them is nineteen years old. He stands near a delicatessen, and he is about to change the world."},
+      {img:'sarajevo_shot',nar:"A grenade is thrown. It bounces. Five assassins fail. Then a driver takes a wrong turn — and fate delivers the Archduke directly to the one man still waiting. In less than ten seconds, the 20th century begins."},
+    ]},
+  { sceneNum:'Scene II · July–August 1914', title:'Europe Goes to War',
+    collageLabel:'The cascade begins', collageTitle:'Europe, 1914',
+    collageSub:'Within six weeks of those two shots, four empires were at war.',
+    collageImgs:['sarajevo_morning','sarajevo_crowd','sarajevo_archduke','sarajevo_shot','mobilisation','berlin_telegram'],
+    panels:[
+      {img:'mobilisation',nar:"Within six weeks of the shots in Sarajevo, the great powers of Europe were all at war. The alliance system — built over decades as a deterrent — became a trap that no one could escape."},
+      {img:'berlin_telegram',nar:"In London, Paris, Berlin, and Vienna, crowds cheered. Young men queued to enlist, grinning for cameras. They expected it to be over by Christmas. They were catastrophically wrong."},
+    ]},
+  { sceneNum:'Scene III · 1914–1917', title:'The Western Front',
+    collageLabel:'Into the trenches', collageTitle:'The Western Front, 1914–1917',
+    collageSub:'700 kilometres of mud, wire, and stalemate. The war that refused to move.',
+    collageImgs:['trenches','somme','mobilisation','berlin_telegram'],
+    panels:[
+      {img:'trenches',nar:"By Christmas 1914, both armies had dug in along a 700-kilometre front. The war of movement was over. What replaced it was something new and terrible — four years of industrial slaughter over distances measured in metres."},
+      {img:'somme',nar:"The trenches ran from the English Channel to the Swiss border. In them, men lived with mud, rats, lice, and the constant sound of artillery. Shell shock — what we now call PTSD — claimed as many as bullets."},
+    ]},
+  { sceneNum:'Scene IV · 1915–1916', title:'The Wider War',
+    collageLabel:'Beyond Europe', collageTitle:'Gallipoli, the seas, the skies',
+    collageSub:'The Great War was not only fought in the trenches of France.',
+    collageImgs:['gallipoli','naval','trenches','somme'],
+    panels:[
+      {img:'gallipoli',nar:"The war spread far beyond the Western Front. At Gallipoli, Australian and New Zealand troops stormed Ottoman cliffs. In the North Sea, the two greatest naval fleets in history collided. Above the trenches, men fought duels in fragile wooden aeroplanes."},
+    ]},
+  { sceneNum:'Scene V · 1917', title:'The Turning Point',
+    collageLabel:'The hinge year', collageTitle:'1917 — Everything changes',
+    collageSub:'Russia collapses. America enters. The balance tips.',
+    collageImgs:['america_enters','berlin_telegram','trenches','gallipoli'],
+    panels:[
+      {img:'america_enters',nar:"1917 was the hinge year of the war. Russia's revolution took the Eastern Front out of the conflict — freeing half a million German troops to move west. But America, provoked by submarine warfare and a secret telegram to Mexico, finally entered. The question was: which side would break first?"},
+    ]},
+  { sceneNum:'Scene VI · 1918–1919', title:'The Aftermath',
+    collageLabel:'The guns fall silent', collageTitle:'November 11, 1918',
+    collageSub:'The war to end all wars. Twenty million dead. A world remade.',
+    collageImgs:['versailles','america_enters','somme','sarajevo_shot'],
+    panels:[
+      {img:'trenches',nar:"On November 11th, 1918, at the eleventh hour of the eleventh day of the eleventh month, the guns fell silent on the Western Front. The war had lasted four years, three months, and fourteen days. Twenty million were dead. Four empires had ceased to exist."},
+      {img:'versailles',nar:"The victors gathered at Versailles to write the peace. The terms they imposed on Germany were crushing. The humiliation they created would fester for twenty years — until a veteran of the Western Front named Adolf Hitler would use it to set the world on fire again."},
+    ]},
+];
+
+// ── QUESTIONS ────────────────────────────────────────────────────────────────────
+const QS = [
+  // ── SCENE 0 — THE ASSASSINATION (8) ─────────────────────────────────────────
+  {scene:0,date:"June 28, 1914 — Morning",loc:"Sarajevo, Bosnia-Herzegovina",prose:"It is a warm Sunday morning. Archduke Franz Ferdinand visits with his wife Sophie. Streets are lined with flags. In the crowd, six young men wait with weapons.",q:"Who was Archduke Franz Ferdinand?",choices:["The Emperor of Austria-Hungary","The heir to the Austro-Hungarian throne","The Prime Minister of Austria","The military governor of Bosnia"],correct:1,img:"sarajevo_morning",cam:{scale:1.22,tx:0,ty:0},fc:"Correct. Franz Ferdinand was heir presumptive — next in line to become Emperor. His great-uncle Franz Joseph I was 83. The assassination of an imperial heir sent shockwaves through every chancellery in Europe.",fw:"Franz Ferdinand was the heir to the throne, not the Emperor. Franz Joseph I, aged 83, was still reigning. Murdering an heir presumptive to one of Europe's oldest empires was the spark that lit the world."},
+  {scene:0,date:"June 28, 1914 — Morning",loc:"Appel Quay, Sarajevo",prose:"The motorcade moves slowly along the quay. Thousands wave flags. The Archduke's route had been published in local newspapers the day before.",q:"In which country is Sarajevo located today?",choices:["Serbia","Croatia","Bosnia and Herzegovina","Slovenia"],correct:2,img:"sarajevo_morning",cam:{scale:1.12,tx:-3,ty:4},fc:"Correct. Sarajevo is the capital of Bosnia and Herzegovina. In 1914 it was under Austro-Hungarian rule, annexed in 1908 — a source of deep resentment among South Slavic nationalists.",fw:"Sarajevo is in Bosnia and Herzegovina. In 1914 it was part of Austria-Hungary, annexed in 1908. This occupation directly fuelled the nationalism that motivated the assassins."},
+  {scene:0,date:"June 28, 1914 — 10:15am",loc:"Appel Quay — the first attempt",prose:"Nedeljko Čabrinović pulls a grenade from his coat, strikes it against a lamppost, and hurls it at the Archduke's open-top car.",q:"What happened when Čabrinović threw the grenade?",choices:["It was a dud and never detonated","It bounced off and exploded under the car behind","A bodyguard caught it mid-air","It exploded directly beneath the Archduke"],correct:1,img:"sarajevo_crowd",cam:{scale:1.18,tx:4,ty:-2},fc:"Exactly. The grenade bounced off the folded roof and detonated under the following car. Čabrinović swallowed cyanide and leapt into the river. The pill had expired. The river was ankle-deep.",fw:"The grenade bounced off the folded roof and exploded under the car behind. Čabrinović swallowed cyanide and jumped into the barely ankle-deep river. He was arrested within minutes."},
+  {scene:0,date:"June 28, 1914 — 10:45am",loc:"Sarajevo Town Hall",prose:"The Mayor delivers his welcome speech as if nothing happened. Franz Ferdinand interrupts, furious. A heated argument follows about what to do next.",q:"What fatal error occurred when the motorcade left for the hospital?",choices:["The driver took a dangerous shortcut","The route change was never communicated to the driver","The motorcade split up, leaving the Archduke alone","The police escort abandoned the convoy"],correct:1,img:"sarajevo_archduke",cam:{scale:1.15,tx:-2,ty:2},fc:"Correct. General Potiorek ordered a new route but the message never reached driver Franz Urban. Urban turned onto the original street and had to stop to reverse. The car stalled directly in front of Gavrilo Princip.",fw:"Driver Franz Urban was simply never told about the new route. He turned onto Franz Josef Street as planned, then stopped to reverse. The car stalled directly in front of Gavrilo Princip — who had given up all hope."},
+  {scene:0,date:"June 28, 1914 — 10:55am",loc:"Franz Josef Street — the fatal shot",prose:"Gavrilo Princip stands near a delicatessen. He had given up. Then the Archduke's car turns directly in front of him and stalls. He steps forward. He is less than five feet away.",q:"How old was Gavrilo Princip when he fired the fatal shots?",choices:["16","19","23","27"],correct:1,img:"sarajevo_shot",cam:{scale:1.25,tx:5,ty:2},fc:"Nineteen — born July 25, 1894, just over a month from his 20th birthday. Austro-Hungarian law barred execution for those under 20. He was sentenced to 20 years and died in prison in 1918 from tuberculosis, aged 23.",fw:"Princip was 19 — just over a month from turning 20. Austro-Hungarian law prohibited the death penalty for those under 20. He received 20 years and died in a Bohemian fortress in 1918 from tuberculosis."},
+  {scene:0,date:"June 28, 1914 — Afternoon",loc:"Vienna, Austria-Hungary",prose:"News reaches Vienna within hours. In chancelleries across Europe, officials begin calculating. Alliances built over decades are about to be tested.",q:"What was the name of the secret society that organised the assassination?",choices:["The Young Slavs","The Black Hand","The Iron Guard","The White Eagle"],correct:1,img:"sarajevo_crowd",cam:{scale:1.2,tx:-4,ty:5},fc:"The Black Hand — Ujedinjenje ili smrt, 'Union or Death'. A Serbian secret military society led by Colonel Dragutin Dimitrijević. It provided the conspirators with weapons, training, and passage into Bosnia.",fw:"The Black Hand — 'Union or Death' — was led by Colonel Dragutin Dimitrijević. It armed and trained the conspirators. Austria-Hungary used its Serbian links to justify the ultimatum that set Europe on fire."},
+  {scene:0,date:"June 28, 1914",loc:"Sarajevo — the conspirators",prose:"The assassination succeeded through planning, lost nerve, incompetence, and sheer accident. Most conspirators never acted. One wrong turn made history.",q:"How many assassins were positioned along the motorcade route that day?",choices:["Two","Four","Six","Eight"],correct:2,img:"sarajevo_morning",cam:{scale:1.28,tx:3,ty:-4},fc:"Six conspirators were placed along the 4km route. Most lost their nerve. Only Čabrinović threw a grenade, and only Princip — by extraordinary chance — fired the fatal shots.",fw:"Six young men were placed along the route. Most failed to act. Only Čabrinović threw a grenade, and only Princip succeeded — because of a driver's wrong turn."},
+  {scene:0,date:"July 5–6, 1914",loc:"Berlin, Germany",prose:"Vienna wants to punish Serbia but fears Russian intervention. A message from Berlin will remove the last restraint on Austrian aggression.",q:"Germany's 'blank cheque' to Austria-Hungary meant what?",choices:["Germany offered financial support for the war","Germany promised unconditional backing for whatever Austria chose to do","Germany agreed to mediate between Austria and Serbia","Germany sent military advisors to help Austria"],correct:1,img:"berlin_telegram",cam:{scale:1.18,tx:-2,ty:3},fc:"Correct. Kaiser Wilhelm II and Chancellor Bethmann Hollweg pledged Germany's full unconditional support regardless of what Austria chose to do. This removed the last brake on Austrian aggression.",fw:"The blank cheque was Germany's unconditional pledge — whatever Austria decided, Germany would back it. Without it Austria might have moderated its demands. Instead it issued a 10-point ultimatum deliberately designed to be rejected."},
+
+  // ── SCENE 1 — MOBILISATION (8) ──────────────────────────────────────────────
+  {scene:1,date:"July 28, 1914",loc:"Vienna, Austria-Hungary",prose:"Austria-Hungary has delivered a 10-point ultimatum to Serbia — deliberately designed to be rejected. Serbia accepts most points but not all. The countdown to war begins.",q:"Which country was the first to formally declare war in World War I?",choices:["Germany","Russia","Austria-Hungary","Serbia"],correct:2,img:"mobilisation",cam:{scale:1.15,tx:0,ty:0},fc:"Austria-Hungary declared war on Serbia on July 28, 1914 — exactly one month after the assassination. This was the formal start of the conflict.",fw:"Austria-Hungary declared war on Serbia on July 28, 1914. Germany declared war on Russia on August 1st, France on August 3rd, and Britain declared war on Germany on August 4th."},
+  {scene:1,date:"August 1914",loc:"Europe",prose:"The alliance system is now activating like dominoes. Each declaration of war triggers another. What began as an Austro-Serbian dispute becomes a continent-wide catastrophe in under six weeks.",q:"The Triple Entente — the main Allied alliance — consisted of which three countries?",choices:["Britain, France, and Russia","Britain, France, and Italy","France, Russia, and Belgium","Britain, Russia, and Serbia"],correct:0,img:"mobilisation",cam:{scale:1.22,tx:-3,ty:2},fc:"Britain, France, and Russia formed the Triple Entente. France and Russia had been allied since 1894; Britain joined informally through the Entente Cordiale of 1904. Italy stayed neutral in 1914 and joined the Allies in 1915.",fw:"The Triple Entente was Britain, France, and Russia. Italy was in the opposing Triple Alliance with Germany and Austria-Hungary but chose neutrality in 1914, then switched to the Allied side in 1915."},
+  {scene:1,date:"August 4, 1914",loc:"London, England",prose:"In London, crowds gather outside Buckingham Palace cheering. Britain has just declared war on Germany — after Germany violated Belgian neutrality to attack France.",q:"What was the German war plan that required sweeping through Belgium to attack France?",choices:["The Hindenburg Plan","The Bismarck Doctrine","The Schlieffen Plan","The Kaiser's Directive"],correct:2,img:"mobilisation",cam:{scale:1.18,tx:4,ty:-2},fc:"The Schlieffen Plan, devised by Field Marshal Alfred von Schlieffen in 1905. It called for a rapid knockout blow against France through neutral Belgium before turning east to face Russia. Britain had guaranteed Belgian neutrality in 1839 — Germany's invasion was the tripwire.",fw:"The Schlieffen Plan called for sweeping through neutral Belgium to knock France out quickly, then turning to face Russia. Britain had guaranteed Belgian neutrality. When Germany violated it, Britain had both a treaty obligation and public justification for war."},
+  {scene:1,date:"August 1914",loc:"Europe",prose:"The Ottoman Empire must decide which side to join. The decision will shape the Middle East for the rest of the century.",q:"Which side did the Ottoman Empire join in World War I?",choices:["The Allied Powers","The Central Powers","It remained neutral throughout","It switched sides mid-war"],correct:1,img:"berlin_telegram",cam:{scale:1.2,tx:-2,ty:3},fc:"The Ottoman Empire joined the Central Powers in October 1914. A secret alliance with Germany had been signed in August. The Ottomans brought new fronts — Gallipoli, Mesopotamia, the Caucasus — and the conflict truly became a world war.",fw:"The Ottomans joined the Central Powers in October 1914. This opened vast new theatres of war and ultimately led to the dissolution of the Ottoman Empire after the war."},
+  {scene:1,date:"September 1914",loc:"River Marne, France",prose:"German armies sweep through Belgium and advance deep into France. Paris seems within reach. Then something unexpected happens on the River Marne.",q:"What was the significance of the First Battle of the Marne in September 1914?",choices:["It was the first use of poison gas","It halted the German advance and ended hopes of a quick German victory","It resulted in the first major German breakthrough","It was where Britain first entered the fighting"],correct:1,img:"mobilisation",cam:{scale:1.25,tx:2,ty:-3},fc:"The First Battle of the Marne, September 5–12 1914, stopped the German advance just 30 miles from Paris. The Schlieffen Plan's goal of a quick French defeat was shattered. Both sides dug in — and four years of trench warfare began.",fw:"The Marne stopped the German advance cold, just 30 miles from Paris. The famous 'taxis of the Marne' — Parisian cabs requisitioned to rush troops to the front — became a symbol of French resistance."},
+  {scene:1,date:"1914",loc:"Britain",prose:"Britain needs soldiers fast. The professional army is small. A massive volunteer recruitment campaign is launched and the face of the campaign becomes iconic.",q:"Which British official became the face of the WWI recruitment campaign with the 'Your Country Needs YOU' poster?",choices:["Prime Minister Herbert Asquith","Field Marshal Douglas Haig","Field Marshal Lord Kitchener","Admiral John Jellicoe"],correct:2,img:"mobilisation",cam:{scale:1.28,tx:-4,ty:2},fc:"Lord Kitchener — Field Marshal Horatio Herbert Kitchener, Secretary of State for War. The poster designed by Alfred Leete became one of the most recognisable images of the war. Kitchener drowned when his ship was sunk by a German mine in June 1916.",fw:"Field Marshal Lord Kitchener — Secretary of State for War. The 'Your Country Needs YOU' poster with his pointing finger became one of history's most iconic recruitment images."},
+  {scene:1,date:"Autumn 1914",loc:"Western Front",prose:"After the Marne, both sides try to outflank each other in the 'Race to the Sea'. By November the front stretches from the Channel to Switzerland.",q:"Approximately how long was the Western Front from end to end?",choices:["200 kilometres","450 kilometres","700 kilometres","1,200 kilometres"],correct:2,img:"mobilisation",cam:{scale:1.32,tx:3,ty:-4},fc:"Roughly 700 kilometres — from the North Sea coast of Belgium to the Swiss border. Along this front, both sides would fight and die for the next four years over distances measured in metres rather than kilometres.",fw:"The Western Front ran approximately 700km from the North Sea to Switzerland. Its near-total immobility despite four years of catastrophic fighting is one of history's most striking military paradoxes."},
+  {scene:1,date:"1914",loc:"The British Empire",prose:"Britain does not fight alone. The British Empire spans a quarter of the world's surface. Soldiers come from Australia, New Zealand, Canada, India, and South Africa.",q:"Soldiers from Australia and New Zealand fighting in WWI were collectively known by what acronym?",choices:["ANZAC","AUSCAN","SAANZ","DOMFORCE"],correct:0,img:"mobilisation",cam:{scale:1.35,tx:-2,ty:4},fc:"ANZAC — Australian and New Zealand Army Corps. Formed in December 1914, the ANZACs became legendary for their fighting spirit, particularly at Gallipoli. ANZAC Day, April 25, remains the most solemn public holiday in both Australia and New Zealand.",fw:"ANZAC — the Australian and New Zealand Army Corps. The ANZACs' courage at Gallipoli made the acronym synonymous with sacrifice and national identity."},
+
+  // ── SCENE 2 — THE WESTERN FRONT (9) ─────────────────────────────────────────
+  {scene:2,date:"December 25, 1914",loc:"No Man's Land, Western Front",prose:"It is Christmas morning. Something extraordinary is happening. German soldiers have placed candles along their parapet. Singing drifts across no man's land. Then a figure climbs out — unarmed.",q:"What activity were soldiers famously reported to have shared during the Christmas Truce of 1914?",choices:["Exchanging letters to post home","Playing football","Sharing medical supplies","Holding a joint church service"],correct:1,img:"sarajevo_crowd",cam:{scale:1.18,tx:0,ty:0},fc:"Football — or something resembling it. Multiple soldiers' letters describe impromptu games in no man's land, helmets for goalposts. It became one of WWI's most enduring images: two sides returning to killing each other the next day, having kicked a ball in the mud on Christmas morning.",fw:"Football is the most famous account — impromptu games with makeshift balls, helmets as goalposts. There was also exchange of gifts and cigarettes, and singing. But the football matches became the enduring symbol of this brief, remarkable truce."},
+  {scene:2,date:"April 22, 1915",loc:"Ypres, Belgium",prose:"A yellow-green cloud drifts slowly from the German trenches toward the Allied line. Men begin choking and collapsing. Nothing like this has ever been used in war at scale before.",q:"What gas was used in the first large-scale chemical weapons attack in history at Ypres?",choices:["Mustard gas","Phosgene","Chlorine gas","Hydrogen cyanide"],correct:2,img:"sarajevo_shot",cam:{scale:1.22,tx:3,ty:-2},fc:"Chlorine gas — identifiable by its yellow-green colour and bleach-like smell. The attack opened a 4-mile gap in the Allied line. Mustard gas came later in 1917 and was more feared because it was nearly odourless and caused severe blistering rather than immediate suffocation.",fw:"Chlorine gas. Mustard gas, introduced in 1917, was actually more feared — nearly odourless, it caused horrific blistering and could linger in soil for days. Chlorine opened the door; mustard gas made chemical warfare a staple horror."},
+  {scene:2,date:"July 1, 1916",loc:"The Somme, France",prose:"At 7:30am, whistles blow along a 30km front. Men climb out of their trenches and walk toward the German lines. Officers had told them the wire would be cut, the defenders dead. They were wrong.",q:"Approximately how many British casualties occurred on the first day of the Battle of the Somme?",choices:["Around 10,000","Around 20,000","Around 57,000","Around 100,000"],correct:2,img:"sarajevo_crowd",cam:{scale:1.28,tx:-4,ty:3},fc:"57,470 British casualties — killed, wounded, or missing — on a single day. Of those, roughly 19,240 were killed. It remains the bloodiest single day in British military history. The Somme continued for four and a half months, ending with over one million total casualties.",fw:"57,470 British casualties in one day — approximately 19,240 killed. It remains the worst single day in British military history. The artillery bombardment that was supposed to destroy German defences had largely failed — the Germans sheltered in deep dugouts then emerged when it stopped."},
+  {scene:2,date:"September 15, 1916",loc:"Flers-Courcelette, The Somme",prose:"Strange metal boxes on tracks appear on the battlefield for the first time, crossing trenches that no cavalry could cross. The Germans are initially terrified. A new era of warfare has begun.",q:"Which new weapon made its battlefield debut on the Somme on September 15, 1916?",choices:["The flamethrower","The tank","The mortar","Barbed wire"],correct:1,img:"mobilisation",cam:{scale:1.2,tx:2,ty:-3},fc:"The tank — the British Mark I. Codenamed 'tanks' during development to disguise their purpose as water carriers, 49 were used at Flers-Courcelette. Their early impact was limited — many broke down — but the psychological effect was profound and changed the future of warfare.",fw:"The tank made its debut on September 15, 1916. British Mark I tanks were codenamed 'tanks' as a cover story — supposedly water carriers for Mesopotamia. Early models were mechanically unreliable, but they terrified German defenders and changed warfare forever."},
+  {scene:2,date:"1914–1918",loc:"The trenches, Western Front",prose:"Life in the trenches is nothing like the adventure the recruiting posters promised. The mud is everywhere. Rats scavenge the dead. Lice infest every man's clothing. And every few yards, a sniper waits.",q:"What was 'trench foot', a common medical condition among WWI soldiers?",choices:["A fungal infection from shared boots","Tissue damage from prolonged cold and wet conditions","A slang term for soldiers who refused to leave the trenches","A bacterial infection from rat bites"],correct:1,img:"sarajevo_morning",cam:{scale:1.15,tx:-3,ty:2},fc:"Trench foot was caused by standing for long periods in cold, waterlogged conditions — blood vessels constrict, tissue begins to die, and in severe cases feet became gangrenous and required amputation. The British Army had around 75,000 cases in the first winter alone.",fw:"Trench foot resulted from prolonged exposure to cold and damp — feet would blister, swell, turn numb, and in severe cases become gangrenous. It was largely preventable with regular boot changes, but conditions in the trenches made this difficult."},
+  {scene:2,date:"1914–1918",loc:"Western Front",prose:"A new medical condition appears among soldiers who have not been physically wounded. Men shake uncontrollably. They stare blankly. They cannot speak. Doctors struggle to explain it.",q:"What was the term for the psychological trauma suffered by soldiers exposed to prolonged combat in WWI?",choices:["Battle fatigue","Shell shock","Combat neurosis","Trench madness"],correct:1,img:"sarajevo_crowd",cam:{scale:1.25,tx:4,ty:-4},fc:"Shell shock — coined in 1915 by British medical officer Charles Myers. We now understand it as PTSD. Many soldiers diagnosed with it were shot for cowardice. The scale of psychological casualties forced the British army to take mental health seriously for the first time.",fw:"Shell shock — today we would call it PTSD. Early in the war, soldiers showing these symptoms were sometimes shot for cowardice. WWI was the first conflict that forced Western militaries to grapple seriously with psychological casualties."},
+  {scene:2,date:"July–November 1917",loc:"Passchendaele, Belgium",prose:"The Third Battle of Ypres is fought in the wettest Flemish autumn in decades. Artillery has destroyed the drainage system. Men and horses drown in the mud. The village of Passchendaele is captured after three months — it lies just eight miles from the start line.",q:"What feature of the Passchendaele battlefield made it one of the most harrowing of the war?",choices:["Underground tunnel warfare","Extreme mud and flooded shell craters that swallowed men alive","The highest concentration of gas attacks","The first large-scale tank battle"],correct:1,img:"sarajevo_shot",cam:{scale:1.3,tx:-2,ty:3},fc:"The mud at Passchendaele was infamous. Artillery had destroyed the Flemish drainage system entirely, turning the battlefield into a swamp. Men and horses drowned in shell craters. Wounded men left in no man's land simply sank. It remains a byword for the futility of WWI.",fw:"The mud at Passchendaele was on an almost incomprehensible scale. The whole battlefield became a waterlogged swamp. Men fell into shell craters and drowned. Wounded men sank. It remains one of the most harrowing environments any army has ever fought in."},
+  {scene:2,date:"1914–1918",loc:"Western Front",prose:"Millions fight for four years over a narrow strip of churned earth. A new generation of commanders makes decisions from château headquarters miles behind the front.",q:"Which British commander oversaw the Battles of the Somme and Passchendaele, controversially known as 'Butcher Haig'?",choices:["Lord Kitchener","Sir John French","Field Marshal Douglas Haig","Sir Edmund Allenby"],correct:2,img:"berlin_telegram",cam:{scale:1.22,tx:3,ty:-2},fc:"Field Marshal Sir Douglas Haig — Commander of the BEF from December 1915. His critics argue his tactics at the Somme and Passchendaele showed callous indifference to his men. His defenders point to structural constraints he faced and note that Britain ultimately won the war under his command.",fw:"Field Marshal Douglas Haig commanded the BEF. 'Butcher Haig' is a label from his harshest critics. Defenders note he faced unprecedented strategic problems and that the British army ultimately broke German resistance in 1918 under his command."},
+  {scene:2,date:"February–December 1916",loc:"Verdun, France",prose:"While the Somme grinds on, another titanic battle is being fought to the east. The Germans choose Verdun not to capture it, but to 'bleed France white' — draining the French army of men faster than France can replace them.",q:"Approximately how many total casualties — French and German combined — were suffered at the Battle of Verdun in 1916?",choices:["Around 100,000","Around 300,000","Around 700,000","Around 1.5 million"],correct:2,img:"sarajevo_crowd",cam:{scale:1.18,tx:-3,ty:4},fc:"Approximately 700,000 casualties — roughly 330,000 French and 340,000 German — over ten months. The German plan to 'bleed France white' failed because German losses matched French ones. Verdun became a symbol of French resilience and national identity.",fw:"Around 700,000 casualties on both sides combined. The German strategy of attrition backfired because German losses matched French ones almost exactly. Verdun became the defining symbol of French suffering and endurance in the war."},
+
+  // ── SCENE 3 — THE WIDER WAR (8) ─────────────────────────────────────────────
+  {scene:3,date:"April 25, 1915",loc:"Gallipoli Peninsula, Ottoman Empire",prose:"At dawn, boats crunch onto the beaches of the Gallipoli peninsula. Australian and New Zealand troops land at a cove that will bear their name forever. Above them, on the cliffs, Turkish defenders open fire.",q:"The Gallipoli landing on April 25, 1915 is commemorated annually in Australia and New Zealand as what?",choices:["Remembrance Day","Victory Day","ANZAC Day","Armistice Day"],correct:2,img:"mobilisation",cam:{scale:1.18,tx:0,ty:0},fc:"ANZAC Day — still observed on April 25 each year as the most solemn public holiday in both Australia and New Zealand. The courage of ANZAC troops at Gallipoli became foundational to both nations' sense of identity, even though the campaign was a costly failure.",fw:"ANZAC Day, April 25, is the most solemn public holiday in both Australia and New Zealand. The Gallipoli campaign became foundational to both nations' identity, transforming colonial subjects into distinct national peoples."},
+  {scene:3,date:"February 1915",loc:"London, England",prose:"The First Lord of the Admiralty has a bold plan to break the Western Front stalemate — strike the Ottoman Empire, knock it out of the war, and open a sea route to Russia. The plan sounds brilliant. The execution will be catastrophic.",q:"Who championed the Gallipoli campaign as First Lord of the Admiralty?",choices:["David Lloyd George","Herbert Asquith","Winston Churchill","Admiral John Jellicoe"],correct:2,img:"berlin_telegram",cam:{scale:1.22,tx:-3,ty:2},fc:"Winston Churchill — then First Lord of the Admiralty. The failure of Gallipoli forced his resignation from the Cabinet in 1915. He subsequently served on the Western Front. The disaster haunted his reputation for years, though he would lead Britain through an even greater war decades later.",fw:"Winston Churchill — First Lord of the Admiralty — was the primary advocate of the Gallipoli strategy. Its failure cost him his Cabinet position. He resigned and served on the Western Front. Though the disaster shadowed him, it also taught him lessons about military planning invaluable in WWII."},
+  {scene:3,date:"May 7, 1915",loc:"Atlantic Ocean",prose:"A luxury ocean liner crosses the Atlantic from New York to Liverpool. German submarines have been operating in these waters. At 2:10pm, a torpedo strikes the hull. The ship sinks in 18 minutes.",q:"Which British ocean liner was sunk by a German U-boat in 1915, killing 1,198 people including 128 Americans?",choices:["RMS Titanic","RMS Lusitania","RMS Mauretania","SS Olympic"],correct:1,img:"sarajevo_morning",cam:{scale:1.25,tx:4,ty:-3},fc:"RMS Lusitania — sunk by German submarine U-20 on May 7, 1915. 1,198 of the 1,959 on board died. The sinking enraged American public opinion and became one of the rallying points for US entry into the war two years later. Germany argued the ship was carrying munitions — post-war records confirmed this.",fw:"The Lusitania was sunk by U-20 with the loss of 1,198 lives including 128 Americans. Germany had published warnings in New York newspapers before the voyage. The sinking became a major step in shifting American opinion toward entering the war."},
+  {scene:3,date:"May 31–June 1, 1916",loc:"North Sea",prose:"Off the coast of Denmark, the two greatest naval fleets in the world come face to face — the British Royal Navy and the German Imperial Navy. It is the largest naval battle in history. Both sides claim victory. Both suffer enormous losses.",q:"What was the name of the massive naval battle in the North Sea in 1916?",choices:["Battle of Trafalgar","Battle of the Falklands","Battle of Jutland","Battle of Heligoland Bight"],correct:2,img:"mobilisation",cam:{scale:1.2,tx:-2,ty:3},fc:"The Battle of Jutland — May 31 to June 1, 1916. Britain lost more ships and men than Germany. Germany claimed a tactical victory. But the German fleet retreated to port and never again seriously challenged British naval dominance. As the quip went: 'The German fleet has assaulted its jailer, but it is still in jail.'",fw:"The Battle of Jutland. Britain lost 14 ships and 6,094 men; Germany lost 11 ships and 2,551 men. Germany claimed a tactical victory, Britain a strategic one — because the German fleet retreated and never mounted another serious challenge to British naval control."},
+  {scene:3,date:"1914–1918",loc:"The skies above the Western Front",prose:"Above the mud and gas of the trenches, a new kind of warfare is being invented. Men in fragile wooden aeroplanes are fighting duels at altitude. The 'aces' — pilots who shoot down five or more enemy aircraft — become the war's first celebrity warriors.",q:"German pilot Manfred von Richthofen — the war's top-scoring ace — was known by what nickname?",choices:["The Iron Eagle","The Red Baron","The Black Knight","The Sky King"],correct:1,img:"sarajevo_crowd",cam:{scale:1.28,tx:3,ty:-4},fc:"The Red Baron — from his distinctive red Fokker triplane. Manfred von Richthofen shot down 80 Allied aircraft — the highest confirmed score of any pilot in WWI. He was killed on April 21, 1918. Even his enemies honoured him: Allied forces gave him a full military funeral.",fw:"The Red Baron — Manfred von Richthofen, whose bright red Fokker triplane made him instantly recognisable. 80 confirmed kills. He was shot down and killed on April 21, 1918. Allied troops buried him with full military honours."},
+  {scene:3,date:"1915–1917",loc:"Atlantic Ocean",prose:"Germany's greatest naval asset is not its surface fleet — it is its U-boat submarine fleet, threatening to cut Britain's supply lines. Britain imports most of its food and raw materials. If the U-boats succeed, Britain starves.",q:"Germany's policy of attacking all ships in war zones around Britain — including neutral ones — was called what?",choices:["Submarine supremacy","Unrestricted submarine warfare","Total sea blockade","Naval attrition policy"],correct:1,img:"berlin_telegram",cam:{scale:1.18,tx:-3,ty:2},fc:"Unrestricted submarine warfare — declared in February 1917. Germany would sink any ship in the war zone, neutral or otherwise. It nearly worked: Britain ran low on food by April 1917. But it also sank American ships and American lives, which was a significant factor in the US declaration of war.",fw:"Unrestricted submarine warfare was enormously effective militarily — sinking 860,000 tonnes of Allied shipping in April 1917 alone. But it also brought America into the war, which ultimately proved Germany's undoing."},
+  {scene:3,date:"1915–1916",loc:"Middle East",prose:"As the war grinds on in Europe, a British officer in Arab dress is moving through the desert on camelback, organising a guerrilla uprising against the Ottoman Empire. He will become one of WWI's most romantic and controversial figures.",q:"Which British officer led the Arab Revolt against the Ottoman Empire, later immortalised in film?",choices:["General Edmund Allenby","General Charles Townshend","T.E. Lawrence","General Frederick Maude"],correct:2,img:"sarajevo_archduke",cam:{scale:1.22,tx:2,ty:-3},fc:"T.E. Lawrence — Lawrence of Arabia. A British intelligence officer and archaeologist, he worked with Arab forces under Emir Faisal to wage guerrilla warfare against the Ottoman Empire. His memoir 'Seven Pillars of Wisdom' described his experiences.",fw:"T.E. Lawrence — Lawrence of Arabia. His memoir 'Seven Pillars of Wisdom' became one of the great books of the war. His legacy is complex — he later expressed deep ambivalence about British promises made to Arab leaders."},
+  {scene:3,date:"December 1917",loc:"Palestine, Middle East",prose:"British forces under General Allenby have been pushing the Ottomans back through the Sinai and into Palestine. Now they stand before one of the most symbolically powerful cities on earth.",q:"Which city did General Allenby famously capture from the Ottomans in December 1917, entering on foot out of respect?",choices:["Cairo","Damascus","Baghdad","Jerusalem"],correct:3,img:"sarajevo_morning",cam:{scale:1.3,tx:-4,ty:3},fc:"Jerusalem — captured on December 11, 1917. Allenby famously entered on foot through the Jaffa Gate, having ordered his men to dismount out of respect for the holy city. It was a significant propaganda victory for Britain and a powerful symbolic moment.",fw:"Jerusalem — Allenby entered on foot on December 11, 1917, having ordered his entire entourage to dismount out of respect. The fall of Jerusalem was a significant propaganda victory for Britain. Allenby later took Damascus in October 1918, effectively ending Ottoman rule in the Levant."},
+
+  // ── SCENE 4 — THE TURNING POINT (9) ─────────────────────────────────────────
+  {scene:4,date:"February 1917",loc:"Washington D.C., USA",prose:"For three years, America has stayed out of the European war. But two things are about to change everything: German submarines sinking American ships, and an intercepted telegram from Berlin to Mexico City.",q:"The intercepted Zimmermann Telegram proposed Germany help Mexico recover which US territories?",choices:["California, Arizona, and Nevada","Texas, New Mexico, and Arizona","Florida, Louisiana, and Mississippi","Montana, Wyoming, and Colorado"],correct:1,img:"berlin_telegram",cam:{scale:1.18,tx:0,ty:0},fc:"Texas, New Mexico, and Arizona — territory lost by Mexico to the United States in the Mexican-American War of 1848. German Foreign Secretary Zimmermann proposed Mexico attack the US in exchange for German support recovering these states. British intelligence decoded and shared it. American public opinion shifted decisively.",fw:"Texas, New Mexico, and Arizona — lost to the US in 1848. Zimmermann proposed Mexico attack the US in exchange for German help recovering this territory. British intelligence had broken the German diplomatic code and shared the telegram with the US government."},
+  {scene:4,date:"April 6, 1917",loc:"Washington D.C., USA",prose:"President Wilson addresses Congress. 'The world must be made safe for democracy,' he says. The vote passes. America is at war for the first time since the Civil War.",q:"What was the name of the American Expeditionary Forces commander sent to France in 1917?",choices:["General Leonard Wood","General George Pershing","General John 'Black Jack' Pershing","General Peyton March"],correct:2,img:"mobilisation",cam:{scale:1.22,tx:-3,ty:2},fc:"General John 'Black Jack' Pershing — Commander of the American Expeditionary Forces. He arrived in France in June 1917 but American troops in significant numbers didn't reach the front until early 1918. By summer 1918, 10,000 US troops were arriving in France every day.",fw:"General John 'Black Jack' Pershing commanded the AEF. He arrived in France in June 1917. By summer 1918, 10,000 US troops were arriving daily. Their fresh enthusiasm and numbers helped break German resistance."},
+  {scene:4,date:"March 1917",loc:"Petrograd, Russia",prose:"Russia is collapsing from the inside. Three years of catastrophic losses — over 3 million dead — have shattered the army and economy. Bread riots turn into revolution. The Tsar abdicates. Then the Bolsheviks seize power.",q:"Why did Germany allow Lenin to travel through Germany in a sealed train to Russia in April 1917?",choices:["Germany admired Lenin's communist ideology","Germany hoped Lenin would take Russia out of the war","Germany wanted Lenin to spy on the Russian government","Germany was trying to destabilise the Russian economy"],correct:1,img:"berlin_telegram",cam:{scale:1.25,tx:4,ty:-3},fc:"Germany calculated — correctly — that Lenin would take Russia out of the war. Allowing him to travel through Germany in a sealed train was a deliberate act of strategic sabotage. Within months the Bolsheviks had seized power and within a year Russia had signed a peace treaty.",fw:"Germany was gambling that Lenin would remove Russia from the war — and the bet paid off spectacularly. Within months the Bolsheviks had seized power and began peace negotiations that took Russia out of the war entirely."},
+  {scene:4,date:"March 3, 1918",loc:"Brest-Litovsk, Belarus",prose:"The new Bolshevik government has been negotiating with Germany for months. Russia must choose between surrendering vast territories or resuming a war it cannot fight.",q:"Under the Treaty of Brest-Litovsk, Russia surrendered vast territories to Germany. Which of these was NOT ceded?",choices:["Finland","Ukraine","The Baltic states","The Crimea"],correct:3,img:"sarajevo_archduke",cam:{scale:1.2,tx:-2,ty:3},fc:"The Crimea remained under Bolshevik control. Under Brest-Litovsk, Russia surrendered Finland, Ukraine, the Baltic states, Belarus, and parts of the Caucasus — roughly a third of European Russia's population and significant industrial and agricultural resources.",fw:"The Crimea was contested but not formally ceded. Russia surrendered Finland, Ukraine, the Baltic states, Belarus, and the Caucasus — around a third of European Russia's population. Germany suddenly controlled vast new territories."},
+  {scene:4,date:"March–July 1918",loc:"Western Front",prose:"With Russia out of the war, Germany transfers over half a million troops to the Western Front. General Ludendorff launches massive offensives designed to break the Allied line before American troops arrive in sufficient numbers.",q:"What were Germany's massive offensives of spring 1918 collectively known as?",choices:["Operation Barbarossa","The Kaiserschlacht (Kaiser's Battle)","The Ludendorff Breakthrough","The Spring Victories"],correct:1,img:"mobilisation",cam:{scale:1.28,tx:3,ty:-4},fc:"The Kaiserschlacht — the Kaiser's Battle. Beginning March 21, 1918 with Operation Michael, German forces broke through the Allied line using new stormtrooper tactics. At one point they were shelling Paris. But the advance outran its supply lines and fresh American troops were arriving daily.",fw:"The Kaiserschlacht — Kaiser's Battle. Beginning March 21 1918, German forces broke through the Allied line. They advanced further in a single day than the Allies had managed in years. But the advance stalled, and by July the tide had turned."},
+  {scene:4,date:"1917",loc:"The Home Front, Britain",prose:"The war has reached deep into civilian life. Food rationing is introduced. Women are working in munitions factories, driving buses and trams. The social order that existed before the war is quietly dissolving.",q:"What major political change occurred in Britain in 1918 as a result of women's wartime contribution?",choices:["Women were given the right to stand as Members of Parliament","Women over 30 who met property qualifications were given the right to vote","All women over 21 were given full voting rights","Women were given equal pay in all government roles"],correct:1,img:"sarajevo_crowd",cam:{scale:1.18,tx:-4,ty:2},fc:"The Representation of the People Act 1918 gave women over 30 who met certain property qualifications the right to vote — enfranchising roughly 8.4 million women. Full equal voting rights for all women over 21 came a decade later with the Equal Franchise Act of 1928.",fw:"The 1918 Representation of the People Act gave women over 30 meeting property qualifications the right to vote. Full equality came in 1928. The link to wartime service was explicit: women had proved their contribution to the national effort, making continued denial of the vote impossible to defend."},
+  {scene:4,date:"1917",loc:"Western Front — French Army",prose:"After the catastrophic Nivelle Offensive in 1917, French troops mutinied across 54 divisions. Men refused further suicidal attacks, though they pledged to defend their trenches. The French high command kept it secret from the Germans and from the public for decades.",q:"Who replaced Nivelle as Commander of the French Army after the 1917 mutinies?",choices:["Marshal Foch","General Joffre","General Pétain","General Weygand"],correct:2,img:"berlin_telegram",cam:{scale:1.22,tx:2,ty:-3},fc:"General Philippe Pétain replaced Nivelle. He listened to grievances, improved rations and leave — and had 43 ringleaders shot. The mutinies were suppressed and kept secret for decades. Pétain became a hero of WWI; he would become a disgraced collaborator in WWII.",fw:"General Philippe Pétain — the 'saviour of Verdun' — replaced Nivelle. He addressed grievances and restored morale. The mutinies were successfully suppressed and kept secret from the Germans. Pétain's WWII collaboration with Nazi Germany would later overshadow his WWI heroism."},
+  {scene:4,date:"1918",loc:"Germany",prose:"Revolution tore through Germany in autumn 1918. Sailors mutinied at Kiel. Workers' councils seized power in cities. The Kaiser fled to the Netherlands after abdicating on November 9.",q:"What was the 'stab in the back' myth that poisoned German politics after WWI?",choices:["The claim that Britain had cheated in naval warfare","The false belief that Germany had been betrayed from within rather than defeated on the battlefield","The accusation that America had entered the war illegally","The theory that Austria-Hungary had sabotaged Germany's war effort"],correct:1,img:"mobilisation",cam:{scale:1.25,tx:-3,ty:4},fc:"The 'stab in the back' — Dolchstoßlegende — was the false claim that the German army had been 'undefeated in the field' but betrayed by civilians, Jews, and socialists on the home front. It was a lie, but a politically powerful one. Hitler would use it to devastating effect.",fw:"The 'stab in the back' myth held that Germany's army was undefeated but betrayed from within. It was false — Germany was militarily exhausted and losing — but it became one of the most dangerous political myths in history, exploited by the Nazi movement."},
+  {scene:4,date:"November 11, 1918",loc:"Western Front",prose:"In a railway carriage in the forest of Compiègne, the Armistice is signed. At 11am — the eleventh hour of the eleventh day of the eleventh month — the guns stop. After four years, the Western Front falls silent for the first time.",q:"Tragically, fighting continued right up to 11am. How did casualties on the final morning of November 11, 1918 compare to D-Day in 1944?",choices:["They were about half of D-Day casualties","They were roughly equal to D-Day casualties","They were higher than D-Day casualties","They were negligible — most commanders ordered ceasefires early"],correct:2,img:"sarajevo_shot",cam:{scale:1.3,tx:4,ty:-2},fc:"More soldiers were killed on the morning of November 11, 1918 than on D-Day in 1944 — approximately 11,000 casualties in those final hours, compared to roughly 10,000 on June 6, 1944. Commanders continued ordering attacks knowing the Armistice was hours away.",fw:"Higher than D-Day. Approximately 11,000 casualties occurred on the final morning of the war. Commanders kept ordering attacks right up to 11am. Some historians argue this was criminal negligence; others that commanders simply followed orders to the end."},
+
+  // ── SCENE 5 — THE AFTERMATH (8) ─────────────────────────────────────────────
+  {scene:5,date:"January–June 1919",loc:"Paris, France",prose:"The victors gather at the Palace of Versailles to write the peace. France, Britain, and the United States are the dominant voices. The German delegation is not invited to negotiate — only to sign.",q:"US President Woodrow Wilson arrived at Versailles with his 'Fourteen Points'. Which international organisation did he propose as central to his vision?",choices:["The United Nations","The League of Nations","The International Peace Council","The World Assembly"],correct:1,img:"berlin_telegram",cam:{scale:1.18,tx:0,ty:0},fc:"The League of Nations — Wilson's central proposal for a new international order based on collective security. Cruelly for Wilson, the US Senate refused to ratify American membership. The League functioned without its most powerful potential member and ultimately failed to prevent World War II.",fw:"The League of Nations — the centrepiece of Wilson's vision. The League was established, but the US Senate refused American membership. The League struggled without American support and was ultimately powerless to stop the aggression of the 1930s."},
+  {scene:5,date:"June 28, 1919",loc:"Hall of Mirrors, Versailles",prose:"Exactly five years to the day after the shots in Sarajevo, German delegates sign the Treaty of Versailles. Their faces show humiliation, anger, despair. One later writes in his diary that it felt like signing a death warrant.",q:"The Treaty of Versailles contained the 'War Guilt Clause' — Article 231. What did it require Germany to accept?",choices:["Permanent disarmament of all German armed forces","Sole responsibility for causing the war and all its losses","The permanent loss of all German colonies","Occupation of Berlin by Allied forces for 20 years"],correct:1,img:"sarajevo_archduke",cam:{scale:1.22,tx:-3,ty:2},fc:"Article 231 forced Germany to accept sole responsibility for the war — the legal foundation for enormous reparations that followed. The sum settled was 132 billion gold marks. Combined with territorial losses and national humiliation, the War Guilt Clause created the political conditions that Hitler would later exploit.",fw:"Article 231 — the War Guilt Clause — forced Germany to acknowledge causing the war and all its damage. This justified the reparations bill of 132 billion gold marks. The economic devastation, combined with national humiliation, created precisely the conditions that enabled the Nazi movement."},
+  {scene:5,date:"1919–1923",loc:"Germany",prose:"The German economy is in ruins. The reparations are crushing. By 1923, the printing presses run day and night. It takes a wheelbarrow of banknotes to buy a loaf of bread.",q:"At the peak of the 1923 German hyperinflation, what was the approximate exchange rate between the German mark and the US dollar?",choices:["1,000 marks to the dollar","1 million marks to the dollar","4.2 trillion marks to the dollar","100 billion marks to the dollar"],correct:2,img:"berlin_telegram",cam:{scale:1.25,tx:4,ty:-3},fc:"4.2 trillion marks to one US dollar — the exchange rate at the peak of hyperinflation in November 1923. Workers were paid twice a day so they could spend wages before they lost value. Savings accumulated over a lifetime evaporated overnight. The psychological scarring was profound and lasting.",fw:"4.2 trillion marks to the dollar in November 1923. People literally burned banknotes for warmth — cheaper than firewood. Middle-class savings built over generations were destroyed overnight. This catastrophe, following Versailles, prepared Germany psychologically for Hitler."},
+  {scene:5,date:"1918–1919",loc:"Global",prose:"The war has officially ended but the dying hasn't. In overcrowded military camps and weakened civilian populations, something spreads faster than the armies ever moved.",q:"The 1918–1919 influenza pandemic killed an estimated 50–100 million people worldwide. Why was it called the 'Spanish flu' despite not originating in Spain?",choices:["Spanish scientists were first to identify and name the virus","Spain was neutral and did not censor press coverage, so Spanish reports were most visible","The pandemic was first carried to Europe by Spanish sailors","The virus was believed to have mutated in livestock on Spanish farms"],correct:1,img:"mobilisation",cam:{scale:1.18,tx:-2,ty:3},fc:"Spain was one of the few countries not subject to wartime press censorship. When the pandemic hit Spain badly, Spanish newspapers reported freely on it. Other countries suppressed coverage for morale reasons, so Spain appeared uniquely affected when it wasn't. The name stuck unfairly.",fw:"Wartime censorship meant most countries suppressed pandemic news to maintain morale. Spain, being neutral, had a free press that reported openly. So Spain appeared to be the epicentre when it wasn't. The origin of the virus remains debated; Kansas, USA is one leading candidate."},
+  {scene:5,date:"1918–1920",loc:"Europe and the Middle East",prose:"The war has dismembered empires and rearranged the map of the world. Four empires that existed in 1914 no longer exist. New nations have been carved from their ruins.",q:"Which four empires collapsed as a result of World War I?",choices:["German, Austro-Hungarian, Ottoman, and Russian","German, Austro-Hungarian, Ottoman, and British","Russian, Ottoman, Spanish, and Portuguese","German, Russian, French, and Ottoman"],correct:0,img:"sarajevo_morning",cam:{scale:1.22,tx:3,ty:-2},fc:"The German, Austro-Hungarian, Ottoman, and Russian empires all collapsed as a result of WWI. From their ruins emerged over a dozen new countries — including Poland, Czechoslovakia, Yugoslavia, Finland, the Baltic states, Iraq, Syria, and Palestine — many with borders drawn without regard for ethnic or historical realities.",fw:"Germany, Austria-Hungary, the Ottoman Empire, and Russia — four of the world's great empires — all ceased to exist. From their ruins, diplomats created a new map of Europe and the Middle East, often drawing borders that stored up conflicts for the rest of the 20th century."},
+  {scene:5,date:"1919 onwards",loc:"Germany",prose:"A defeated, humiliated, economically devastated Germany searches for someone to blame. A failed Austrian artist and veteran of the Western Front begins to find his voice in Munich's beer halls.",q:"Adolf Hitler served in World War I. In what capacity?",choices:["As an officer in the Prussian cavalry","As a corporal in the Bavarian infantry, serving as a messenger","As an artillery commander on the Western Front","As a military intelligence officer in Berlin"],correct:1,img:"berlin_telegram",cam:{scale:1.28,tx:-4,ty:3},fc:"Hitler served as a Gefreiter in the 16th Bavarian Reserve Infantry Regiment, mainly as a regimental messenger — a dangerous role between headquarters and the front lines. He was wounded twice, awarded the Iron Cross First Class, and was temporarily blinded by a British gas attack in October 1918.",fw:"Hitler served as a regimental messenger in the Bavarian infantry — a genuinely dangerous role. He was wounded twice and received the Iron Cross First Class. He said news of the Armistice, which he heard in hospital while temporarily blind from a gas attack, was the moment he decided to become a politician."},
+  {scene:5,date:"1919–1939",loc:"Europe",prose:"You look across the ruined landscape of post-war Europe. The war to end all wars has ended. The peace to end all peaces has been signed. The seeds of everything that follows are already in the soil.",q:"The Treaty of Versailles was signed on June 28, 1919. How long after that did World War II begin?",choices:["Exactly 10 years","Just over 15 years","Just over 20 years","Exactly 25 years"],correct:2,img:"sarajevo_morning",cam:{scale:1.32,tx:2,ty:-4},fc:"Just over 20 years — World War II began with Germany's invasion of Poland on September 1, 1939: 20 years, 2 months, and 4 days after the signing of Versailles. Whether Versailles 'caused' WWII is fiercely debated, but it created the conditions in which it became possible.",fw:"Just over 20 years — Germany invaded Poland on September 1, 1939. John Maynard Keynes famously predicted the economic consequences would be catastrophic. He was right. The peace that was supposed to end all wars lasted barely a generation."},
+  {scene:5,date:"1914–1918",loc:"The world",prose:"Step back and look at the full sweep of what you have witnessed — from a single pistol shot on a Sarajevo street corner to a world remade in blood and fire.",q:"Approximately how many people were killed in World War I — military and civilian combined?",choices:["Around 5 million","Around 10 million","Around 20 million","Around 40 million"],correct:2,img:"sarajevo_shot",cam:{scale:1.18,tx:-3,ty:2},fc:"Approximately 20 million killed — around 9–11 million military deaths and 7–12 million civilian deaths. A further 21 million were wounded. An entire generation of European men was hollowed out. The Spanish flu pandemic that followed killed another 50–100 million. All of it, from one wrong turn in Sarajevo.",fw:"Around 20 million dead, 21 million wounded. The Spanish flu pandemic that spread through weakened wartime populations killed another 50–100 million. All of it traceable, in one way or another, to a driver taking a wrong turn on a sunny Sunday morning in Sarajevo."},
+];
+
+// ── STATE ─────────────────────────────────────────────────────────────────────────
+let qIdx=0, score=0, answered=false, cinAborted=false, cinCb=null, currentCinScene=0;
+let activeBgSlot='a';
+let currentAudio=null;
+
+// ── AUDIO — pre-generated MP3s from ElevenLabs (George voice) ───────────────────
+// Files live in audio/ folder, generated once via generate_audio.py
+// Falls back to browser speech if audio files are missing
+
+const AUDIO_FILES = {
+  'cin_1_1': 'audio/cin_1_1.mp3',
+  'cin_1_2': 'audio/cin_1_2.mp3',
+  'cin_1_3': 'audio/cin_1_3.mp3',
+  'cin_2_1': 'audio/cin_2_1.mp3',
+  'cin_2_2': 'audio/cin_2_2.mp3',
+};
+const CIN_AUDIO_MAP = [
+  ['cin_1_1','cin_1_2','cin_1_3'],
+  ['cin_2_1','cin_2_2'],
+  ['cin_3_1','cin_3_2'],
+  ['cin_4_1'],
+  ['cin_5_1'],
+  ['cin_6_1','cin_6_2'],
+];
+
+// ── AMBIENT AUDIO ────────────────────────────────────────────────────────────
+// One looping ambient track per scene, plays under narration and questions.
+// Download files from freesound.org and place in build/audio/ — see README.
+const AMBIENT = {
+  0: 'audio/amb_sarajevo.mp3',
+  1: 'audio/amb_mobilisation.mp3',
+  2: 'audio/amb_trenches.mp3',
+  3: 'audio/amb_wider.mp3',
+  4: 'audio/amb_turning.mp3',
+  5: 'audio/amb_aftermath.mp3',
+};
+// Ambient volume levels: lower during narration so voice is clear, raise for questions
+const AMB_VOL_NARRATION = 0.12;
+const AMB_VOL_QUESTIONS = 0.22;
+let ambientAudio = null;
+let currentAmbientScene = -1;
+
+function startAmbient(sceneIdx) {
+  const src = AMBIENT[sceneIdx];
+  if (!src) return;
+  // Already playing the right scene — just adjust volume
+  if (currentAmbientScene === sceneIdx && ambientAudio) {
+    fadeAmbientTo(AMB_VOL_NARRATION);
+    return;
+  }
+  // Fade out old ambient
+  if (ambientAudio) {
+    const old = ambientAudio;
+    fadeAmbientTo(0, () => { old.pause(); old.src = ''; });
+    ambientAudio = null;
+  }
+  currentAmbientScene = sceneIdx;
+  const a = new Audio(src);
+  a.loop = true;
+  a.volume = 0;
+  ambientAudio = a;
+  a.play().then(() => fadeAmbientTo(AMB_VOL_NARRATION)).catch(() => {});
+}
+
+function fadeAmbientTo(targetVol, onDone) {
+  if (!ambientAudio) { if(onDone) onDone(); return; }
+  const audio = ambientAudio;
+  const step = (targetVol - audio.volume) / 20;
+  let count = 0;
+  const iv = setInterval(() => {
+    count++;
+    audio.volume = Math.max(0, Math.min(1, audio.volume + step));
+    if (count >= 20) {
+      clearInterval(iv);
+      audio.volume = targetVol;
+      if (onDone) onDone();
+    }
+  }, 50);
+}
+
+function setAmbientForQuestions() { fadeAmbientTo(AMB_VOL_QUESTIONS); }
+function setAmbientForNarration() { fadeAmbientTo(AMB_VOL_NARRATION); }
+function stopAmbient() { fadeAmbientTo(0, () => { if(ambientAudio){ ambientAudio.pause(); ambientAudio=null; } currentAmbientScene=-1; }); }
+
+function speak(audioKey, text, onDone) {
+  stopAudio();
+  const src = audioKey ? AUDIO_FILES[audioKey] : null;
+  if (src) {
+    console.log('[Audio] Loading:', src);
+    const audio = new Audio(src);
+    currentAudio = audio;
+    audio.oncanplaythrough = function() { console.log('[Audio] Ready:', src); };
+    audio.onended = function() { console.log('[Audio] Finished:', src); if (!cinAborted) onDone(); };
+    audio.onerror = function(e) {
+      console.warn('[Audio] Failed to load:', src, e);
+      fallbackSpeak(text, onDone);
+    };
+    audio.play().then(function() {
+      console.log('[Audio] Playing:', src);
+    }).catch(function(e) {
+      console.warn('[Audio] play() blocked:', e);
+      fallbackSpeak(text, onDone);
+    });
+  } else {
+    console.log('[Audio] No key, using browser speech');
+    fallbackSpeak(text, onDone);
+  }
+}
+
+function fallbackSpeak(text, onDone) {
+  const synth = window.speechSynthesis;
+  if (!synth) { onDone(); return; }
+  synth.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.rate=.87; u.pitch=.94; u.volume=.88;
+  const vs = synth.getVoices();
+  const v = vs.find(v=>v.name.includes('Daniel')||v.name.includes('Arthur')||v.name.includes('George'))
+         || vs.find(v=>v.lang==='en-GB') || vs.find(v=>v.lang.startsWith('en'));
+  if(v) u.voice=v;
+  u.onend = () => { if(!cinAborted) onDone(); };
+  synth.speak(u);
+}
+
+function stopAudio() {
+  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
+}
+
+// ── BACKGROUND SYSTEM ─────────────────────────────────────────────────────────────
+// Two slides (bg-a, bg-b) cross-dissolve for panning transitions
+// Each slide starts zoomed in and slowly zooms out (reverse Ken Burns)
+
+let bgKBInterval = null;
+
+function setBG(imgKey, cam, animate=true) {
+  const el = document.getElementById('bg-a');
+  const url = IMGS[imgKey];
+  el.style.backgroundImage = `url('${url}')`;
+  el.style.background = '';
+  // Start zoomed in, zoom out via CSS transition
+  const s = cam.scale + 0.15; // start more zoomed
+  const tx = cam.tx; const ty = cam.ty;
+  el.style.transition = 'none';
+  el.style.transform = `scale(${(s).toFixed(2)}) translate(${tx}%,${ty}%)`;
+  if (animate) {
+    requestAnimationFrame(() => {
+      el.style.transition = 'transform 12s ease-out';
+      el.style.transform = `scale(${cam.scale.toFixed(2)}) translate(${tx}%,${ty}%)`;
+    });
+  }
+}
+
+function crossDissolveTo(imgKey, cam) {
+  // Ping-pong between bg-a (z-index 1) and bg-b (z-index 2)
+  const incoming = document.getElementById('bg-b');
+  const outgoing = document.getElementById('bg-a');
+
+  const url = IMGS[imgKey];
+  // Set new image on incoming layer, start zoomed in
+  incoming.style.backgroundImage = `url('${url}')`;
+  incoming.style.background = '';
+  const s = cam.scale + 0.15;
+  incoming.style.transition = 'none';
+  incoming.style.transform = `scale(${s.toFixed(2)}) translate(${cam.tx}%,${cam.ty}%)`;
+  incoming.style.opacity = '0';
+  incoming.style.zIndex = '2';
+  outgoing.style.zIndex = '1';
+
+  requestAnimationFrame(() => {
+    // Start zoom-out on incoming
+    incoming.style.transition = 'opacity 1.2s ease, transform 12s ease-out';
+    incoming.style.opacity = '1';
+    incoming.style.transform = `scale(${cam.scale.toFixed(2)}) translate(${cam.tx}%,${cam.ty}%)`;
+    // Fade out outgoing
+    outgoing.style.transition = 'opacity 1.2s ease';
+    outgoing.style.opacity = '0';
+  });
+
+  // After dissolve, swap slots: copy bg-b state to bg-a, reset bg-b
+  setTimeout(() => {
+    document.getElementById('bg-a').style.backgroundImage = incoming.style.backgroundImage;
+    document.getElementById('bg-a').style.transform = incoming.style.transform;
+    document.getElementById('bg-a').style.opacity = '1';
+    document.getElementById('bg-a').style.zIndex = '1';
+    incoming.style.opacity = '0';
+    incoming.style.zIndex = '2';
+  }, 1400);
+}
+
+// ── COLLAGE RECAP ─────────────────────────────────────────────────────────────────
+let collageCb = null;
+
+function showCollage(sceneIdx, cb) {
+  collageCb = cb;
+  const data = CIN[sceneIdx];
+  // If no collage defined for this scene, skip straight to callback
+  if (!data || !data.collageImgs) { collageCb = cb; endCollage(); return; }
+  const imgs = data.collageImgs;
+  const el = document.getElementById('collage');
+  const grid = document.getElementById('collage-grid');
+  grid.innerHTML = '';
+
+  // Responsive grid columns based on image count
+  const cols = imgs.length <= 2 ? 2 : imgs.length <= 4 ? 2 : 3;
+  grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+  grid.style.gridTemplateRows = `repeat(${Math.ceil(imgs.length/cols)}, 1fr)`;
+
+  const cells = imgs.map(imgKey => {
+    const div = document.createElement('div');
+    div.className = 'collage-cell';
+    div.style.backgroundImage = `url('${IMGS[imgKey]}')`;
+    grid.appendChild(div);
+    return div;
+  });
+
+  // Reset text elements
+  ['collage-label','collage-title','collage-sub','collage-btn'].forEach(id => {
+    const e = document.getElementById(id);
+    e.classList.remove('in');
+  });
+  document.getElementById('collage-label').textContent = data.collageLabel;
+  document.getElementById('collage-title').textContent = data.collageTitle;
+  document.getElementById('collage-sub').textContent = data.collageSub;
+
+  // Hide question panel so collage sits cleanly on top
+  document.getElementById('qpanel').classList.add('out');
+  el.classList.add('active');
+  setAmbientForNarration();
+
+  // Stagger cells in
+  cells.forEach((c, i) => setTimeout(() => c.classList.add('on'), i * 120));
+
+  // Animate text in
+  setTimeout(() => document.getElementById('collage-label').classList.add('in'), 400);
+  setTimeout(() => document.getElementById('collage-title').classList.add('in'), 600);
+  setTimeout(() => document.getElementById('collage-sub').classList.add('in'), 800);
+  setTimeout(() => document.getElementById('collage-btn').classList.add('in'), 1000);
+}
+
+function endCollage() {
+  const el = document.getElementById('collage');
+  el.style.opacity = '0';
+  el.style.transition = 'opacity .5s';
+  setTimeout(() => {
+    el.classList.remove('active');
+    el.style.opacity = '';
+    el.style.transition = '';
+    // Restore question panel visibility
+    document.getElementById('qpanel').classList.remove('out');
+    if (collageCb) collageCb();
+  }, 500);
+}
+
+// ── SPLASH → GAME ─────────────────────────────────────────────────────────────────
+function startGame() {
+
+  // Audio files pre-generated — no key needed at runtime
+  document.getElementById('splash').classList.remove('active');
+  document.getElementById('game').style.display = 'block';
+  // Start cinematic, then collage, then questions
+  showCin(0, () => showCollage(0, () => renderQ()));
+}
+
+// ── RENDER QUESTION ──────────────────────────────────────────────────────────────
+let lastImg = null;
+
+function renderQ() {
+  const q = QS[qIdx];
+  answered = false;
+
+  // Cross-dissolve if image changed, else just zoom update
+  if (q.img !== lastImg) {
+    crossDissolveTo(q.img, q.cam);
+    lastImg = q.img;
+  } else {
+    // Same image — just update the zoom/pan on bg-a
+    const el = document.getElementById('bg-a');
+    el.style.transition = 'transform 1.8s ease';
+    el.style.transform = `scale(${q.cam.scale}) translate(${q.cam.tx}%,${q.cam.ty}%)`;
+  }
+
+  const sceneLabels = ['Scene 1 — The Assassination','Scene 2 — Mobilisation','Scene 3 — The Trenches','Scene 4 — The Wider War','Scene 5 — The Turning Point','Scene 6 — The Aftermath'];
+  document.getElementById('hscene').textContent = sceneLabels[q.scene] || 'Scene '+(q.scene+1);
+  document.getElementById('qcounter').textContent = 'Question ' + (qIdx+1) + ' of ' + QS.length;
+  document.getElementById('hscore').textContent = score;
+  document.getElementById('htotal').textContent = qIdx;
+  document.getElementById('pfill').style.width = (qIdx/QS.length*100)+'%';
+  renderSDots(q.scene);
+  document.getElementById('qloc').textContent = q.loc.toUpperCase();
+  document.getElementById('qdate').textContent = q.date;
+  document.getElementById('qprose').textContent = q.prose;
+  document.getElementById('qtext').textContent = q.q;
+
+  const grid = document.getElementById('cgrid');
+  grid.innerHTML = '';
+  q.choices.forEach((c,i) => {
+    const b = document.createElement('button');
+    b.className = 'choice'; b.textContent = c;
+    b.onclick = () => pick(i);
+    grid.appendChild(b);
+  });
+  document.getElementById('fb').classList.remove('on');
+  document.getElementById('nxtbtn').classList.remove('on');
+  const panel = document.getElementById('qpanel');
+  panel.classList.add('out');
+  requestAnimationFrame(() => requestAnimationFrame(() => panel.classList.remove('out')));
+  setAmbientForQuestions();
+}
+
+function renderSDots(active) {
+  const el = document.getElementById('sdots'); el.innerHTML='';
+  const sceneCount = [...new Set(QS.map(q=>q.scene))].length;
+  Array.from({length:sceneCount},(_,i)=>i).forEach(i => {
+    const d = document.createElement('div');
+    d.className = 'sdot'+(i<active?' done':i===active?' active':'');
+    el.appendChild(d);
+  });
+}
+
+// ── ANSWER ────────────────────────────────────────────────────────────────────────
+function pick(idx) {
+  if (answered) return;
+  answered = true;
+  const q = QS[qIdx];
+  const btns = document.querySelectorAll('.choice');
+  btns.forEach(b => b.disabled=true);
+  const ok = idx===q.correct;
+  btns[idx].classList.add(ok?'correct':'wrong');
+  if(!ok) btns[q.correct].classList.add('correct');
+  if(ok) {
+    score++;
+    // Correct answer: push in slightly closer
+    const el = document.getElementById('bg-a');
+    const cur = parseFloat(el.style.transform.match(/scale\(([^)]+)\)/)?.[1]||'1.1');
+    el.style.transition = 'transform 1.2s ease';
+    el.style.transform = el.style.transform.replace(/scale\([^)]+\)/,`scale(${(cur+.06).toFixed(2)})`);
+  }
+  document.getElementById('hscore').textContent = score;
+  document.getElementById('htotal').textContent = qIdx+1;
+  document.getElementById('fb').classList.add('on');
+  const lbl = document.getElementById('fblabel');
+  lbl.textContent = ok?'Correct':'Not quite'; lbl.className=ok?'c':'w';
+  document.getElementById('fbtext').textContent = ok?q.fc:q.fw;
+  document.getElementById('nxtbtn').classList.add('on');
+}
+
+function handleNext() {
+  const prev = QS[qIdx].scene; qIdx++;
+  if(qIdx>=QS.length) { showEnd(); return; }
+  const nextScene = QS[qIdx].scene;
+  if(nextScene !== prev) {
+    // Always start ambient for new scene even if no cinematic
+    startAmbient(nextScene);
+    showCin(nextScene, () => showCollage(nextScene, () => renderQ()));
+  } else {
+    renderQ();
+  }
+}
+
+// ── CINEMATIC ─────────────────────────────────────────────────────────────────────
+function showCin(si, cb) {
+  currentCinScene=si; cinAborted=false; cinCb=cb;
+  startAmbient(si);
+  setAmbientForNarration();
+
+  // If no cinematic defined for this scene, skip straight to callback
+  const data = CIN[si];
+  if (!data || !data.panels || data.panels.length === 0) {
+    cb();
+    return;
+  }
+
+  const cin = document.getElementById('cin'); cin.classList.add('active');
+  const sn=document.getElementById('cscnum'); sn.style.opacity='0'; sn.textContent='';
+  const st=document.getElementById('ctitle'); st.style.opacity='0'; st.style.transform='translateY(16px)'; st.textContent='';
+  document.getElementById('cnarrtext').textContent='';
+  document.getElementById('cskip').classList.remove('on');
+  document.getElementById('ccont').classList.remove('on');
+
+  const cpEl = document.getElementById('cpanels'); cpEl.innerHTML='';
+  data.panels.forEach((p,i) => {
+    const div = document.createElement('div');
+    div.className = 'cpanel '+(i===0?'on ':'')+(PAN_CLASSES[i]||'zoom-out');
+    div.style.backgroundImage = `url('${IMGS[p.img]}')`;
+    div.innerHTML += '<div class="cpanel-dim"></div>';
+    cpEl.appendChild(div);
+  });
+
+  const dotsEl = document.getElementById('cdots'); dotsEl.innerHTML='';
+  data.panels.forEach((_,i) => { const d=document.createElement('div'); d.className='cdot'+(i===0?' on':''); dotsEl.appendChild(d); });
+
+  setTimeout(()=>document.getElementById('cskip').classList.add('on'), 800);
+  setTimeout(()=>{ if(!cinAborted){sn.textContent=data.sceneNum; sn.style.opacity='1';}}, 500);
+  setTimeout(()=>{ if(!cinAborted){st.textContent=data.title; st.style.opacity='1'; st.style.transform='translateY(0)';}}, 900);
+
+  runCinPanel(data.panels, 0);
+}
+
+function runCinPanel(panels, panelIdx) {
+  if (cinAborted) return;
+  if (panelIdx >= panels.length) { finishCin(); return; }
+
+  const allP = document.querySelectorAll('.cpanel');
+  const allD = document.querySelectorAll('.cdot');
+
+  if (panelIdx > 0) {
+    allP.forEach((p, i) => {
+      if (i === panelIdx) {
+        p.classList.remove('pan-left','pan-right','zoom-out');
+        void p.offsetWidth;
+        p.classList.add(PAN_CLASSES[panelIdx] || 'zoom-out');
+        p.classList.add('on');
+        p.style.opacity = '0';
+        requestAnimationFrame(() => { p.style.transition = 'opacity 1.4s ease'; p.style.opacity = '1'; });
+      } else if (i === panelIdx - 1) {
+        p.style.transition = 'opacity 1.4s ease';
+        p.style.opacity = '0';
+        setTimeout(() => p.classList.remove('on'), 1400);
+      }
+    });
+  }
+  allD.forEach((d, i) => d.classList.toggle('on', i === panelIdx));
+
+  const text = panels[panelIdx].nar;
+
+  // Typewriter — runs independently, doesn't gate progression
+  const el = document.getElementById('cnarrtext');
+  el.textContent = '';
+  let charIdx = 0;
+  const spd = Math.max(16, Math.min(30, Math.floor(text.length / 55) + 16));
+  const iv = setInterval(() => {
+    if (cinAborted) { clearInterval(iv); return; }
+    if (charIdx < text.length) el.textContent += text[charIdx++];
+    else clearInterval(iv);
+  }, spd);
+
+  // Speech drives timing — when audio ends, advance to next panel
+  const audioKey = (CIN_AUDIO_MAP[currentCinScene] || [])[panelIdx] || null;
+  speak(audioKey, text, () => {
+    if (!cinAborted) setTimeout(() => runCinPanel(panels, panelIdx + 1), 700);
+  });
+}
+
+function finishCin() {
+  document.getElementById('ccont').classList.add('on');
+  document.getElementById('cskip').classList.remove('on');
+}
+function endCin() {
+  stopAudio(); cinAborted=false;
+  const el=document.getElementById('cin');
+  el.style.opacity='0'; el.style.transition='opacity .5s';
+  setTimeout(()=>{ el.classList.remove('active'); el.style.opacity=''; el.style.transition=''; if(cinCb)cinCb(); },500);
+}
+function skipCin() {
+  cinAborted=true; stopAudio();
+  const el=document.getElementById('cin');
+  el.style.opacity='0'; el.style.transition='opacity .35s';
+  setTimeout(()=>{ el.classList.remove('active'); el.style.opacity=''; el.style.transition=''; if(cinCb)cinCb(); },350);
+}
+
+// ── END ───────────────────────────────────────────────────────────────────────────
+// ── FEEDBACK ─────────────────────────────────────────────────────────────────────
+let feedbackRating = 0;
+
+document.querySelectorAll('.star').forEach(star => {
+  star.addEventListener('click', () => {
+    feedbackRating = parseInt(star.dataset.v);
+    document.querySelectorAll('.star').forEach((s,i) => {
+      s.classList.toggle('on', i < feedbackRating);
+    });
+  });
+  star.addEventListener('mouseover', () => {
+    const v = parseInt(star.dataset.v);
+    document.querySelectorAll('.star').forEach((s,i) => s.style.opacity = i < v ? '1' : '.3');
+  });
+  star.addEventListener('mouseout', () => {
+    document.querySelectorAll('.star').forEach((s,i) => s.style.opacity = i < feedbackRating ? '1' : '.3');
+  });
+});
+
+function showFeedback() {
+  document.getElementById('feedback-modal').classList.add('active');
+}
+
+function skipFeedback() {
+  document.getElementById('feedback-modal').classList.remove('active');
+}
+
+function submitFeedback() {
+  const comment = document.getElementById('fb-comment').value.trim();
+  const payload = {
+    timestamp: new Date().toISOString(),
+    rating: feedbackRating,
+    score: score,
+    total: QS.length,
+    chapter: 'Chapter I — The Shot That Started a War',
+    comment: comment
+  };
+
+  // Submit to Google Sheets via Apps Script
+  fetch('https://script.google.com/macros/s/AKfycbysN0KOPUTfnqk_vuOZ-BoSHEiP_s77EHoiuBb1zB3lL6n9kTWxACZ79IbmMNamIfodEA/exec', {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(() => console.log('[Feedback] Submitted to Google Sheets'))
+  .catch(e => console.warn('[Feedback] Submission failed:', e));
+
+  // Show thank you immediately
+  document.querySelectorAll('.fb-btns, .star-row, #fb-comment, .fb-sub').forEach(el => el.style.display='none');
+  document.getElementById('fb-thankyou').style.display = 'block';
+  setTimeout(() => document.getElementById('feedback-modal').classList.remove('active'), 2200);
+}
+
+function showEnd() {
+  stopAmbient();
+  document.getElementById('endsc').classList.add('active');
+  setTimeout(showFeedback, 1200);
+  document.getElementById('end-score').textContent=score;
+  document.getElementById('end-of').textContent='/ '+QS.length;
+  const p=score/QS.length;
+  document.getElementById('end-verdict').textContent =
+    p===1  ? "Perfect — all fifty. You walked every step from Sarajevo to Versailles without missing a beat." :
+    p>=.9  ? "Exceptional. You moved through six scenes of history with real depth. The full arc is yours." :
+    p>=.75 ? "Strong. You understood the shape of the war — assassination, stalemate, turning points, terrible peace." :
+    p>=.6  ? "Solid. The details you missed are the most interesting ones — history rewards a second visit." :
+    p>=.4  ? "You witnessed it. The cascade from one bullet to a world remade. Go back and look closer." :
+             "The Great War is vast. But you were there — from Sarajevo to Versailles. Go back. History rewards attention.";
+}
+function restartGame() {
+  qIdx=0; score=0; answered=false; lastImg=null;
+  document.getElementById('endsc').classList.remove('active');
+  showCin(0, ()=>showCollage(0, ()=>renderQ()));
+}
+function shareGame() {
+  const url=window.location.href;
+  if(navigator.share){navigator.share({title:'Fly on the Wall — WWI History Game',text:'Can you beat my score? An immersive WWI quiz.',url});}
+  else{navigator.clipboard.writeText(url).then(()=>{const t=document.getElementById('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);});}
+}
+
+
+</script>
+</body>
+</html>

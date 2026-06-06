@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bash *)",
+      "Bash(xattr /Users/swayammaharaj/Downloads/fly-on-the-wall/build/audio/cin_3_1.mp3)",
+      "Bash(python3 *)",
+      "Bash(node --input-type=module)",
+      "Bash(node --check /tmp/game.js)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code} %{url_effective}\" \"https://eclectic-gumdrop-e558e0.netlify.app/audio/cin_2_1.mp3\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code} %{url_effective}\" \"https://eclectic-gumdrop-e558e0.netlify.app/audio/cin_1_1.mp3\")",
+      "Bash(curl -s -I \"https://eclectic-gumdrop-e558e0.netlify.app/\")",
+      "Bash(curl -s -I \"https://eclectic-gumdrop-e558e0.netlify.app/audio/cin_2_1.mp3\")",
+      "Bash(curl -s -I \"https://eclectic-gumdrop-e558e0.netlify.app/audio/cin_2_2.mp3\")"
+    ]
+  }
+}
