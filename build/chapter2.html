@@ -150,9 +150,6 @@ body{font-family:'Crimson Text',Georgia,serif;color:var(--cream)}
 #toast.show{transform:translateX(-50%) translateY(0)}
 
 /* ── INTRO VIDEO ── */
-#intro-screen{position:fixed;inset:0;z-index:200;background:#000;display:flex;align-items:center;justify-content:center;cursor:pointer}
-#intro-screen.hidden{display:none}
-#intro-video{width:100%;height:100%;object-fit:cover}
 #intro-skip{position:absolute;bottom:2rem;right:2rem;font-family:'Source Sans 3',sans-serif;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.25);background:rgba(0,0,0,.4);padding:9px 18px;cursor:pointer;transition:all .2s;backdrop-filter:blur(4px)}
 #intro-skip:hover{color:#fff;border-color:rgba(255,255,255,.6)}
 #intro-fly-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;transition:opacity .5s}
@@ -306,42 +303,6 @@ body{font-family:'Crimson Text',Georgia,serif;color:var(--cream)}
 // Audio is pre-generated — see generate_audio.py to regenerate with a different voice
 
 // ── INTRO VIDEO ───────────────────────────────────────────────────────────────
-(function() {
-  const introScreen = document.getElementById('intro-screen');
-  const video = document.getElementById('intro-video');
-  const flyOverlay = document.getElementById('intro-fly-overlay');
-  const splash = document.getElementById('splash');
-
-  function endIntro() {
-    // Fly grows and fades into splash screen
-    flyOverlay.style.opacity = '1';
-    setTimeout(() => {
-      introScreen.style.transition = 'opacity .8s ease';
-      introScreen.style.opacity = '0';
-      setTimeout(() => {
-        introScreen.classList.add('hidden');
-        introScreen.style.opacity = '';
-        introScreen.style.transition = '';
-        splash.classList.add('active');
-      }, 800);
-    }, 400);
-  }
-
-  // Auto-end when video finishes
-  video.addEventListener('ended', endIntro);
-
-  // Also allow clicking anywhere on the video to skip to splash
-  // (skip button is separate)
-  video.addEventListener('click', endIntro);
-
-  // If video fails to load, skip straight to splash
-  video.addEventListener('error', () => {
-    introScreen.classList.add('hidden');
-  });
-
-  // Unmute after first user interaction (browser autoplay policy)
-  document.addEventListener('click', () => { video.muted = false; }, { once: true });
-})();
 
 
 
