@@ -3,28 +3,1072 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Fly on the Wall — Chapter II: The Birth of a Nation. An immersive American Revolution history quiz.">
 <title>Fly on the Wall — Chapter II</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Crimson+Text:ital,wght@0,400;1,400&family=Source+Sans+3:wght@300;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
-:root{--cream:#f0e9d6;--gold:#b8943f}
+:root{--cream:#f0e9d6;--ink:#1a140d;--gold:#b8943f;--gold-l:#d4af6a}
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;background:#0a0806}
-body{font-family:'Crimson Text',serif;color:var(--cream);display:flex;align-items:center;justify-content:center;text-align:center;padding:2rem}
+html,body{height:100%;background:#0a0806;overflow:hidden}
+body{font-family:'Crimson Text',Georgia,serif;color:var(--cream)}
+
+/* ── SCREENS ── */
+.screen{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center}
+.screen.active{display:flex}
+
+/* ── SPLASH ── */
+#splash{background:radial-gradient(ellipse at 50% 55%,#1e180e,#0a0806 70%);text-align:center;padding:2rem;z-index:10}
 .fly{font-size:44px;margin-bottom:.75rem;filter:grayscale(1)brightness(.6)}
-.ch{font-family:'Source Sans 3',sans-serif;font-size:10px;font-weight:600;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem}
-h1{font-family:'Playfair Display',serif;font-size:clamp(26px,5vw,46px);font-weight:700;margin-bottom:.5rem}
-p{font-style:italic;color:rgba(240,233,214,.5);max-width:400px;margin:0 auto 1.5rem}
-a{font-family:'Source Sans 3',sans-serif;font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;border:1px solid var(--gold);color:var(--gold);padding:13px 40px;text-decoration:none;transition:all .25s}
-a:hover{background:var(--gold);color:#1a140d}
+.ch-label{font-family:'Source Sans 3',sans-serif;font-size:10px;font-weight:600;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem}
+.main-title{font-family:'Playfair Display',serif;font-size:clamp(26px,5vw,46px);font-weight:700;color:var(--cream);line-height:1.1;margin-bottom:.35rem}
+.main-sub{font-family:'Crimson Text',serif;font-size:17px;font-style:italic;color:rgba(240,233,214,.52);max-width:400px;line-height:1.65;margin-bottom:1.5rem}
+.rule{width:50px;height:1px;background:var(--gold);margin:0 auto 1.5rem}
+.meta-row{display:flex;gap:2.5rem;margin-bottom:1.75rem}
+.mi .n{font-family:'Playfair Display',serif;font-size:26px;color:var(--cream)}
+.mi .l{font-family:'Source Sans 3',sans-serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(240,233,214,.28);margin-top:2px}
+
+.start-btn{width:100%;max-width:340px;font-family:'Source Sans 3',sans-serif;font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;background:transparent;border:1px solid var(--gold);color:var(--gold);padding:13px 40px;cursor:pointer;transition:all .25s}
+.start-btn:hover{background:var(--gold);color:var(--ink)}
+.snote{font-family:'Source Sans 3',sans-serif;font-size:10px;color:rgba(240,233,214,.18);margin-top:1rem;max-width:340px;text-align:center;line-height:1.6}
+
+/* ── GAME ── */
+#game{background:#0a0806;display:none;position:absolute;inset:0}
+#game.active{display:block}
+
+/* ── BACKGROUND SYSTEM ── */
+/* Two image layers for cross-dissolve pan transitions */
+#bg-layer{position:absolute;inset:0;overflow:hidden}
+.bg-slide{position:absolute;inset:-20%;width:140%;height:140%;background-size:cover;background-position:center;transform-origin:center center}
+#bg-a{z-index:1}
+#bg-b{z-index:2;opacity:0}
+#bg-overlay{position:absolute;inset:0;z-index:3;background:linear-gradient(to bottom,rgba(10,8,6,.52)0%,rgba(10,8,6,.1)38%,rgba(10,8,6,.1)55%,rgba(10,8,6,.94)100%)}
+#bg-vignette{position:absolute;inset:0;z-index:4;box-shadow:inset 0 0 180px rgba(10,8,6,.85)}
+#bg-grain{position:absolute;inset:0;z-index:5;opacity:.18;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");mix-blend-mode:overlay}
+#bg-sepia{position:absolute;inset:0;z-index:6;background:rgba(80,50,15,.1);mix-blend-mode:multiply;pointer-events:none}
+
+/* ── COLLAGE RECAP ── */
+#collage{position:absolute;inset:0;z-index:45;display:none;background:#0a0806}
+#collage.active{display:block}
+.collage-grid{position:absolute;inset:0;display:grid;gap:3px;padding:3px}
+.collage-cell{background-size:cover;background-position:center;opacity:0;transition:opacity .5s ease;filter:sepia(.4)brightness(.7)}
+.collage-cell.on{opacity:1}
+#collage-overlay{position:absolute;inset:0;background:rgba(10,8,6,.55)}
+#collage-text{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:2;text-align:center;padding:2rem}
+#collage-label{font-family:'Source Sans 3',sans-serif;font-size:9px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem;opacity:0;transition:opacity .5s .4s}
+#collage-title{font-family:'Playfair Display',serif;font-size:clamp(20px,4vw,36px);font-weight:700;color:var(--cream);margin-bottom:.75rem;opacity:0;transform:translateY(12px);transition:opacity .6s .5s,transform .6s .5s}
+#collage-sub{font-family:'Crimson Text',serif;font-size:15px;font-style:italic;color:rgba(240,233,214,.65);margin-bottom:1.5rem;opacity:0;transition:opacity .6s .7s}
+#collage-btn{font-family:'Source Sans 3',sans-serif;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;background:transparent;border:1px solid var(--gold);color:var(--gold);padding:11px 28px;cursor:pointer;transition:all .2s;opacity:0;transition:opacity .5s .9s}
+#collage-btn:hover{background:var(--gold);color:var(--ink)}
+#collage-label.in,#collage-title.in,#collage-sub.in,#collage-btn.in{opacity:1;transform:translateY(0)}
+
+/* ── HUD / PROGRESS ── */
+#pbar{position:absolute;top:0;left:0;right:0;height:3px;background:rgba(240,233,214,.07);z-index:30}
+#pfill{height:100%;background:linear-gradient(to right,var(--gold),var(--gold-l));transition:width .5s ease;box-shadow:0 0 8px rgba(184,148,63,.35)}
+#hud{position:absolute;top:0;left:0;right:0;z-index:20;padding:.9rem 1.5rem;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(to bottom,rgba(10,8,6,.7),transparent)}
+.hbrand{font-family:'Source Sans 3',sans-serif;font-size:10px;font-weight:300;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+.hscene{font-family:'Source Sans 3',sans-serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(240,233,214,.32)}
+.hscore{font-family:'Source Sans 3',sans-serif;font-size:11px;color:rgba(240,233,214,.4)}
+.hscore span{color:var(--cream);font-weight:600}
+#sdots{position:absolute;top:50px;left:50%;transform:translateX(-50%);display:flex;gap:7px;z-index:20}
+.sdot{width:5px;height:5px;border-radius:50%;background:rgba(240,233,214,.14);transition:all .3s}
+.sdot.done{background:rgba(184,148,63,.4)}
+.sdot.active{background:var(--gold);width:18px;border-radius:3px}
+
+/* ── QUESTION PANEL ── */
+#qpanel{position:absolute;bottom:0;left:0;right:0;z-index:20;padding:0 1.5rem 1.5rem;transition:opacity .35s,transform .35s}
+#qpanel.out{opacity:0;transform:translateY(10px);pointer-events:none}
+.qloc{font-family:'Source Sans 3',sans-serif;font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:.3rem}
+.qdate{font-family:'Playfair Display',serif;font-size:clamp(15px,2.5vw,22px);font-style:italic;color:var(--cream);margin-bottom:.5rem;line-height:1.2}
+.qprose{font-size:13.5px;line-height:1.78;color:rgba(240,233,214,.73);max-width:620px;margin-bottom:.85rem;text-shadow:0 1px 6px rgba(10,8,6,.95)}
+.qtext{font-family:'Playfair Display',serif;font-size:clamp(13px,2vw,16px);font-weight:600;color:var(--cream);margin-bottom:.8rem;max-width:620px;line-height:1.4;text-shadow:0 1px 8px rgba(10,8,6,1)}
+#cgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px;max-width:620px}
+.choice{background:rgba(5,3,1,.63);border:1px solid rgba(240,233,214,.14);padding:.65rem .9rem;font-family:'Crimson Text',serif;font-size:13.5px;color:rgba(240,233,214,.78);cursor:pointer;text-align:left;transition:border-color .13s,background .13s;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);line-height:1.4}
+.choice:hover:not(:disabled){border-color:var(--gold-l);background:rgba(184,148,63,.1);color:var(--cream)}
+.choice.correct{border-color:#4a9e5c;background:rgba(74,158,92,.15);color:#b8e8c0}
+.choice.wrong{border-color:#9e4a3a;background:rgba(158,74,58,.15);color:#e8b8b0}
+.choice:disabled{cursor:default}
+#fb{max-width:620px;margin-top:.6rem;background:rgba(5,3,1,.8);border-left:2px solid var(--gold);padding:.75rem 1rem;backdrop-filter:blur(12px);display:none}
+#fb.on{display:block}
+#fblabel{font-family:'Source Sans 3',sans-serif;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px}
+#fblabel.c{color:#4a9e5c}
+#fblabel.w{color:var(--gold-l)}
+#fbtext{font-size:13px;line-height:1.72;color:rgba(240,233,214,.76)}
+#nxtbtn{margin-top:.7rem;font-family:'Source Sans 3',sans-serif;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;background:transparent;border:1px solid rgba(240,233,214,.22);color:rgba(240,233,214,.82);padding:9px 22px;cursor:pointer;transition:all .2s;display:none}
+#nxtbtn.on{display:inline-block}
+#nxtbtn:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ── CINEMATIC ── */
+#cin{position:absolute;inset:0;z-index:50;background:#0a0806;display:none}
+#cin.active{display:block}
+#cpanels{position:absolute;inset:0}
+.cpanel{position:absolute;inset:-20%;width:140%;height:140%;opacity:0;transition:opacity 1.4s ease;background-size:cover;background-position:center;will-change:transform}
+.cpanel.on{opacity:1}
+/* Pan directions for transition feel */
+.cpanel.pan-left{animation:panL 18s linear forwards}
+.cpanel.pan-right{animation:panR 18s linear forwards}
+.cpanel.zoom-out{animation:zoomOut 12s ease-out forwards}
+@keyframes panL{from{transform:translateX(0) scale(1.15)}to{transform:translateX(-5%) scale(1.05)}}
+@keyframes panR{from{transform:translateX(-5%) scale(1.05)}to{transform:translateX(0) scale(1.15)}}
+@keyframes zoomOut{from{transform:scale(1.22)}to{transform:scale(1.05)}}
+.cpanel-dim{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(10,8,6,.35),rgba(10,8,6,.72))}
+#ccontent{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:2rem 2.5rem 4.5rem;z-index:5}
+#cscnum{font-family:'Source Sans 3',sans-serif;font-size:9px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:.35rem;opacity:0;transition:opacity .6s}
+#ctitle{font-family:'Playfair Display',serif;font-size:clamp(22px,5vw,50px);font-weight:700;color:var(--cream);line-height:1.1;margin-bottom:.8rem;opacity:0;transform:translateY(16px);transition:opacity .7s .15s,transform .7s .15s}
+#cnarr{font-family:'Crimson Text',serif;font-size:clamp(14px,2vw,19px);font-style:italic;color:rgba(240,233,214,.82);max-width:660px;line-height:1.82;min-height:70px}
+#ccursor{display:inline-block;width:2px;height:.9em;background:var(--gold);vertical-align:middle;animation:blink .75s step-end infinite;margin-left:2px}
+@keyframes blink{50%{opacity:0}}
+#cdots{position:absolute;bottom:1.75rem;left:50%;transform:translateX(-50%);display:flex;gap:7px;z-index:10}
+.cdot{width:5px;height:5px;border-radius:50%;background:rgba(240,233,214,.18)}
+.cdot.on{background:var(--gold)}
+#cbtns{position:absolute;bottom:1.5rem;right:1.5rem;display:flex;gap:9px;z-index:10}
+.cbtn{font-family:'Source Sans 3',sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:rgba(5,3,1,.6);border:1px solid rgba(240,233,214,.22);color:rgba(240,233,214,.58);padding:9px 18px;cursor:pointer;backdrop-filter:blur(4px);transition:all .2s;display:none}
+.cbtn.on{display:inline-block}
+.cbtn:hover{border-color:var(--gold);color:var(--gold)}
+#ccont{border-color:var(--gold);color:var(--gold)}
+#ccont:hover{background:var(--gold);color:var(--ink)}
+
+/* ── END ── */
+#endsc{position:absolute;inset:0;z-index:60;background:#0a0806;display:none;flex-direction:column;align-items:center;justify-content:center;padding:2rem}
+#endsc.active{display:flex}
+.einner{max-width:460px;text-align:center}
+.efly{font-size:34px;margin-bottom:.7rem;filter:grayscale(1)brightness(.55)}
+.ech{font-family:'Source Sans 3',sans-serif;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:.4rem}
+.etitle{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;color:var(--cream);margin-bottom:.2rem}
+.esub{font-size:16px;font-style:italic;color:rgba(240,233,214,.38);margin-bottom:1.5rem}
+.ering{width:104px;height:104px;border-radius:50%;border:1.5px solid var(--gold);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 1.1rem}
+.ebig{font-family:'Playfair Display',serif;font-size:34px;color:var(--cream);line-height:1}
+.eof{font-family:'Source Sans 3',sans-serif;font-size:10px;letter-spacing:.1em;color:rgba(240,233,214,.3)}
+.everdict{font-size:14px;line-height:1.75;color:rgba(240,233,214,.62);margin-bottom:1.5rem}
+.ebtns{display:flex;gap:9px;justify-content:center;flex-wrap:wrap}
+.ebtn{font-family:'Source Sans 3',sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:11px 26px;cursor:pointer;transition:all .2s}
+.ebtn-g{background:transparent;border:1px solid rgba(240,233,214,.22);color:rgba(240,233,214,.5)}
+.ebtn-g:hover{border-color:var(--gold);color:var(--gold)}
+.ebtn-gold{background:transparent;border:1px solid var(--gold);color:var(--gold)}
+.ebtn-gold:hover{background:var(--gold);color:var(--ink)}
+#toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(80px);background:rgba(184,148,63,.95);color:var(--ink);font-family:'Source Sans 3',sans-serif;font-size:12px;font-weight:600;padding:10px 20px;z-index:100;transition:transform .35s;pointer-events:none}
+#toast.show{transform:translateX(-50%) translateY(0)}
+
+/* ── INTRO VIDEO ── */
+#intro-screen{position:fixed;inset:0;z-index:200;background:#000;display:flex;align-items:center;justify-content:center;cursor:pointer}
+#intro-screen.hidden{display:none}
+#intro-video{width:100%;height:100%;object-fit:cover}
+#intro-skip{position:absolute;bottom:2rem;right:2rem;font-family:'Source Sans 3',sans-serif;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.25);background:rgba(0,0,0,.4);padding:9px 18px;cursor:pointer;transition:all .2s;backdrop-filter:blur(4px)}
+#intro-skip:hover{color:#fff;border-color:rgba(255,255,255,.6)}
+#intro-fly-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;transition:opacity .5s}
+#intro-fly-overlay span{font-size:80px;filter:drop-shadow(0 0 40px rgba(184,148,63,.8))}
+/* Feedback modal */
+#feedback-modal{position:fixed;inset:0;z-index:80;background:rgba(10,8,6,.85);display:none;align-items:center;justify-content:center;padding:1.5rem;backdrop-filter:blur(6px)}
+#feedback-modal.active{display:flex}
+#feedback-box{background:#121008;border:1px solid rgba(184,148,63,.3);border-radius:8px;padding:2rem;width:100%;max-width:420px;text-align:center}
+#feedback-box .fb-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--cream);margin-bottom:.3rem}
+#feedback-box .fb-sub{font-family:'Crimson Text',serif;font-size:14px;font-style:italic;color:rgba(240,233,214,.5);margin-bottom:1.5rem}
+.star-row{display:flex;justify-content:center;gap:10px;margin-bottom:1.5rem}
+.star{font-size:28px;cursor:pointer;opacity:.3;transition:opacity .15s,transform .15s;user-select:none}
+.star:hover,.star.on{opacity:1;transform:scale(1.15)}
+#fb-comment{width:100%;background:rgba(240,233,214,.05);border:1px solid rgba(240,233,214,.15);color:var(--cream);font-family:'Crimson Text',serif;font-size:14px;padding:.75rem 1rem;border-radius:4px;resize:none;height:80px;outline:none;margin-bottom:1.25rem}
+#fb-comment::placeholder{color:rgba(240,233,214,.25)}
+.fb-btns{display:flex;gap:10px;justify-content:center}
+.fb-skip{font-family:'Source Sans 3',sans-serif;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;background:transparent;border:1px solid rgba(240,233,214,.2);color:rgba(240,233,214,.45);padding:9px 20px;cursor:pointer;transition:all .2s}
+.fb-skip:hover{border-color:rgba(240,233,214,.4);color:rgba(240,233,214,.7)}
+.fb-submit{font-family:'Source Sans 3',sans-serif;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;background:transparent;border:1px solid var(--gold);color:var(--gold);padding:9px 24px;cursor:pointer;transition:all .2s}
+.fb-submit:hover{background:var(--gold);color:var(--ink)}
+.fb-thankyou{font-family:'Crimson Text',serif;font-size:15px;font-style:italic;color:rgba(240,233,214,.7);padding:1rem 0;display:none}
+#mute-btn{background:transparent;border:1px solid rgba(240,233,214,.2);color:var(--cream);font-size:12px;padding:3px 8px;cursor:pointer;margin-left:8px;vertical-align:middle;transition:border-color .2s}
+#mute-btn:hover{border-color:var(--gold)}
+.choice,.start-btn,.cbtn,.ebtn,#nxtbtn{touch-action:manipulation}
+@media (max-width:600px){
+  #cgrid{grid-template-columns:1fr}
+  .choice{padding:.85rem 1rem;font-size:14px}
+  #qpanel{padding:0 1rem 1.1rem}
+  #ccontent{padding:1.5rem 1.25rem 5.5rem}
+  .qprose{font-size:13px}
+  #hud{padding:.75rem 1rem}
+}
 </style>
 </head>
 <body>
-<div>
+
+<!-- SPLASH -->
+<div class="screen active" id="splash">
   <div class="fly">🪰</div>
-  <div class="ch">Chapter II</div>
-  <h1>The Birth of a Nation</h1>
-  <p>Boston to Yorktown — the American Revolution. Coming July 4th.</p>
-  <a href="index.html">← Back to Chapter I</a>
+  <div class="ch-label">Chapter II</div>
+  <div class="main-title">The Birth of<br>a Nation</div>
+  <div class="main-sub">Boston to Yorktown — experience the American Revolution from the inside</div>
+  <div class="rule"></div>
+  <div class="meta-row">
+    <div class="mi"><div class="n">50</div><div class="l">Questions</div></div>
+    <div class="mi"><div class="n">6</div><div class="l">Scenes</div></div>
+    <div class="mi"><div class="n">~25</div><div class="l">Minutes</div></div>
+  </div>
+  <button class="start-btn" onclick="startGame()">Enter the Story</button>
+  <button class="start-btn" id="resume-btn" style="display:none;margin-top:9px;border-color:rgba(240,233,214,.3);color:rgba(240,233,214,.7)" onclick="resumeGame()"></button>
+  <div class="snote">Illustrated in the style of Le Petit Journal, 1776 · Narrated by George · Audio included<br><a href="credits.html" style="color:rgba(184,148,63,.6);font-size:10px;letter-spacing:.08em;text-decoration:none;border-bottom:1px solid rgba(184,148,63,.25)">Credits &amp; attributions</a></div>
 </div>
+
+<!-- GAME -->
+<div id="game">
+  <div id="pbar"><div id="pfill" style="width:0%"></div></div>
+  <div id="bg-layer">
+    <div class="bg-slide" id="bg-a"></div>
+    <div class="bg-slide" id="bg-b"></div>
+    <div id="bg-overlay"></div><div id="bg-vignette"></div>
+    <div id="bg-grain"></div><div id="bg-sepia"></div>
+  </div>
+
+  <!-- COLLAGE RECAP -->
+  <div id="collage">
+    <div class="collage-grid" id="collage-grid"></div>
+    <div id="collage-overlay"></div>
+    <div id="collage-text">
+      <div id="collage-label"></div>
+      <div id="collage-title"></div>
+      <div id="collage-sub"></div>
+      <button id="collage-btn" onclick="endCollage()">Begin Questions →</button>
+    </div>
+  </div>
+
+  <div id="hud">
+    <div class="hbrand">🪰 Fly on the Wall</div>
+    <div class="hscene" id="hscene"></div>
+    <div class="hscore">Score: <span id="hscore">0</span> / <span id="htotal">0</span> <button id="mute-btn" onclick="toggleMute()" title="Toggle sound">🔊</button></div>
+  </div>
+  <div id="sdots"></div>
+  <div id="qpanel">
+    <div style="display:flex;align-items:center;justify-content:space-between;max-width:620px;margin-bottom:.3rem"><div class="qloc" id="qloc"></div><div id="qcounter" style="font-family:'Source Sans 3',sans-serif;font-size:9px;font-weight:600;letter-spacing:.1em;color:rgba(240,233,214,.35)"></div></div>
+    <div class="qdate" id="qdate"></div>
+    <div class="qprose" id="qprose"></div>
+    <div class="qtext" id="qtext"></div>
+    <div id="cgrid"></div>
+    <div id="fb">
+      <div id="fblabel"></div><div id="fbtext"></div>
+      <button id="nxtbtn" onclick="handleNext()">Continue →</button>
+    </div>
+  </div>
+
+  <!-- CINEMATIC -->
+  <div id="cin">
+    <div id="cpanels"></div>
+    <div id="ccontent">
+      <div id="cscnum"></div><div id="ctitle"></div>
+      <div id="cnarr"><span id="cnarrtext"></span><span id="ccursor"></span></div>
+    </div>
+    <div id="cdots"></div>
+    <div id="cbtns">
+      <button class="cbtn" id="cskip" onclick="skipCin()">Skip</button>
+      <button class="cbtn" id="ccont" onclick="endCin()">Begin Scene →</button>
+    </div>
+  </div>
+
+  <!-- END -->
+  <!-- FEEDBACK MODAL -->
+  <div id="feedback-modal">
+    <div id="feedback-box">
+      <div class="fb-title">How was the experience?</div>
+      <div class="fb-sub">Your feedback shapes the next chapter</div>
+      <div class="star-row" id="star-row">
+        <span class="star" data-v="1">★</span>
+        <span class="star" data-v="2">★</span>
+        <span class="star" data-v="3">★</span>
+        <span class="star" data-v="4">★</span>
+        <span class="star" data-v="5">★</span>
+      </div>
+      <textarea id="fb-comment" placeholder="Any thoughts? (optional)"></textarea>
+      <div class="fb-btns">
+        <button class="fb-skip" onclick="skipFeedback()">Skip</button>
+        <button class="fb-submit" onclick="submitFeedback()">Submit →</button>
+      </div>
+      <div class="fb-thankyou" id="fb-thankyou">Thank you — it means a lot. ✦</div>
+    </div>
+  </div>
+
+  <div id="endsc">
+    <div class="einner">
+      <div class="efly">🪰</div>
+      <div class="ech">Chapter II Complete</div>
+      <div class="etitle">A nation forged</div>
+      <div class="esub">From Boston Harbour to a Constitution</div>
+      <div class="ering"><div class="ebig" id="end-score">0</div><div class="eof" id="end-of">/ 8</div></div>
+      <div class="everdict" id="end-verdict"></div>
+      <div class="ebtns">
+        <button class="ebtn ebtn-g" onclick="restartGame()">Play again</button>
+        <button class="ebtn ebtn-g" onclick="shareGame()">Share ↗</button>
+        <button class="ebtn ebtn-gold" onclick="alert('Chapter III — coming soon.')">Chapter III coming soon →</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="toast">Link copied!</div>
+
+<!-- Feedback via Google Sheets Apps Script -->
+
+<script>
+// Audio is pre-generated — see generate_audio.py to regenerate with a different voice
+
+// ── INTRO VIDEO ───────────────────────────────────────────────────────────────
+(function() {
+  const introScreen = document.getElementById('intro-screen');
+  const video = document.getElementById('intro-video');
+  const flyOverlay = document.getElementById('intro-fly-overlay');
+  const splash = document.getElementById('splash');
+
+  function endIntro() {
+    // Fly grows and fades into splash screen
+    flyOverlay.style.opacity = '1';
+    setTimeout(() => {
+      introScreen.style.transition = 'opacity .8s ease';
+      introScreen.style.opacity = '0';
+      setTimeout(() => {
+        introScreen.classList.add('hidden');
+        introScreen.style.opacity = '';
+        introScreen.style.transition = '';
+        splash.classList.add('active');
+      }, 800);
+    }, 400);
+  }
+
+  // Auto-end when video finishes
+  video.addEventListener('ended', endIntro);
+
+  // Also allow clicking anywhere on the video to skip to splash
+  // (skip button is separate)
+  video.addEventListener('click', endIntro);
+
+  // If video fails to load, skip straight to splash
+  video.addEventListener('error', () => {
+    introScreen.classList.add('hidden');
+  });
+
+  // Unmute after first user interaction (browser autoplay policy)
+  document.addEventListener('click', () => { video.muted = false; }, { once: true });
+})();
+
+
+
+// ── IMAGES ───────────────────────────────────────────────────────────────────────
+const IMGS = {
+  boston_harbour:    'images/boston_harbour.jpg',
+  independence_hall: 'images/independence_hall.jpg',
+  valley_forge:      'images/valley_forge.jpg',
+  crossing_delaware: 'images/crossing_delaware.jpg',
+  yorktown:          'images/yorktown.jpg',
+  constitution:      'images/constitution.jpg',
+};
+const FB = {
+  boston_harbour:    'linear-gradient(160deg,#0a1822,#16283a 35%,#203848 65%,#0c1620)',
+  independence_hall: 'linear-gradient(158deg,#1c1408,#3a2c14 40%,#52401c 65%,#140e08)',
+  valley_forge:      'linear-gradient(165deg,#1a1e24,#2a323a 40%,#3a4248 65%,#141a1e)',
+  crossing_delaware: 'linear-gradient(162deg,#0c1420,#1a2838 40%,#28384a 65%,#0a1018)',
+  yorktown:          'linear-gradient(160deg,#1e1610,#3a2c1c 40%,#4e3c24 65%,#160e08)',
+  constitution:      'linear-gradient(158deg,#181006,#2e2010 40%,#4a3618 65%,#120c04)',
+};
+
+// Pan animations cycle for cinematic variety
+const PAN_CLASSES = ['zoom-out','pan-left','pan-right','zoom-out','pan-left'];
+
+// ── CINEMATIC DATA ──────────────────────────────────────────────────────────────
+const CIN = [
+  { sceneNum:"Scene I · 1770-1775", title:"The Road to Revolution",
+    collageLabel:"Before the shot heard round the world", collageTitle:"Boston, 1770-1775",
+    collageSub:"A decade of taxes, protest, and mounting fury finally reaches breaking point.",
+    collageImgs:["boston_harbour","independence_hall","crossing_delaware","valley_forge"],
+    panels:[
+      {img:"boston_harbour",nar:"Boston, 1773. For a decade, Britain's American colonies have chafed under taxes imposed without their consent. Tonight, a group of colonists calling themselves the Sons of Liberty board three ships in the harbour and dump 92,000 pounds of British tea into the water."},
+      {img:"boston_harbour",nar:"Britain's response is swift and severe — the Coercive Acts close the port of Boston entirely. What the British call the Intolerable Acts unite the thirteen colonies in shared outrage as never before. Delegates begin gathering in Philadelphia to decide what comes next."},
+      {img:"crossing_delaware",nar:"On April 19th, 1775, British troops marching to seize colonial weapons at Concord are met by armed militia at Lexington. Shots are fired. No one knows, to this day, who fired first. But the war has begun — eight years before anyone agrees to call it that."},
+    ]},
+  { sceneNum:"Scene II · July 1776", title:"Independence",
+    collageLabel:"A nation declares itself", collageTitle:"Philadelphia, July 1776",
+    collageSub:"Fifty-six men sign their names to a document that could hang them all as traitors.",
+    collageImgs:["independence_hall","boston_harbour","crossing_delaware","valley_forge"],
+    panels:[
+      {img:"independence_hall",nar:"Philadelphia, July 1776. In a plain brick building, delegates from all thirteen colonies debate a document that will either found a nation or condemn its authors to the gallows. Thomas Jefferson has spent weeks drafting it, with edits from Franklin and Adams."},
+      {img:"independence_hall",nar:"On July 4th, the Continental Congress formally adopts the Declaration of Independence. It will take weeks for copies to reach every colony, and months before King George III even hears of it. But the words are now written: that all men are created equal, and that governments derive their power from the consent of the governed."},
+    ]},
+  { sceneNum:"Scene III · 1776-1778", title:"Darkest Before Dawn",
+    collageLabel:"The war turns desperate", collageTitle:"The Continental Army, 1776-1778",
+    collageSub:"A ragged army crosses an icy river, and survives a winter that should have ended it.",
+    collageImgs:["crossing_delaware","valley_forge","independence_hall","yorktown"],
+    panels:[
+      {img:"crossing_delaware",nar:"By December 1776, the Continental Army is in collapse. Enlistments are expiring, morale is shattered, and General Washington needs a victory — any victory — to hold his army together. On Christmas night, in brutal cold, he leads his men across the ice-choked Delaware River for a surprise attack on Trenton."},
+      {img:"valley_forge",nar:"The gamble pays off — Trenton falls, then Princeton. But the following winter brings an even harder test. At Valley Forge, nearly 12,000 soldiers endure brutal cold with little food, inadequate clothing, and disease that kills more men than British muskets ever will. Roughly one in six will not survive the winter."},
+    ]},
+  { sceneNum:"Scene IV · 1777-1780", title:"A World War",
+    collageLabel:"The conflict spreads", collageTitle:"A Global War, 1777-1780",
+    collageSub:"France enters the fight, and a trusted American general becomes its most infamous traitor.",
+    collageImgs:["yorktown","valley_forge","independence_hall","crossing_delaware"],
+    panels:[
+      {img:"yorktown",nar:"In October 1777, American forces achieve the unthinkable — the surrender of an entire British army at Saratoga. The victory convinces France that the Americans might actually win. France enters the war as an open ally, transforming a colonial rebellion into a global conflict between the great powers of Europe."},
+    ]},
+  { sceneNum:"Scene V · 1781", title:"Yorktown",
+    collageLabel:"The decisive blow", collageTitle:"Yorktown, October 1781",
+    collageSub:"Trapped between an American army and a French fleet, a British general has no way out.",
+    collageImgs:["yorktown","crossing_delaware","valley_forge","independence_hall"],
+    panels:[
+      {img:"yorktown",nar:"By 1781, the war has dragged on for six years. British General Cornwallis digs in at Yorktown, Virginia, expecting naval evacuation. Instead, a French fleet seals off the bay, and a combined American-French army of over 17,000 surrounds him on land. On October 19th, Cornwallis surrenders. The war for American independence is effectively over."},
+    ]},
+  { sceneNum:"Scene VI · 1783-1789", title:"A More Perfect Union",
+    collageLabel:"Building a nation", collageTitle:"Philadelphia, 1787",
+    collageSub:"Independence was won on the battlefield. Now comes the harder task — governing.",
+    collageImgs:["constitution","yorktown","independence_hall","valley_forge"],
+    panels:[
+      {img:"constitution",nar:"The Treaty of Paris in 1783 formally ends the war and recognises American independence. But the new nation's first system of government — the Articles of Confederation — proves too weak to function. In 1787, delegates gather again in Philadelphia, this time to write an entirely new framework: the United States Constitution."},
+      {img:"constitution",nar:"The document they produce creates a government of checks and balances, designed by men deeply suspicious of concentrated power — because they had just fought a war against it. It would be amended, contested, and fought over for centuries to come. But in 1789, for the first time, the United States of America had a government built to last."},
+    ]},
+];
+
+// ── QUESTIONS ────────────────────────────────────────────────────────────────────
+const QS = [
+{scene:0,date:"December 16, 1773",loc:"Boston Harbour, Massachusetts",prose:"Disguised colonists board three British ships at night and dump their cargo into the harbour. It is a direct response to a tax most colonists refuse to recognise as legitimate.",q:"What product was destroyed in the Boston Tea Party?",choices:["Coffee","Tea","Sugar","Tobacco"],correct:1,img:"boston_harbour",cam:{scale:1.2,tx:0,ty:0},fc:"Correct. On the night of December 16, 1773, colonists boarded three ships and dumped 342 chests of British East India Company tea into Boston Harbour — roughly 92,000 pounds, worth about £10,000 at the time (well over £1 million today).",fw:"It was tea — 342 chests, roughly 92,000 pounds, dumped from three ships into Boston Harbour. The protest was against the Tea Act, which colonists saw as Parliament asserting a right to tax them without their consent."},
+{scene:0,date:"1764-1773",loc:"The Thirteen Colonies",prose:"In the decade before the Tea Party, Britain imposed a series of taxes on the colonies to help pay off debts from the Seven Years' War — taxes the colonies had no vote on.",q:"What was the central colonial objection to taxes like the Stamp Act and Tea Act?",choices:["The taxes were too high compared to British rates","The colonies had no representation in the Parliament imposing them","The taxes only applied to imported goods","The money raised was spent on the French colonies"],correct:1,img:"boston_harbour",cam:{scale:1.15,tx:-3,ty:2},fc:"Correct — 'No taxation without representation' became the rallying cry. Colonists argued that only their own elected assemblies had the right to tax them, since they had no elected members in the British Parliament that was imposing these laws.",fw:"The objection was representation, not the amount. Colonists argued Parliament had no legitimate authority to tax them since they elected no members to it. This constitutional argument — not the tax itself — became the ideological foundation of the Revolution."},
+{scene:0,date:"1773-1774",loc:"London, England",prose:"News of the Tea Party reaches London. Parliament's response is not negotiation, but punishment — a series of laws aimed squarely at Massachusetts.",q:"What were the punitive laws Britain passed in response to the Boston Tea Party collectively known as?",choices:["The Townshend Acts","The Coercive Acts (Intolerable Acts)","The Quartering Acts","The Navigation Acts"],correct:1,img:"boston_harbour",cam:{scale:1.25,tx:3,ty:-2},fc:"The Coercive Acts — known to colonists as the Intolerable Acts. They closed the Port of Boston until the tea was paid for, and stripped Massachusetts of much of its self-government. Rather than isolating Massachusetts, the Acts pushed the other colonies to its defence.",fw:"The Coercive Acts — the Intolerable Acts. Among other measures, they shut down Boston's port entirely until the destroyed tea was paid for. The severity backfired: instead of isolating Massachusetts, it convinced the other colonies that any of them could be next."},
+{scene:0,date:"September 1774",loc:"Philadelphia, Pennsylvania",prose:"In response to the Intolerable Acts, delegates from twelve of the thirteen colonies gather in Philadelphia for the first time — a body with no legal authority, but enormous symbolic weight.",q:"What was the name of this 1774 gathering of colonial delegates in Philadelphia?",choices:["The Second Continental Congress","The First Continental Congress","The Albany Congress","The Constitutional Convention"],correct:1,img:"independence_hall",cam:{scale:1.18,tx:2,ty:-2},fc:"The First Continental Congress, September 1774. Georgia was the only colony not represented. The Congress organised a boycott of British goods and petitioned the King — but also began coordinating colonial militias, a quiet step toward armed resistance.",fw:"The First Continental Congress. Twelve of thirteen colonies sent delegates (Georgia abstained). While it petitioned King George III for redress, it simultaneously organised a trade boycott and encouraged colonies to arm and train militias — hedging toward conflict even while seeking peace."},
+{scene:0,date:"April 18-19, 1775",loc:"Lexington and Concord, Massachusetts",prose:"British troops march out of Boston at night, aiming to seize colonial weapons stores at Concord. Riders fan out across the countryside to warn that the regulars are coming.",q:"Which rider is most famously remembered for warning colonial militias that British troops were marching, on the night of April 18, 1775?",choices:["Nathan Hale","Paul Revere","Ethan Allen","Israel Putnam"],correct:1,img:"crossing_delaware",cam:{scale:1.2,tx:-2,ty:3},fc:"Paul Revere — though he was one of several riders that night, and was actually captured by a British patrol before reaching Concord. William Dawes and Samuel Prescott also carried the warning. Revere's role was immortalised decades later in a famous poem by Longfellow.",fw:"Paul Revere is the most famous, though he didn't complete the ride — he was captured en route. William Dawes rode a separate route, and Samuel Prescott was the one who actually reached Concord with the warning. Revere's fame owes much to an 1861 poem written 86 years after the event."},
+{scene:0,date:"April 19, 1775",loc:"Lexington Green, Massachusetts",prose:"At dawn, British troops find a small group of colonial militia — minutemen — assembled on Lexington Green. Someone fires. To this day, historians cannot say with certainty which side fired first.",q:"The first shots of the Revolutionary War at Lexington became known by what famous phrase?",choices:["The first volley","The shot heard round the world","The dawn of liberty","The minute of decision"],correct:1,img:"crossing_delaware",cam:{scale:1.22,tx:4,ty:-3},fc:"'The shot heard round the world' — a phrase coined decades later by Ralph Waldo Emerson in his poem about Concord. It captures how a small skirmish in rural Massachusetts would echo through world history, inspiring revolutionary movements for centuries.",fw:"'The shot heard round the world' comes from Emerson's 1837 poem 'Concord Hymn'. Eight colonial militiamen were killed at Lexington in the opening exchange — a small, almost accidental clash that nonetheless ignited eight years of war."},
+{scene:0,date:"1775",loc:"Massachusetts countryside",prose:"After Lexington, British troops continue to Concord, destroy some supplies, and begin a long, bloody retreat back to Boston — harried the entire way by colonial militia firing from behind walls and trees.",q:"What term did colonists use for the armed citizen-soldiers who could assemble for military duty at short notice?",choices:["Redcoats","Minutemen","Continentals","Rangers"],correct:1,img:"boston_harbour",cam:{scale:1.16,tx:-4,ty:3},fc:"Minutemen — colonial militia companies trained to be ready 'at a minute's notice'. They were the backbone of the early resistance, harassing the British retreat from Concord to Boston and inflicting roughly 250 casualties on the British force.",fw:"Minutemen — elite militia companies who could mobilise within minutes of an alarm. Their ambush tactics during the British retreat from Concord caused significant casualties and demonstrated that colonial forces could inflict real damage on professional soldiers."},
+{scene:0,date:"May-June 1775",loc:"Philadelphia, Pennsylvania",prose:"With fighting now underway around Boston, delegates reconvene in Philadelphia — this time facing a much harder question. Do they prepare for full-scale war, and if so, who will lead it?",q:"Who did the Second Continental Congress appoint to command the newly formed Continental Army in June 1775?",choices:["Benjamin Franklin","John Adams","George Washington","Nathanael Greene"],correct:2,img:"independence_hall",cam:{scale:1.2,tx:2,ty:2},fc:"George Washington — chosen partly for his military experience in the French and Indian War, and partly for political reasons: a Virginian commander would help unite the Southern colonies behind what was, at the time, primarily a New England conflict.",fw:"George Washington was appointed Commander-in-Chief in June 1775. His selection was as much political as military — as a Virginian, he helped bind the Southern colonies to a cause that had so far been fought almost entirely in Massachusetts."},
+{scene:1,date:"Spring 1776",loc:"Philadelphia, Pennsylvania",prose:"By early 1776, reconciliation with Britain seems increasingly impossible. A widely read pamphlet pushes public opinion firmly toward outright independence.",q:"What was the title of Thomas Paine's hugely influential 1776 pamphlet arguing for American independence?",choices:["The Rights of Man","Common Sense","The Federalist","Poor Richard's Almanack"],correct:1,img:"independence_hall",cam:{scale:1.18,tx:0,ty:0},fc:"Common Sense, published January 1776. It sold an estimated 500,000 copies in a population of roughly 2.5 million — proportionally one of the best-selling publications in American history. Paine argued plainly that independence, not reconciliation, was the only sensible path.",fw:"Common Sense by Thomas Paine. Written in plain, accessible language rather than the formal style of educated elites, it reached an enormous audience and significantly shifted public opinion toward independence in just a few months."},
+{scene:1,date:"June-July 1776",loc:"Philadelphia, Pennsylvania",prose:"Congress appoints a committee of five to draft a formal declaration of independence. One man does almost all of the actual writing.",q:"Who was the principal author of the Declaration of Independence?",choices:["Benjamin Franklin","John Adams","Thomas Jefferson","John Hancock"],correct:2,img:"independence_hall",cam:{scale:1.22,tx:-2,ty:2},fc:"Thomas Jefferson — a 33-year-old delegate from Virginia, chosen partly for his writing skill. Franklin and Adams made edits, and Congress itself cut roughly a quarter of his draft, including a passionate passage condemning the slave trade.",fw:"Thomas Jefferson wrote the draft, with input from Franklin and Adams. Congress edited the document significantly — including removing Jefferson's clause condemning the slave trade, a decision driven by delegates from Georgia and South Carolina."},
+{scene:1,date:"July 2, 1776",loc:"Pennsylvania State House, Philadelphia",prose:"Before the Declaration could be adopted, Congress had to vote on independence itself. The vote needed to be unanimous among the colonies present to carry full legitimacy.",q:"On what date did the Continental Congress actually vote in favour of independence (two days before adopting the Declaration's text)?",choices:["July 4, 1776","July 2, 1776","June 28, 1776","August 2, 1776"],correct:1,img:"independence_hall",cam:{scale:1.25,tx:3,ty:-2},fc:"July 2, 1776. The vote for independence itself happened on the 2nd; the Declaration's wording was approved on the 4th. John Adams believed the 2nd would be celebrated as Independence Day — he was off by two days in his prediction, but right that it would be celebrated.",fw:"July 2, 1776 — the actual vote for independence. The Declaration's text was approved two days later, on the 4th, which is why that date became the holiday. John Adams wrote to his wife predicting the 2nd would be commemorated 'as the great anniversary Festival' — close, but not quite."},
+{scene:1,date:"August 2, 1776",loc:"Philadelphia, Pennsylvania",prose:"The famous signing did not happen all at once on July 4th, as popular imagination often holds. Most delegates signed the engrossed (formal) copy weeks later.",q:"How many delegates ultimately signed the Declaration of Independence?",choices:["13","39","56","78"],correct:2,img:"independence_hall",cam:{scale:1.2,tx:-3,ty:3},fc:"56 delegates signed. Most signed on August 2, 1776, though a few signed even later. Signing was an act of genuine personal risk — as British subjects committing treason, every signer was, in theory, risking execution if the rebellion failed.",fw:"56 signers in total, representing all thirteen colonies. The most famous signature — John Hancock's — was deliberately large; he is said to have wanted it legible to King George III without spectacles, though this story may be apocryphal."},
+{scene:1,date:"July 4, 1776",loc:"Philadelphia, Pennsylvania",prose:"The Declaration's most famous lines articulate a radical philosophy of government — one that would outlive the specific grievances against King George III listed in the rest of the document.",q:"Which philosopher's ideas about natural rights and government by consent most directly influenced the Declaration's core arguments?",choices:["Thomas Hobbes","John Locke","Niccolo Machiavelli","Jean-Jacques Rousseau"],correct:1,img:"independence_hall",cam:{scale:1.16,tx:2,ty:-3},fc:"John Locke. His ideas — that people have natural rights to life, liberty, and property, and that governments derive legitimacy from the consent of the governed and can be overthrown if they violate that trust — are echoed almost directly in the Declaration's opening paragraphs.",fw:"John Locke's political philosophy — natural rights, government by consent, and the right to revolution against tyranny — provided the intellectual framework Jefferson drew on. The phrase 'life, liberty, and the pursuit of happiness' adapts Locke's 'life, liberty, and property'."},
+{scene:1,date:"1776",loc:"The Thirteen Colonies",prose:"Not every colonist supported independence. A significant portion of the population remained loyal to the Crown — a division that would tear apart families and communities throughout the war.",q:"What term was used for colonists who remained loyal to the British Crown during the Revolution?",choices:["Tories / Loyalists","Federalists","Whigs","Royalists"],correct:0,img:"crossing_delaware",cam:{scale:1.18,tx:-2,ty:2},fc:"Loyalists, also called Tories. Estimates suggest roughly 15-20% of the colonial population remained loyal to Britain. Tens of thousands fought for the Crown, and after the war, many thousands emigrated to Canada, the Caribbean, or Britain itself rather than remain in the new United States.",fw:"Loyalists, or Tories — estimated at 15-20% of the population. The Revolution was not a unanimous uprising; it was closer to a civil war in many regions, particularly the South, where Loyalist and Patriot militias fought each other directly."},
+{scene:1,date:"1776",loc:"Philadelphia, Pennsylvania",prose:"The Declaration lists 27 grievances against King George III — a long bill of particulars meant to justify revolution to a watching world, especially potential allies like France.",q:"What was a key strategic purpose of listing detailed grievances against the King in the Declaration?",choices:["To request a formal trial of the King","To justify the revolution to potential foreign allies","To create a legal basis for a peace treaty","To establish grounds for compensation from Britain"],correct:1,img:"independence_hall",cam:{scale:1.24,tx:4,ty:-2},fc:"To justify the cause internationally — particularly to France, whose support would prove decisive. By framing the conflict as a response to tyranny rather than mere colonial unrest, Congress hoped to make foreign intervention on America's behalf more politically palatable.",fw:"The grievances served as a public justification aimed partly at foreign powers, especially France. A rebellion framed as resistance to tyranny was easier for European monarchies to support than one that looked like simple colonial disorder — even though France itself was, of course, also a monarchy."},
+{scene:1,date:"1776 onwards",loc:"The Thirteen Colonies",prose:"The Declaration's promise that 'all men are created equal' sat uneasily alongside the realities of colonial society — a contradiction that would shape American history for centuries.",q:"Which of these was true of the Declaration's principles versus the society that produced it?",choices:["Slavery was abolished immediately to align with the Declaration's principles","Women were granted full political rights under the new government","The phrase 'all men are created equal' coexisted with the continuation of slavery in most states","Indigenous nations were granted citizenship under the Declaration"],correct:2,img:"independence_hall",cam:{scale:1.2,tx:-4,ty:4},fc:"The contradiction between the Declaration's stated ideals and the continuation of slavery was glaring even to contemporaries — including some signers, who themselves owned enslaved people. This tension would not be resolved and remained one of the central unfinished questions of the founding, eventually contributing to the Civil War nearly a century later.",fw:"Slavery continued in most states after 1776, including for some signers of the Declaration itself. The gap between 'all men are created equal' and the lived reality for enslaved Americans was recognised at the time and became one of the great unresolved tensions of the founding era."},
+{scene:2,date:"August-November 1776",loc:"New York",prose:"Shortly after independence is declared, Washington's army suffers a string of disasters around New York, narrowly avoiding total destruction multiple times.",q:"What major setback did Washington's army suffer in the Battle of Long Island (Brooklyn) in August 1776?",choices:["A decisive American victory","A crushing defeat that nearly destroyed the army","A negotiated truce with the British","The capture of General Howe"],correct:1,img:"crossing_delaware",cam:{scale:1.18,tx:0,ty:0},fc:"A crushing defeat. British forces under General Howe outflanked and routed the Continental Army. Washington's forces were saved largely by a skilful night evacuation across the East River under cover of fog — one of several narrow escapes that kept the army alive in 1776.",fw:"A major defeat — the British outmanoeuvred and overwhelmed the American positions on Long Island. Washington managed a remarkable night-time retreat across the East River, saving most of his army, but New York City itself was lost to the British for the remainder of the war."},
+{scene:2,date:"December 25-26, 1776",loc:"Delaware River",prose:"With enlistments about to expire and morale collapsing, Washington gambles everything on a single bold stroke — crossing an ice-choked river on Christmas night to attack a garrison of Hessian troops (German soldiers fighting for Britain) at Trenton.",q:"What was the outcome of Washington's surprise attack on Trenton on December 26, 1776?",choices:["A costly defeat that ended the campaign","A decisive American victory that captured nearly 1,000 prisoners","A stalemate with both sides withdrawing","The death of Washington's second-in-command"],correct:1,img:"crossing_delaware",cam:{scale:1.28,tx:-3,ty:2},fc:"A decisive victory. Washington's force surprised the Hessian garrison at Trenton, capturing roughly 900 prisoners with minimal American casualties. The victory — followed by another at Princeton days later — rescued the Revolution's momentum at its lowest point and convinced many soldiers to re-enlist.",fw:"A major American victory — roughly 900 Hessian soldiers captured. Coming after months of defeats, Trenton was a desperately needed morale boost. Washington followed it with a second victory at Princeton just days later, turning what had looked like the war's end into a renewed cause."},
+{scene:2,date:"Winter 1777-1778",loc:"Valley Forge, Pennsylvania",prose:"After a difficult 1777 campaign that saw Philadelphia itself fall to the British, Washington's army settles into winter quarters at Valley Forge — a period that would become legendary for its hardship.",q:"Approximately what proportion of soldiers at Valley Forge died during the winter of 1777-1778, mostly from disease and exposure rather than combat?",choices:["About 1 in 50","About 1 in 20","About 1 in 6","About 1 in 2"],correct:2,img:"valley_forge",cam:{scale:1.2,tx:2,ty:-2},fc:"Approximately 1 in 6 — roughly 2,000 of the nearly 12,000 soldiers who wintered at Valley Forge died, primarily from disease, malnutrition, and exposure rather than enemy action. The winter became a defining symbol of the sacrifice required for independence.",fw:"Roughly 1 in 6 soldiers died — about 2,000 out of approximately 12,000. Far more died from typhus, dysentery, and pneumonia than from any battle. The image of barefoot soldiers leaving bloody footprints in the snow, while not universally documented, reflects real and severe shortages of basic supplies."},
+{scene:2,date:"Winter 1777-1778",loc:"Valley Forge, Pennsylvania",prose:"Despite the suffering, Valley Forge also became a turning point for the Continental Army's effectiveness — largely due to the arrival of a European volunteer with crucial expertise.",q:"Which European officer is credited with transforming the Continental Army's training and discipline at Valley Forge?",choices:["The Marquis de Lafayette","Baron Friedrich Wilhelm von Steuben","Comte de Rochambeau","Casimir Pulaski"],correct:1,img:"valley_forge",cam:{scale:1.22,tx:-2,ty:3},fc:"Baron von Steuben — a Prussian-trained officer who arrived at Valley Forge in early 1778. Despite speaking little English, he drilled the Continental Army in European tactics and standardised training, dramatically improving its battlefield effectiveness for the rest of the war.",fw:"Baron Friedrich Wilhelm von Steuben. A former Prussian officer, he designed a training programme that turned a ragged militia force into a disciplined army capable of standing against British regulars in open battle — a transformation evident at the Battle of Monmouth later in 1778."},
+{scene:2,date:"1777",loc:"Continental Army camps",prose:"Beyond Steuben, several foreign volunteers played significant roles in the American cause — drawn by revolutionary ideals, personal ambition, or both.",q:"Which young French aristocrat became a close ally of Washington and a significant military leader in the Revolution, despite being only 19 when he joined?",choices:["The Marquis de Lafayette","Comte de Rochambeau","Comte de Grasse","Duc de Broglie"],correct:0,img:"valley_forge",cam:{scale:1.18,tx:3,ty:-3},fc:"The Marquis de Lafayette — who arrived in 1777 at age 19, was wounded at Brandywine, and became one of Washington's most trusted commanders. His advocacy back in France also helped secure French support for the American cause. He remained a celebrated figure in both countries for the rest of his life.",fw:"The Marquis de Lafayette. A wealthy young French nobleman inspired by Enlightenment ideals, he served without pay, fought with distinction, and became almost a surrogate son to Washington. His influence helped strengthen the case for French military support."},
+{scene:2,date:"1777",loc:"Saratoga, New York (preview)",prose:"While Washington struggled around Philadelphia, a separate British campaign was unfolding to the north — one that would have consequences far beyond the battlefield.",q:"What was the British strategic goal of the 1777 campaign that led to the Battles of Saratoga?",choices:["To capture Boston","To split New England from the other colonies by controlling the Hudson River corridor","To force a naval blockade of the entire coast","To capture Washington's army directly"],correct:1,img:"crossing_delaware",cam:{scale:1.24,tx:-4,ty:2},fc:"To split the colonies by controlling the Hudson River — isolating New England, seen as the heart of the rebellion, from the other colonies. The plan required coordinated British forces converging from Canada and New York City. The coordination failed, and the northern force under General Burgoyne became isolated and was forced to surrender.",fw:"The plan aimed to sever New England from the other colonies via the Hudson River corridor. It required multiple British armies to converge — but poor coordination meant General Burgoyne's force from Canada arrived without the expected support, leaving it dangerously exposed."},
+{scene:2,date:"1776-1777",loc:"American colonies",prose:"Supplying an army of this scale required constant innovation — and constant desperation. The Continental Congress had limited ability to raise funds through taxation.",q:"How did the Continental Congress primarily fund the war effort, given its lack of taxation power?",choices:["Loans from Spain only","Printing paper currency (Continental dollars), which rapidly lost value","Selling western land to speculators","Confiscating all Loyalist property"],correct:1,img:"independence_hall",cam:{scale:1.16,tx:2,ty:2},fc:"Congress printed paper money — 'Continentals' — which rapidly depreciated due to lack of backing and rampant counterfeiting (some by the British deliberately). By the war's end, Continental currency was nearly worthless, giving rise to the phrase 'not worth a Continental'.",fw:"Congress printed paper currency with no gold or silver backing. Without taxation power, there was nothing to stop rampant inflation — Continental dollars eventually became almost worthless, and the phrase 'not worth a Continental' entered the language as shorthand for something valueless."},
+{scene:2,date:"1775-1783",loc:"The Thirteen Colonies",prose:"Tens of thousands of soldiers who served in the Continental Army and militias were not free white men — a reality often left out of popular memory of the Revolution.",q:"Approximately how many Black soldiers — both free and enslaved — served on the American side during the Revolutionary War?",choices:["Around 500","Around 5,000","Around 50,000","Around 150,000"],correct:1,img:"valley_forge",cam:{scale:1.2,tx:-3,ty:-2},fc:"Approximately 5,000 Black soldiers served with American forces — in integrated units in several states, including Rhode Island's famous 1st Rhode Island Regiment. Many more — likely tens of thousands — sided with the British, who offered freedom to enslaved people who joined the Crown's forces.",fw:"Around 5,000 Black soldiers, both free and enslaved, served with American forces — a small but significant number given the era. Notably, far more — perhaps 20,000 or more — escaped to British lines, drawn by Royal Governor Dunmore's 1775 proclamation offering freedom to enslaved people who supported the Crown."},
+{scene:2,date:"1778",loc:"Monmouth, New Jersey",prose:"After Valley Forge, the newly trained Continental Army gets its first major test against British regulars in open battle — a test of whether Steuben's training had actually worked.",q:"What did the Battle of Monmouth (June 1778) demonstrate about the Continental Army?",choices:["That it could not yet fight British regulars in open battle","That it could now stand toe-to-toe with British regulars in conventional battle","That it had abandoned European-style tactics entirely","That Washington had been replaced as commander"],correct:1,img:"valley_forge",cam:{scale:1.22,tx:3,ty:-2},fc:"Monmouth demonstrated that the Continental Army, after Valley Forge's training, could fight a major engagement against British regulars and hold its own — a marked contrast to earlier in the war. The battle was largely a tactical draw, but that itself was a significant improvement and validated Steuben's training reforms.",fw:"Monmouth showed the army could now stand and fight European-trained regulars in a conventional pitched battle without collapsing — a direct result of the winter training at Valley Forge. The battle ended inconclusively, but for an army that had been routed repeatedly in 1776, simply not losing was itself a kind of victory."},
+{scene:3,date:"October 1777",loc:"Saratoga, New York",prose:"The northern British campaign collapses entirely. An entire army, cut off and surrounded, has no choice but to lay down its arms — the single most consequential surrender of the war.",q:"Who was the British general forced to surrender his entire army at Saratoga in October 1777?",choices:["General Cornwallis","General Howe","General Burgoyne","General Clinton"],correct:2,img:"yorktown",cam:{scale:1.2,tx:0,ty:0},fc:"General John Burgoyne surrendered approximately 6,000 troops at Saratoga — the first time an entire British army had surrendered in the war. The victory was the single most important diplomatic event of the Revolution, as it convinced France that American independence was achievable.",fw:"General John Burgoyne. His surrender of roughly 6,000 men at Saratoga was a strategic catastrophe for Britain — and a diplomatic triumph for America, since it was the decisive factor in persuading France to enter the war as an open ally."},
+{scene:3,date:"February 1778",loc:"Paris, France",prose:"News of Saratoga reaches Paris and transforms the diplomatic calculus. France had been secretly supplying the Americans for years — now it considers an open alliance.",q:"What did France formally agree to after Saratoga, in the Treaty of Alliance of 1778?",choices:["To provide loans only, with no military involvement","To recognise American independence and enter the war as a military ally","To mediate peace talks between Britain and America","To annex parts of the former French territories in Canada"],correct:1,img:"independence_hall",cam:{scale:1.18,tx:-2,ty:2},fc:"France formally recognised American independence and committed troops, naval forces, and funding as a full military ally — transforming a colonial rebellion into a global war between Britain, France, and eventually Spain and the Netherlands as well.",fw:"France recognised American independence and entered as a full military ally — providing troops, a navy, and substantial financing. This was the single most important diplomatic achievement of the Revolution, turning a local conflict into a worldwide war that stretched British resources across multiple continents."},
+{scene:3,date:"1779-1780",loc:"American colonies",prose:"Beyond France, other European powers saw an opportunity to weaken Britain — turning the American war into part of a much larger global contest.",q:"Besides France, which other major European power entered the war against Britain (though without formally recognising American independence)?",choices:["Russia","Prussia","Spain","Austria"],correct:2,img:"yorktown",cam:{scale:1.22,tx:3,ty:-2},fc:"Spain entered the war against Britain in 1779 — primarily motivated by hopes of recovering territory lost in earlier conflicts, particularly Gibraltar and Florida, rather than out of sympathy for American independence, which Spain never formally recognised during the war.",fw:"Spain joined the war against Britain in 1779, largely to pursue its own territorial goals — especially recovering Gibraltar and Florida — rather than supporting American independence as a principle. Spain notably never formally recognised the United States during the Revolutionary War itself."},
+{scene:3,date:"September 1780",loc:"West Point, New York",prose:"Perhaps the most infamous act of treason in American history occurs when one of Washington's most capable generals secretly agrees to surrender a key fortress to the British in exchange for money and a command in the British army.",q:"Which American general's name became permanently synonymous with 'traitor' after his plot to surrender West Point was discovered in 1780?",choices:["Charles Lee","Horatio Gates","Benedict Arnold","Nathanael Greene"],correct:2,img:"yorktown",cam:{scale:1.2,tx:-3,ty:3},fc:"Benedict Arnold — once one of the most talented and aggressive American commanders, credited with key roles at Saratoga. Resentful over lack of recognition and deep in debt, he conspired to hand over West Point. The plot was discovered when his British contact, Major Andre, was captured carrying incriminating documents. Arnold escaped to British lines and fought against the Americans for the rest of the war.",fw:"Benedict Arnold. Despite a distinguished record — he was instrumental in the victory at Saratoga — Arnold felt passed over for promotion and financially desperate. His plot to surrender West Point for £20,000 and a British commission was exposed when his contact was captured. His name remains, to this day, the American synonym for 'traitor'."},
+{scene:3,date:"1778-1781",loc:"The South",prose:"After early failures in the North, Britain shifted its main strategy southward — believing Loyalist sentiment was stronger there and that the Southern colonies could be retaken one by one.",q:"Which major Southern city did the British capture in 1780, in what was one of the worst American defeats of the entire war?",choices:["Savannah","Charleston","New Orleans","Norfolk"],correct:1,img:"yorktown",cam:{scale:1.24,tx:2,ty:-3},fc:"Charleston, South Carolina, fell in May 1780 — over 5,000 American troops surrendered, the largest American surrender of the war. It appeared to validate Britain's 'Southern Strategy', but the brutal occupation that followed, including widespread plundering, ultimately turned much of the population against the British.",fw:"Charleston fell in May 1780, with the surrender of over 5,000 American troops — the largest single American loss of the war. The victory seemed to confirm British hopes for the South, but harsh occupation policies soon alienated many colonists who might otherwise have remained neutral or loyal."},
+{scene:3,date:"1780-1781",loc:"The Carolinas",prose:"Following Charleston, the war in the South became increasingly brutal — fought as much between Patriot and Loyalist militias as between regular armies, with atrocities on both sides.",q:"What style of warfare became particularly associated with the Southern campaign, exemplified by leaders like Francis Marion ('the Swamp Fox')?",choices:["Large-scale set-piece battles only","Naval blockades","Guerrilla warfare and hit-and-run raids","Siege warfare against fortified cities"],correct:2,img:"valley_forge",cam:{scale:1.18,tx:-2,ty:2},fc:"Guerrilla warfare. Partisan leaders like Francis Marion used hit-and-run tactics, striking British supply lines and outposts before disappearing into swamps and forests. This made the Southern countryside extremely difficult for Britain to control, even after major battlefield victories.",fw:"Guerrilla warfare — partisan bands led by figures like Francis Marion, Thomas Sumter, and Andrew Pickens harassed British forces relentlessly, making it nearly impossible for Britain to hold territory even where it had won conventional battles. This wore down British resources and morale."},
+{scene:3,date:"January 1781",loc:"Cowpens, South Carolina",prose:"American forces under General Daniel Morgan use a clever tactical formation to lure a British force into a trap, resulting in one of the most complete American victories of the war.",q:"What was notable about the American tactical victory at the Battle of Cowpens in January 1781?",choices:["It was the only naval battle of the Southern campaign","It nearly wiped out a British force with minimal American losses","It was fought entirely by French troops","It ended with a negotiated ceasefire"],correct:1,img:"yorktown",cam:{scale:1.2,tx:3,ty:2},fc:"Cowpens was a near-total American victory — Morgan's double-envelopment tactic devastated the British force under Banastre Tarleton, with minimal American casualties. It was one of the most tactically perfect battles of the war and significantly weakened British operations in the South.",fw:"Cowpens resulted in the near-destruction of a British force with very light American casualties — a tactical masterpiece. It significantly weakened British military strength in the Carolinas and set the stage for the campaign that would eventually push Cornwallis toward Yorktown."},
+{scene:3,date:"1781",loc:"Virginia",prose:"After a string of costly engagements in the Carolinas, the British commander in the South decides to march north into Virginia — a decision that will prove fateful.",q:"Which British general led the force that eventually marched into Virginia and dug in at Yorktown in 1781?",choices:["General Clinton","General Cornwallis","General Howe","General Tarleton"],correct:1,img:"yorktown",cam:{scale:1.22,tx:-4,ty:-2},fc:"General Charles Cornwallis. After the costly Pyrrhic victory at Guilford Courthouse, Cornwallis moved his army into Virginia, eventually establishing a base at Yorktown — expecting to be resupplied or evacuated by the Royal Navy. That assumption would prove to be a fatal miscalculation.",fw:"General Charles Cornwallis led the British army into Virginia in 1781. His decision to fortify at Yorktown, on the assumption that the Royal Navy could always resupply or evacuate him by sea, set up the conditions for the campaign's final, decisive confrontation."},
+{scene:4,date:"August 1781",loc:"Chesapeake Bay",prose:"For the Yorktown campaign to succeed, the Americans and French needed something that had eluded them for the entire war — temporary control of the sea.",q:"Which French admiral's fleet was decisive in sealing off Chesapeake Bay, preventing British naval relief of Cornwallis at Yorktown?",choices:["Comte de Rochambeau","Comte de Grasse","Comte d'Estaing","Marquis de Lafayette"],correct:1,img:"yorktown",cam:{scale:1.2,tx:0,ty:0},fc:"The Comte de Grasse. His fleet defeated a British relief squadron at the Battle of the Chesapeake in September 1781 and then blockaded the bay, cutting off Cornwallis's only route of escape or resupply by sea — a brief but absolutely decisive window of French naval superiority.",fw:"The Comte de Grasse commanded the French fleet that won the Battle of the Chesapeake and then sealed the bay. This was arguably the single most important naval engagement of the war for America — without it, Cornwallis could simply have been evacuated by sea."},
+{scene:4,date:"September-October 1781",loc:"Yorktown, Virginia",prose:"With the sea blocked, a combined American and French army marches south from New York to complete the encirclement on land.",q:"Approximately how large was the combined American-French force that besieged Cornwallis at Yorktown?",choices:["About 5,000","About 9,000","About 17,000","About 30,000"],correct:2,img:"yorktown",cam:{scale:1.18,tx:-2,ty:2},fc:"Approximately 17,000 — roughly split between American Continental troops, American militia, and French regulars under Rochambeau. Cornwallis had around 9,000 men, trapped with no way to escape by land or sea.",fw:"Approximately 17,000 combined American and French troops besieged Cornwallis's roughly 9,000-strong garrison. The numerical advantage, combined with the naval blockade, made Cornwallis's position essentially hopeless from the moment the siege began."},
+{scene:4,date:"October 9-17, 1781",loc:"Yorktown, Virginia",prose:"For over a week, allied artillery pounds the British fortifications. Trenches advance closer each night. Two key British outer defences — redoubts — must be taken before the final assault can proceed.",q:"In the assault on the redoubts at Yorktown, which two nations' troops led the attacks on the two key fortifications?",choices:["British and Hessian deserters","American and French troops","Spanish and American troops","French and Spanish troops"],correct:1,img:"yorktown",cam:{scale:1.22,tx:3,ty:-2},fc:"American troops, including light infantry under Lafayette, stormed Redoubt 10, while French troops took Redoubt 9 — both assaults conducted at night with bayonets, in coordinated attacks that succeeded with relatively low casualties. Taking these redoubts allowed allied artillery to move close enough to make Cornwallis's position untenable.",fw:"American light infantry, including troops under Alexander Hamilton, stormed Redoubt 10, while French troops simultaneously took Redoubt 9. Both assaults were conducted at night with bayonets fixed and unloaded muskets, to maintain surprise — and both succeeded."},
+{scene:4,date:"October 19, 1781",loc:"Yorktown, Virginia",prose:"With his position untenable and a last-ditch attempt to evacuate across the York River thwarted by weather, Cornwallis has no remaining options.",q:"What happened on October 19, 1781 at Yorktown?",choices:["Cornwallis successfully evacuated by sea","Cornwallis surrendered his army","Washington was wounded in a final assault","A ceasefire was declared pending negotiations"],correct:1,img:"yorktown",cam:{scale:1.25,tx:-3,ty:2},fc:"Cornwallis formally surrendered his army of roughly 8,000 men on October 19, 1781. He himself claimed illness and did not attend the surrender ceremony — his deputy, General O'Hara, formally handed over Cornwallis's sword. The surrender effectively ended major combat operations in America.",fw:"Cornwallis surrendered approximately 8,000 troops. Citing illness, he did not personally attend the surrender ceremony, sending his second-in-command, General O'Hara, instead. While the war technically continued for two more years, Yorktown was the last major battle in America."},
+{scene:4,date:"October 19, 1781",loc:"Yorktown, Virginia",prose:"As the British troops marched out to surrender their arms, military tradition called for music — and the choice of tune, whether deliberate or not, became one of the war's most famous anecdotes.",q:"What song did the British band reportedly play during the surrender ceremony at Yorktown — fittingly, given the circumstances?",choices:["Rule, Britannia!","God Save the King","The World Turned Upside Down","Yankee Doodle"],correct:2,img:"yorktown",cam:{scale:1.2,tx:2,ty:3},fc:"'The World Turned Upside Down' — at least according to popular tradition, though definitive contemporary evidence is thin. Whether or not it's strictly accurate, the story has endured precisely because it captures the moment so perfectly: the world's most powerful military empire, defeated by its own colonists.",fw:"Tradition holds the British band played 'The World Turned Upside Down' — a fitting (if possibly embellished) detail for the moment Britain's American empire effectively ended. Historians debate how literally true this is, but the story has become inseparable from the popular memory of Yorktown."},
+{scene:4,date:"November 1781",loc:"London, England",prose:"News of Yorktown takes weeks to cross the Atlantic. When it arrives in London, the political reaction is immediate and severe.",q:"What was the political consequence in Britain of the defeat at Yorktown?",choices:["King George III abdicated","Parliament voted to continue the war indefinitely","The British government of Lord North fell, and peace negotiations began","Britain immediately recognised American independence"],correct:2,img:"independence_hall",cam:{scale:1.18,tx:-4,ty:2},fc:"Yorktown effectively broke British political will to continue the war. Lord North's government fell in early 1782, and the new government opened peace negotiations. It would still take nearly two years to finalise the Treaty of Paris, but Yorktown was the war's last major battle.",fw:"Lord North's government collapsed in the aftermath of Yorktown, and the new British leadership began peace negotiations. King George III reportedly considered abdicating in despair but did not. The Treaty of Paris formally ending the war was not signed until September 1783 — nearly two years later."},
+{scene:4,date:"1781-1783",loc:"Paris, France",prose:"Negotiating the peace proved almost as complicated as winning the war — America, France, Spain, and Britain all had competing interests to balance.",q:"Which American diplomats were primarily responsible for negotiating the Treaty of Paris (1783)?",choices:["Washington, Hamilton, and Madison","Franklin, Adams, and Jay","Jefferson, Monroe, and Madison","Hancock, Adams, and Henry"],correct:1,img:"independence_hall",cam:{scale:1.2,tx:3,ty:-3},fc:"Benjamin Franklin, John Adams, and John Jay led the American delegation. Notably, they negotiated directly with Britain somewhat independently of France's wishes — securing more favourable terms (including vast western territory) than France had necessarily intended for its American ally.",fw:"Franklin, Adams, and Jay represented America at the negotiations. They secured remarkably favourable terms — including territory extending to the Mississippi River — partly by negotiating somewhat separately from France, whose own interests didn't always align with America's."},
+{scene:4,date:"September 3, 1783",loc:"Paris, France",prose:"The Treaty of Paris formally ends the Revolutionary War — establishing not just independence, but the borders of the new nation.",q:"What western boundary did the Treaty of Paris (1783) establish for the new United States?",choices:["The Appalachian Mountains","The Mississippi River","The Ohio River","The Rocky Mountains"],correct:1,img:"constitution",cam:{scale:1.18,tx:-2,ty:2},fc:"The Mississippi River — a remarkably generous boundary that roughly doubled the territory of the original thirteen colonies, encompassing vast lands that would become the Midwest and parts of the South. Britain's relatively generous terms partly reflected a strategic interest in fostering goodwill with the new nation, hoping to limit French influence in America.",fw:"The Mississippi River became the western boundary — a huge territorial gain that included land far beyond the original colonies' settled areas. Britain's surprisingly generous terms were partly strategic: a friendly (or at least non-hostile) United States was preferable to one closely tied to France."},
+{scene:4,date:"December 1783",loc:"Annapolis, Maryland",prose:"With the war won and peace signed, Washington faced a decision that would define the new nation's character — and that many in history, holding similar power, had not made.",q:"What did George Washington do in December 1783, an act widely seen as crucial to establishing civilian control of the American military?",choices:["He declared himself King","He resigned his military commission and returned to private life","He dissolved the Continental Congress","He demanded payment in land for his soldiers before resigning"],correct:1,img:"constitution",cam:{scale:1.22,tx:4,ty:-2},fc:"Washington voluntarily resigned his commission as Commander-in-Chief before Congress and returned to civilian life at Mount Vernon — at a moment when he could plausibly have seized far greater power. King George III reportedly said that if Washington did this, he would be 'the greatest character of his age'. The precedent of voluntary relinquishment of military power shaped the new nation's civilian-military relationship for centuries.",fw:"Washington resigned his military commission voluntarily and returned to private life as a farmer — astonishing observers in Europe, where such voluntary relinquishment of power by a victorious general was almost unheard of. This precedent of civilian supremacy over the military became a foundational principle of American government."},
+{scene:5,date:"1781",loc:"The United States",prose:"Even before the war ended, the states had ratified a framework for national government — one deliberately designed to be weak, reflecting deep suspicion of centralised power after years of fighting against a distant monarchy.",q:"What was the name of the first American framework of national government, ratified in 1781, which preceded the Constitution?",choices:["The Bill of Rights","The Articles of Confederation","The Federalist Papers","The Northwest Ordinance"],correct:1,img:"constitution",cam:{scale:1.18,tx:0,ty:0},fc:"The Articles of Confederation. It created a loose confederation of sovereign states with a weak central government — Congress couldn't levy taxes directly, regulate interstate commerce, or enforce its own laws. This weakness would soon become a serious problem.",fw:"The Articles of Confederation, ratified in 1781. Designed to prevent the kind of centralised tyranny the states had just fought against, it left the national government too weak to function effectively — unable to tax, regulate trade, or compel states to follow its decisions."},
+{scene:5,date:"1786-1787",loc:"Western Massachusetts",prose:"Economic distress among farmers — many of them Revolutionary War veterans facing debt and foreclosure — boiled over into armed uprising, exposing the weakness of the Articles of Confederation in stark terms.",q:"What was the name of the 1786-87 armed uprising of indebted farmers in Massachusetts that alarmed many leaders into seeking a stronger national government?",choices:["The Whiskey Rebellion","Shays' Rebellion","The Pennsylvania Mutiny","Bacon's Rebellion"],correct:1,img:"valley_forge",cam:{scale:1.2,tx:-2,ty:2},fc:"Shays' Rebellion, led by Revolutionary War veteran Daniel Shays. The uprising was eventually put down by the state militia — but the central government's inability to respond effectively alarmed figures like Washington and Madison, adding urgency to calls for constitutional reform.",fw:"Shays' Rebellion — named for Daniel Shays, a former Continental Army captain. The rebellion itself was relatively small, but the federal government's powerlessness to assist Massachusetts in suppressing it became a powerful argument for scrapping the Articles of Confederation entirely."},
+{scene:5,date:"May-September 1787",loc:"Philadelphia, Pennsylvania",prose:"Delegates gather once again in Philadelphia — officially to revise the Articles of Confederation, but the conversation quickly becomes something far more ambitious.",q:"What did the delegates at the Constitutional Convention of 1787 ultimately decide to do, rather than simply revise the existing Articles?",choices:["Strengthen state governments at the expense of the national government","Draft an entirely new framework of government — the Constitution","Re-establish a monarchy under a European prince","Dissolve the union into smaller regional confederacies"],correct:1,img:"constitution",cam:{scale:1.22,tx:3,ty:-2},fc:"Rather than amend the Articles, the delegates — exceeding their original mandate — drafted an entirely new Constitution, creating a much stronger federal government with the power to tax, regulate commerce, and enforce national law, while still preserving significant state authority.",fw:"The delegates scrapped the Articles entirely and wrote a new Constitution from scratch — a significant overreach of their original instructions, which were only to propose amendments. The new document created a genuinely national government with real enforcement powers, while building in checks against any single branch becoming too powerful."},
+{scene:5,date:"Summer 1787",loc:"Philadelphia, Pennsylvania",prose:"One of the most contentious debates at the Convention centred on how states of vastly different population sizes would be represented in the new Congress.",q:"What compromise resolved the dispute between large and small states over representation in Congress?",choices:["The Three-Fifths Compromise","The Great Compromise (Connecticut Compromise) — a bicameral legislature with one house based on population and one with equal state representation","The Electoral College Compromise","The Missouri Compromise"],correct:1,img:"constitution",cam:{scale:1.18,tx:-3,ty:2},fc:"The Great Compromise, also called the Connecticut Compromise. It created a two-chamber Congress: the House of Representatives, with seats allocated by population (favouring large states), and the Senate, with equal representation for every state regardless of size (favouring small states).",fw:"The Great Compromise (Connecticut Compromise) created the bicameral Congress still in use today — a House of Representatives based on population, and a Senate with equal representation per state. This balanced the competing interests of large and small states in the new federal system."},
+{scene:5,date:"Summer 1787",loc:"Philadelphia, Pennsylvania",prose:"Another deeply contentious issue involved how enslaved populations would be counted for purposes of representation and taxation — a question that revealed thedeep moral compromises baked into the founding document.",q:"Under the Three-Fifths Compromise, how were enslaved people counted for purposes of congressional representation?",choices:["Not counted at all","Counted fully, the same as free persons","Counted as three-fifths of a person","Counted only for taxation, not representation"],correct:2,img:"constitution",cam:{scale:1.2,tx:2,ty:3},fc:"Enslaved people were counted as three-fifths of a person for both representation in the House and for taxation purposes. This gave Southern states significantly more political power than their free population alone would have warranted — a compromise that entrenched slavery's influence in national politics for decades.",fw:"The Three-Fifths Compromise counted enslaved people as three-fifths of a person for both representation and taxation. This inflated the political power of slaveholding states in Congress and the Electoral College — an arrangement that would have lasting consequences right up to the Civil War."},
+{scene:5,date:"1787-1788",loc:"The United States",prose:"Once drafted, the Constitution needed to be ratified by the states — a process that sparked intense public debate between supporters and opponents of the new, stronger federal government.",q:"What were supporters of the new Constitution, who favoured a stronger federal government, generally called?",choices:["Federalists","Anti-Federalists","Republicans","Whigs"],correct:0,img:"independence_hall",cam:{scale:1.18,tx:-2,ty:-2},fc:"Federalists supported ratification and a stronger national government — figures like Hamilton, Madison, and Jay wrote the Federalist Papers to make the case. Anti-Federalists opposed ratification, fearing the new government would become too powerful and threaten individual liberties and states' rights — concerns that directly led to the Bill of Rights.",fw:"Federalists — supporters of ratification and a stronger central government. Their opponents, the Anti-Federalists, worried the new Constitution recreated the kind of centralised power the Revolution had fought against. The Anti-Federalists' concerns were significant enough that addressing them — via the Bill of Rights — became a condition of ratification in several states."},
+{scene:5,date:"1787-1788",loc:"New York",prose:"To persuade New York's notoriously sceptical public to support ratification, three Founders wrote a series of essays defending the Constitution clause by clause.",q:"Who were the three authors of the Federalist Papers?",choices:["Washington, Jefferson, and Adams","Hamilton, Madison, and Jay","Franklin, Hancock, and Henry","Monroe, Madison, and Adams"],correct:1,img:"independence_hall",cam:{scale:1.22,tx:3,ty:2},fc:"Alexander Hamilton, James Madison, and John Jay — writing under the shared pseudonym 'Publius'. The 85 essays remain a foundational text of American political philosophy, still cited by courts and scholars today as evidence of the Constitution's original intent.",fw:"Hamilton, Madison, and Jay wrote the 85 essays of the Federalist Papers under the pen name 'Publius', aimed at persuading New York to ratify. Beyond their immediate purpose, they became one of the most important works of political theory in American history."},
+{scene:5,date:"1789-1791",loc:"The United States",prose:"Even after ratification, many states had only agreed on the understanding that specific protections for individual liberties would be added promptly — a promise that was kept within two years.",q:"What name is given to the first ten amendments to the Constitution, added in 1791 to guarantee specific individual rights?",choices:["The Articles of Confederation","The Federalist Papers","The Bill of Rights","The Emancipation Proclamation"],correct:2,img:"constitution",cam:{scale:1.2,tx:-4,ty:2},fc:"The Bill of Rights — the first ten amendments, ratified in 1791, guaranteeing freedoms such as speech, religion, the press, and protections against unreasonable searches and self-incrimination. Its addition was essentially the price of ratification in several states that had withheld support without such guarantees.",fw:"The Bill of Rights — ten amendments ratified in 1791, addressing Anti-Federalist concerns about individual liberties. Primarily authored by James Madison, it remains the most directly invoked part of the Constitution in American legal and political life to this day."},
+];
+
+// ── STATE ─────────────────────────────────────────────────────────────────────────
+let qIdx=0, score=0, answered=false, cinAborted=false, cinCb=null, currentCinScene=0;
+let activeBgSlot='a';
+let currentAudio=null;
+let streak=0;
+let isMuted=false; try{isMuted=localStorage.getItem('fotw_muted')==='1';}catch(e){}
+
+// ── AUDIO — pre-generated MP3s from ElevenLabs (George voice) ───────────────────
+// Files live in audio/ folder, generated once via generate_audio.py
+// Falls back to browser speech if audio files are missing
+
+const AUDIO_FILES = {
+  'cin_1_1': 'chapter2_audio/cin_1_1.mp3',
+  'cin_1_2': 'chapter2_audio/cin_1_2.mp3',
+  'cin_1_3': 'chapter2_audio/cin_1_3.mp3',
+  'cin_2_1': 'chapter2_audio/cin_2_1.mp3',
+  'cin_2_2': 'chapter2_audio/cin_2_2.mp3',
+  'cin_3_1': 'chapter2_audio/cin_3_1.mp3',
+  'cin_3_2': 'chapter2_audio/cin_3_2.mp3',
+  'cin_4_1': 'chapter2_audio/cin_4_1.mp3',
+  'cin_5_1': 'chapter2_audio/cin_5_1.mp3',
+  'cin_6_1': 'chapter2_audio/cin_6_1.mp3',
+  'cin_6_2': 'chapter2_audio/cin_6_2.mp3',
+};
+const CIN_AUDIO_MAP = [
+  ['cin_1_1','cin_1_2','cin_1_3'],
+  ['cin_2_1','cin_2_2'],
+  ['cin_3_1','cin_3_2'],
+  ['cin_4_1'],
+  ['cin_5_1'],
+  ['cin_6_1','cin_6_2'],
+];
+
+// ── AMBIENT AUDIO ────────────────────────────────────────────────────────────
+// One looping ambient track per scene, plays under narration and questions.
+// Download files from freesound.org and place in build/audio/ — see README.
+const AMBIENT = {
+  0: 'chapter2_audio/amb_boston.mp3',
+  1: 'chapter2_audio/amb_philadelphia.mp3',
+  2: 'chapter2_audio/amb_valley_forge.mp3',
+  3: 'chapter2_audio/amb_wider_war.mp3',
+  4: 'chapter2_audio/amb_yorktown.mp3',
+  5: 'chapter2_audio/amb_constitution.mp3',
+};
+// Ambient volume levels: lower during narration so voice is clear, raise for questions
+const AMB_VOL_NARRATION = 0.12;
+const AMB_VOL_QUESTIONS = 0.22;
+let ambientAudio = null;
+let currentAmbientScene = -1;
+
+function startAmbient(sceneIdx) {
+  const src = AMBIENT[sceneIdx];
+  if (!src) return;
+  // Already playing the right scene — just adjust volume
+  if (currentAmbientScene === sceneIdx && ambientAudio) {
+    fadeAmbientTo(AMB_VOL_NARRATION);
+    return;
+  }
+  // Fade out old ambient
+  if (ambientAudio) {
+    const old = ambientAudio;
+    fadeAmbientTo(0, () => { old.pause(); old.src = ''; });
+    ambientAudio = null;
+  }
+  currentAmbientScene = sceneIdx;
+  const a = new Audio(src);
+  a.loop = true;
+  a.muted = isMuted;
+  a.volume = 0;
+  ambientAudio = a;
+  a.play().then(() => fadeAmbientTo(AMB_VOL_NARRATION)).catch(() => {});
+}
+
+function fadeAmbientTo(targetVol, onDone) {
+  if (!ambientAudio) { if(onDone) onDone(); return; }
+  const audio = ambientAudio;
+  const step = (targetVol - audio.volume) / 20;
+  let count = 0;
+  const iv = setInterval(() => {
+    count++;
+    audio.volume = Math.max(0, Math.min(1, audio.volume + step));
+    if (count >= 20) {
+      clearInterval(iv);
+      audio.volume = targetVol;
+      if (onDone) onDone();
+    }
+  }, 50);
+}
+
+function setAmbientForQuestions() { fadeAmbientTo(AMB_VOL_QUESTIONS); }
+function setAmbientForNarration() { fadeAmbientTo(AMB_VOL_NARRATION); }
+function stopAmbient() { fadeAmbientTo(0, () => { if(ambientAudio){ ambientAudio.pause(); ambientAudio=null; } currentAmbientScene=-1; }); }
+
+function speak(audioKey, text, onDone) {
+  stopAudio();
+  const src = audioKey ? AUDIO_FILES[audioKey] : null;
+  if (src) {
+    console.log('[Audio] Loading:', src);
+    const audio = new Audio(src);
+    audio.muted = isMuted;
+    currentAudio = audio;
+    audio.oncanplaythrough = function() { console.log('[Audio] Ready:', src); };
+    audio.onended = function() { console.log('[Audio] Finished:', src); if (!cinAborted) onDone(); };
+    audio.onerror = function(e) {
+      console.warn('[Audio] Failed to load:', src, e);
+      fallbackSpeak(text, onDone);
+    };
+    audio.play().then(function() {
+      console.log('[Audio] Playing:', src);
+    }).catch(function(e) {
+      console.warn('[Audio] play() blocked:', e);
+      fallbackSpeak(text, onDone);
+    });
+  } else {
+    console.log('[Audio] No key, using browser speech');
+    fallbackSpeak(text, onDone);
+  }
+}
+
+function fallbackSpeak(text, onDone) {
+  if (isMuted) { setTimeout(()=>{ if(!cinAborted) onDone(); }, Math.max(2500, text.length*45)); return; }
+  const synth = window.speechSynthesis;
+  if (!synth) { onDone(); return; }
+  synth.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.rate=.87; u.pitch=.94; u.volume=.88;
+  const vs = synth.getVoices();
+  const v = vs.find(v=>v.name.includes('Daniel')||v.name.includes('Arthur')||v.name.includes('George'))
+         || vs.find(v=>v.lang==='en-GB') || vs.find(v=>v.lang.startsWith('en'));
+  if(v) u.voice=v;
+  u.onend = () => { if(!cinAborted) onDone(); };
+  synth.speak(u);
+}
+
+function stopAudio() {
+  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
+}
+
+// ── BACKGROUND SYSTEM ─────────────────────────────────────────────────────────────
+// Two slides (bg-a, bg-b) cross-dissolve for panning transitions
+// Each slide starts zoomed in and slowly zooms out (reverse Ken Burns)
+
+let bgKBInterval = null;
+
+function setBG(imgKey, cam, animate=true) {
+  const el = document.getElementById('bg-a');
+  const url = IMGS[imgKey];
+  el.style.backgroundImage = `url('${url}')`;
+  el.style.background = '';
+  // Start zoomed in, zoom out via CSS transition
+  const s = cam.scale + 0.15; // start more zoomed
+  const tx = cam.tx; const ty = cam.ty;
+  el.style.transition = 'none';
+  el.style.transform = `scale(${(s).toFixed(2)}) translate(${tx}%,${ty}%)`;
+  if (animate) {
+    requestAnimationFrame(() => {
+      el.style.transition = 'transform 12s ease-out';
+      el.style.transform = `scale(${cam.scale.toFixed(2)}) translate(${tx}%,${ty}%)`;
+    });
+  }
+}
+
+function crossDissolveTo(imgKey, cam) {
+  // Ping-pong between bg-a (z-index 1) and bg-b (z-index 2)
+  const incoming = document.getElementById('bg-b');
+  const outgoing = document.getElementById('bg-a');
+
+  const url = IMGS[imgKey];
+  // Set new image on incoming layer, start zoomed in
+  incoming.style.backgroundImage = `url('${url}')`;
+  incoming.style.background = '';
+  const s = cam.scale + 0.15;
+  incoming.style.transition = 'none';
+  incoming.style.transform = `scale(${s.toFixed(2)}) translate(${cam.tx}%,${cam.ty}%)`;
+  incoming.style.opacity = '0';
+  incoming.style.zIndex = '2';
+  outgoing.style.zIndex = '1';
+
+  requestAnimationFrame(() => {
+    // Start zoom-out on incoming
+    incoming.style.transition = 'opacity 1.2s ease, transform 12s ease-out';
+    incoming.style.opacity = '1';
+    incoming.style.transform = `scale(${cam.scale.toFixed(2)}) translate(${cam.tx}%,${cam.ty}%)`;
+    // Fade out outgoing
+    outgoing.style.transition = 'opacity 1.2s ease';
+    outgoing.style.opacity = '0';
+  });
+
+  // After dissolve, swap slots: copy bg-b state to bg-a, reset bg-b
+  setTimeout(() => {
+    document.getElementById('bg-a').style.backgroundImage = incoming.style.backgroundImage;
+    document.getElementById('bg-a').style.transform = incoming.style.transform;
+    document.getElementById('bg-a').style.opacity = '1';
+    document.getElementById('bg-a').style.zIndex = '1';
+    incoming.style.opacity = '0';
+    incoming.style.zIndex = '2';
+  }, 1400);
+}
+
+// ── COLLAGE RECAP ─────────────────────────────────────────────────────────────────
+let collageCb = null;
+
+function showCollage(sceneIdx, cb) {
+  collageCb = cb;
+  const data = CIN[sceneIdx];
+  // If no collage defined for this scene, skip straight to callback
+  if (!data || !data.collageImgs) { collageCb = cb; endCollage(); return; }
+  const imgs = data.collageImgs;
+  const el = document.getElementById('collage');
+  const grid = document.getElementById('collage-grid');
+  grid.innerHTML = '';
+
+  // Responsive grid columns based on image count
+  const cols = imgs.length <= 2 ? 2 : imgs.length <= 4 ? 2 : 3;
+  grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+  grid.style.gridTemplateRows = `repeat(${Math.ceil(imgs.length/cols)}, 1fr)`;
+
+  const cells = imgs.map(imgKey => {
+    const div = document.createElement('div');
+    div.className = 'collage-cell';
+    div.style.backgroundImage = `url('${IMGS[imgKey]}')`;
+    grid.appendChild(div);
+    return div;
+  });
+
+  // Reset text elements
+  ['collage-label','collage-title','collage-sub','collage-btn'].forEach(id => {
+    const e = document.getElementById(id);
+    e.classList.remove('in');
+  });
+  document.getElementById('collage-label').textContent = data.collageLabel;
+  document.getElementById('collage-title').textContent = data.collageTitle;
+  document.getElementById('collage-sub').textContent = data.collageSub;
+
+  // Hide question panel so collage sits cleanly on top
+  document.getElementById('qpanel').classList.add('out');
+  el.classList.add('active');
+  setAmbientForNarration();
+
+  // Stagger cells in
+  cells.forEach((c, i) => setTimeout(() => c.classList.add('on'), i * 120));
+
+  // Animate text in
+  setTimeout(() => document.getElementById('collage-label').classList.add('in'), 400);
+  setTimeout(() => document.getElementById('collage-title').classList.add('in'), 600);
+  setTimeout(() => document.getElementById('collage-sub').classList.add('in'), 800);
+  setTimeout(() => document.getElementById('collage-btn').classList.add('in'), 1000);
+}
+
+function endCollage() {
+  const el = document.getElementById('collage');
+  el.style.opacity = '0';
+  el.style.transition = 'opacity .5s';
+  setTimeout(() => {
+    el.classList.remove('active');
+    el.style.opacity = '';
+    el.style.transition = '';
+    // Restore question panel visibility
+    document.getElementById('qpanel').classList.remove('out');
+    if (collageCb) collageCb();
+  }, 500);
+}
+
+// ── SPLASH → GAME ─────────────────────────────────────────────────────────────────
+function startGame() {
+
+  // Audio files pre-generated — no key needed at runtime
+  document.getElementById('splash').classList.remove('active');
+  document.getElementById('game').style.display = 'block';
+  // Start cinematic, then collage, then questions
+  showCin(0, () => showCollage(0, () => renderQ()));
+}
+
+// ── RENDER QUESTION ──────────────────────────────────────────────────────────────
+let lastImg = null;
+
+function renderQ() {
+  const q = QS[qIdx];
+  answered = false;
+
+  // Cross-dissolve if image changed, else just zoom update
+  if (q.img !== lastImg) {
+    crossDissolveTo(q.img, q.cam);
+    lastImg = q.img;
+  } else {
+    // Same image — just update the zoom/pan on bg-a
+    const el = document.getElementById('bg-a');
+    el.style.transition = 'transform 1.8s ease';
+    el.style.transform = `scale(${q.cam.scale}) translate(${q.cam.tx}%,${q.cam.ty}%)`;
+  }
+
+  const sceneLabels = ['Scene 1 — The Assassination','Scene 2 — Mobilisation','Scene 3 — The Trenches','Scene 4 — The Wider War','Scene 5 — The Turning Point','Scene 6 — The Aftermath'];
+  document.getElementById('hscene').textContent = sceneLabels[q.scene] || 'Scene '+(q.scene+1);
+  document.getElementById('qcounter').textContent = 'Question ' + (qIdx+1) + ' of ' + QS.length;
+  document.getElementById('hscore').textContent = score;
+  document.getElementById('htotal').textContent = qIdx;
+  document.getElementById('pfill').style.width = (qIdx/QS.length*100)+'%';
+  renderSDots(q.scene);
+  document.getElementById('qloc').textContent = q.loc.toUpperCase();
+  document.getElementById('qdate').textContent = q.date;
+  document.getElementById('qprose').textContent = q.prose;
+  document.getElementById('qtext').textContent = q.q;
+
+  const grid = document.getElementById('cgrid');
+  grid.innerHTML = '';
+  q.choices.forEach((c,i) => {
+    const b = document.createElement('button');
+    b.className = 'choice'; b.textContent = c;
+    b.onclick = () => pick(i);
+    grid.appendChild(b);
+  });
+  document.getElementById('fb').classList.remove('on');
+  document.getElementById('nxtbtn').classList.remove('on');
+  const panel = document.getElementById('qpanel');
+  panel.classList.add('out');
+  requestAnimationFrame(() => requestAnimationFrame(() => panel.classList.remove('out')));
+  setAmbientForQuestions();
+}
+
+function renderSDots(active) {
+  const el = document.getElementById('sdots'); el.innerHTML='';
+  const sceneCount = [...new Set(QS.map(q=>q.scene))].length;
+  Array.from({length:sceneCount},(_,i)=>i).forEach(i => {
+    const d = document.createElement('div');
+    d.className = 'sdot'+(i<active?' done':i===active?' active':'');
+    el.appendChild(d);
+  });
+}
+
+// ── ANSWER ────────────────────────────────────────────────────────────────────────
+function pick(idx) {
+  if (answered) return;
+  answered = true;
+  const q = QS[qIdx];
+  const btns = document.querySelectorAll('.choice');
+  btns.forEach(b => b.disabled=true);
+  const ok = idx===q.correct;
+  btns[idx].classList.add(ok?'correct':'wrong');
+  if(!ok) btns[q.correct].classList.add('correct');
+  if(ok) {
+    score++; streak++;
+    // Correct answer: push in slightly closer
+    const el = document.getElementById('bg-a');
+    const cur = parseFloat(el.style.transform.match(/scale\(([^)]+)\)/)?.[1]||'1.1');
+    el.style.transition = 'transform 1.2s ease';
+    el.style.transform = el.style.transform.replace(/scale\([^)]+\)/,`scale(${(cur+.06).toFixed(2)})`);
+  }
+  document.getElementById('hscore').textContent = score;
+  document.getElementById('htotal').textContent = qIdx+1;
+  document.getElementById('fb').classList.add('on');
+  const lbl = document.getElementById('fblabel');
+  if(!ok) streak=0;
+  lbl.textContent = ok ? (streak>=3 ? 'Correct — '+streak+' in a row!' : 'Correct') : 'Not quite';
+  lbl.className = ok ? 'c' : 'w';
+  document.getElementById('fbtext').textContent = ok?q.fc:q.fw;
+  document.getElementById('nxtbtn').classList.add('on');
+}
+
+function handleNext() {
+  const prev = QS[qIdx].scene; qIdx++; saveProgress();
+  if(qIdx>=QS.length) { showEnd(); return; }
+  const nextScene = QS[qIdx].scene;
+  if(nextScene !== prev) {
+    // Always start ambient for new scene even if no cinematic
+    startAmbient(nextScene);
+    showCin(nextScene, () => showCollage(nextScene, () => renderQ()));
+  } else {
+    renderQ();
+  }
+}
+
+// ── CINEMATIC ─────────────────────────────────────────────────────────────────────
+function showCin(si, cb) {
+  currentCinScene=si; cinAborted=false; cinCb=cb;
+  startAmbient(si);
+  setAmbientForNarration();
+
+  // If no cinematic defined for this scene, skip straight to callback
+  const data = CIN[si];
+  if (!data || !data.panels || data.panels.length === 0) {
+    cb();
+    return;
+  }
+
+  const cin = document.getElementById('cin'); cin.classList.add('active');
+  const sn=document.getElementById('cscnum'); sn.style.opacity='0'; sn.textContent='';
+  const st=document.getElementById('ctitle'); st.style.opacity='0'; st.style.transform='translateY(16px)'; st.textContent='';
+  document.getElementById('cnarrtext').textContent='';
+  document.getElementById('cskip').classList.remove('on');
+  document.getElementById('ccont').classList.remove('on');
+
+  const cpEl = document.getElementById('cpanels'); cpEl.innerHTML='';
+  data.panels.forEach((p,i) => {
+    const div = document.createElement('div');
+    div.className = 'cpanel '+(i===0?'on ':'')+(PAN_CLASSES[i]||'zoom-out');
+    div.style.backgroundImage = `url('${IMGS[p.img]}')`;
+    div.innerHTML += '<div class="cpanel-dim"></div>';
+    cpEl.appendChild(div);
+  });
+
+  const dotsEl = document.getElementById('cdots'); dotsEl.innerHTML='';
+  data.panels.forEach((_,i) => { const d=document.createElement('div'); d.className='cdot'+(i===0?' on':''); dotsEl.appendChild(d); });
+
+  setTimeout(()=>document.getElementById('cskip').classList.add('on'), 800);
+  setTimeout(()=>{ if(!cinAborted){sn.textContent=data.sceneNum; sn.style.opacity='1';}}, 500);
+  setTimeout(()=>{ if(!cinAborted){st.textContent=data.title; st.style.opacity='1'; st.style.transform='translateY(0)';}}, 900);
+
+  runCinPanel(data.panels, 0);
+}
+
+function runCinPanel(panels, panelIdx) {
+  if (cinAborted) return;
+  if (panelIdx >= panels.length) { finishCin(); return; }
+
+  const allP = document.querySelectorAll('.cpanel');
+  const allD = document.querySelectorAll('.cdot');
+
+  if (panelIdx > 0) {
+    allP.forEach((p, i) => {
+      if (i === panelIdx) {
+        p.classList.remove('pan-left','pan-right','zoom-out');
+        void p.offsetWidth;
+        p.classList.add(PAN_CLASSES[panelIdx] || 'zoom-out');
+        p.classList.add('on');
+        p.style.opacity = '0';
+        requestAnimationFrame(() => { p.style.transition = 'opacity 1.4s ease'; p.style.opacity = '1'; });
+      } else if (i === panelIdx - 1) {
+        p.style.transition = 'opacity 1.4s ease';
+        p.style.opacity = '0';
+        setTimeout(() => p.classList.remove('on'), 1400);
+      }
+    });
+  }
+  allD.forEach((d, i) => d.classList.toggle('on', i === panelIdx));
+
+  const text = panels[panelIdx].nar;
+
+  // Typewriter — runs independently, doesn't gate progression
+  const el = document.getElementById('cnarrtext');
+  el.textContent = '';
+  let charIdx = 0;
+  const spd = Math.max(16, Math.min(30, Math.floor(text.length / 55) + 16));
+  const iv = setInterval(() => {
+    if (cinAborted) { clearInterval(iv); return; }
+    if (charIdx < text.length) el.textContent += text[charIdx++];
+    else clearInterval(iv);
+  }, spd);
+
+  // Speech drives timing — when audio ends, advance to next panel
+  const audioKey = (CIN_AUDIO_MAP[currentCinScene] || [])[panelIdx] || null;
+  speak(audioKey, text, () => {
+    if (!cinAborted) setTimeout(() => runCinPanel(panels, panelIdx + 1), 700);
+  });
+}
+
+function finishCin() {
+  document.getElementById('ccont').classList.add('on');
+  document.getElementById('cskip').classList.remove('on');
+}
+function endCin() {
+  stopAudio(); cinAborted=false;
+  const el=document.getElementById('cin');
+  el.style.opacity='0'; el.style.transition='opacity .5s';
+  setTimeout(()=>{ el.classList.remove('active'); el.style.opacity=''; el.style.transition=''; if(cinCb)cinCb(); },500);
+}
+function skipCin() {
+  cinAborted=true; stopAudio();
+  const el=document.getElementById('cin');
+  el.style.opacity='0'; el.style.transition='opacity .35s';
+  setTimeout(()=>{ el.classList.remove('active'); el.style.opacity=''; el.style.transition=''; if(cinCb)cinCb(); },350);
+}
+
+// ── END ───────────────────────────────────────────────────────────────────────────
+// ── FEEDBACK ─────────────────────────────────────────────────────────────────────
+let feedbackRating = 0;
+
+document.querySelectorAll('.star').forEach(star => {
+  star.addEventListener('click', () => {
+    feedbackRating = parseInt(star.dataset.v);
+    document.querySelectorAll('.star').forEach((s,i) => {
+      s.classList.toggle('on', i < feedbackRating);
+    });
+  });
+  star.addEventListener('mouseover', () => {
+    const v = parseInt(star.dataset.v);
+    document.querySelectorAll('.star').forEach((s,i) => s.style.opacity = i < v ? '1' : '.3');
+  });
+  star.addEventListener('mouseout', () => {
+    document.querySelectorAll('.star').forEach((s,i) => s.style.opacity = i < feedbackRating ? '1' : '.3');
+  });
+});
+
+function showFeedback() {
+  document.getElementById('feedback-modal').classList.add('active');
+}
+
+function skipFeedback() {
+  document.getElementById('feedback-modal').classList.remove('active');
+}
+
+function submitFeedback() {
+  const comment = document.getElementById('fb-comment').value.trim();
+  const payload = {
+    timestamp: new Date().toISOString(),
+    rating: feedbackRating,
+    score: score,
+    total: QS.length,
+    chapter: 'Chapter II — The Birth of a Nation',
+    comment: comment
+  };
+
+  // Submit to Google Sheets via Apps Script
+  fetch('https://script.google.com/macros/s/AKfycbysN0KOPUTfnqk_vuOZ-BoSHEiP_s77EHoiuBb1zB3lL6n9kTWxACZ79IbmMNamIfodEA/exec', {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(() => console.log('[Feedback] Submitted to Google Sheets'))
+  .catch(e => console.warn('[Feedback] Submission failed:', e));
+
+  // Show thank you immediately
+  document.querySelectorAll('.fb-btns, .star-row, #fb-comment, .fb-sub').forEach(el => el.style.display='none');
+  document.getElementById('fb-thankyou').style.display = 'block';
+  setTimeout(() => document.getElementById('feedback-modal').classList.remove('active'), 2200);
+}
+
+function showEnd() {
+  stopAmbient();
+  try{localStorage.removeItem('fotw_ch2_progress');}catch(e){}
+  document.getElementById('endsc').classList.add('active');
+  setTimeout(showFeedback, 1200);
+  document.getElementById('end-score').textContent=score;
+  document.getElementById('end-of').textContent='/ '+QS.length;
+  const p=score/QS.length;
+  document.getElementById('end-verdict').textContent =
+    p===1  ? "Perfect — all fifty. From the Tea Party to the Constitution, you missed nothing. A masterclass in the founding era." :
+    p>=.9  ? "Exceptional. You traced the full arc — from taxation without representation to a government built to last. Outstanding." :
+    p>=.75 ? "Strong. You understood the shape of the Revolution — defiance, declaration, desperation, and a hard-won peace." :
+    p>=.6  ? "Solid. The details you missed are the most interesting ones — history rewards a second visit." :
+    p>=.4  ? "You witnessed it. From a harbour full of tea to a nation built on paper. Go back and look closer." :
+             "The Revolution is vast and its detail unforgiving. But you were there — from Boston to Yorktown. Go back. History rewards attention.";
+}
+function restartGame() {
+  qIdx=0; score=0; answered=false; lastImg=null;
+  document.getElementById('endsc').classList.remove('active');
+  showCin(0, ()=>showCollage(0, ()=>renderQ()));
+}
+function shareGame() {
+  const url=window.location.href;
+  if(navigator.share){navigator.share({title:'Fly on the Wall — WWI History Game',text:'I scored '+score+'/'+QS.length+' on Fly on the Wall — an immersive WWI history game. Can you beat me?',url});}
+  else{navigator.clipboard.writeText(url).then(()=>{const t=document.getElementById('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);});}
+}
+
+
+
+// ── PLAYABILITY: resume / mute / keyboard ────────────────────────────────────
+function saveProgress(){ try{localStorage.setItem('fotw_ch2_progress',JSON.stringify({qIdx:qIdx,score:score,ts:Date.now()}));}catch(e){} }
+
+function resumeGame(){
+  let save=null; try{save=JSON.parse(localStorage.getItem('fotw_ch2_progress'));}catch(e){}
+  if(!save){ startGame(); return; }
+  qIdx=Math.min(save.qIdx, QS.length-1); score=save.score||0; lastImg=null; streak=0;
+  document.getElementById('splash').classList.remove('active');
+  document.getElementById('game').style.display='block';
+  startAmbient(QS[qIdx].scene);
+  renderQ();
+}
+
+function checkResume(){
+  try{
+    const s=JSON.parse(localStorage.getItem('fotw_ch2_progress')||'null');
+    if(s && s.qIdx>0 && s.qIdx<QS.length){
+      const b=document.getElementById('resume-btn');
+      b.style.display='block';
+      b.textContent='Resume — Question '+(s.qIdx+1)+' of '+QS.length;
+    }
+  }catch(e){}
+  const mb=document.getElementById('mute-btn');
+  if(mb) mb.textContent = isMuted ? '🔇' : '🔊';
+}
+window.addEventListener('load', checkResume);
+
+function toggleMute(){
+  isMuted=!isMuted;
+  try{localStorage.setItem('fotw_muted',isMuted?'1':'0');}catch(e){}
+  document.getElementById('mute-btn').textContent=isMuted?'🔇':'🔊';
+  if(currentAudio)currentAudio.muted=isMuted;
+  if(ambientAudio)ambientAudio.muted=isMuted;
+  if(window.__bgMusic)window.__bgMusic.muted=isMuted;
+  if(window.speechSynthesis&&isMuted)window.speechSynthesis.cancel();
+}
+
+document.addEventListener('keydown',e=>{
+  const nb=document.getElementById('nxtbtn');
+  if((e.key==='Enter'||e.key===' ')&&nb&&nb.classList.contains('on')){e.preventDefault();handleNext();}
+});
+</script>
 </body>
 </html>
