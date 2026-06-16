@@ -480,6 +480,20 @@ const AMBIENT = {
 const AMB_VOL_NARRATION = 0.12;
 const AMB_VOL_QUESTIONS = 0.22;
 let ambientAudio = null;
+let userHasInteracted = false;
+let pendingAmbientScene = -1;
+
+function onUserInteraction() {
+  if (userHasInteracted) return;
+  userHasInteracted = true;
+  if (pendingAmbientScene >= 0) {
+    startAmbient(pendingAmbientScene);
+    pendingAmbientScene = -1;
+  }
+}
+['click','keydown','touchstart'].forEach(e =>
+  document.addEventListener(e, onUserInteraction, {once:false, passive:true})
+);
 let currentAmbientScene = -1;
 
 function startAmbient(sceneIdx) {
@@ -502,6 +516,10 @@ function startAmbient(sceneIdx) {
   a.muted = isMuted;
   a.volume = 0;
   ambientAudio = a;
+  if (!userHasInteracted) {
+    pendingAmbientScene = sceneIdx;
+    return;
+  }
   a.play().then(() => fadeAmbientTo(AMB_VOL_NARRATION)).catch(() => {});
 }
 
