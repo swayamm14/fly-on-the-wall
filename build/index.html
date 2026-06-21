@@ -174,6 +174,58 @@ body{font-family:'Crimson Text',Georgia,serif;color:var(--cream)}
 .fb-submit{font-family:'Source Sans 3',sans-serif;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;background:transparent;border:1px solid var(--gold);color:var(--gold);padding:9px 24px;cursor:pointer;transition:all .2s}
 .fb-submit:hover{background:var(--gold);color:var(--ink)}
 .fb-thankyou{font-family:'Crimson Text',serif;font-size:15px;font-style:italic;color:rgba(240,233,214,.7);padding:1rem 0;display:none}
+#mute-btn{background:transparent;border:1px solid rgba(240,233,214,.2);color:var(--cream);font-size:12px;padding:3px 8px;cursor:pointer;margin-left:8px;vertical-align:middle;transition:border-color .2s}
+#mute-btn:hover{border-color:var(--gold)}
+.choice,.start-btn,.cbtn,.ebtn,#nxtbtn{touch-action:manipulation}
+@media (max-width:600px){
+  #cgrid{grid-template-columns:1fr}
+  .choice{padding:.85rem 1rem;font-size:14px}
+  #qpanel{padding:0 1rem 1.1rem}
+  #ccontent{padding:1.5rem 1.25rem 5.5rem}
+  .qprose{font-size:13px}
+  #hud{padding:.75rem 1rem}
+}
+
+/* ── PULSE ANIMATION ── */
+@keyframes pulse-gold{0%,100%{box-shadow:0 0 0 0 rgba(184,148,63,0);}50%{box-shadow:0 0 0 6px rgba(184,148,63,.45);border-color:var(--gold);color:var(--gold);}}
+.pulse{animation:pulse-gold 1.8s ease-in-out infinite;}
+
+/* ── QUESTION BACKGROUND IMAGE ── */
+#qbg{position:absolute;inset:0;z-index:0;background-size:cover;background-position:center;transition:background-image .5s ease;}
+#qbg-overlay{position:absolute;inset:0;z-index:1;background:linear-gradient(to bottom,rgba(10,8,6,.72) 0%,rgba(10,8,6,.80) 50%,rgba(10,8,6,.88) 100%);}
+#qpanel{position:relative;z-index:2;}
+#cgrid{position:relative;z-index:2;}
+
+/* ── BACK BUTTON IN CINEMATIC ── */
+#cin-back{position:absolute;bottom:1.5rem;left:1.5rem;font-family:'Source Sans 3',sans-serif;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;background:transparent;border:1px solid rgba(240,233,214,.25);color:rgba(240,233,214,.5);padding:8px 16px;cursor:pointer;transition:all .2s;z-index:10;display:none;}
+#cin-back:hover{border-color:rgba(240,233,214,.6);color:var(--cream);}
+
+/* ── HOME BUTTON ── */
+#home-btn{position:fixed;top:0;left:0;height:var(--hud-h,52px);display:flex;align-items:center;padding:0 14px;gap:7px;font-family:'Source Sans 3',sans-serif;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(240,233,214,.55);cursor:pointer;background:transparent;border:none;transition:color .2s;z-index:60;}
+#home-btn:hover{color:var(--gold);}
+#home-btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ── PROMINENT MUTE ── */
+#mute-btn{background:transparent;border:1px solid rgba(240,233,214,.2);color:var(--cream);font-size:13px;padding:5px 10px;cursor:pointer;margin-left:6px;vertical-align:middle;transition:all .2s;border-radius:3px;}
+#mute-btn:hover{border-color:var(--gold);color:var(--gold);}
+
+/* ── SCORE DISPLAY ── */
+.hscore{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;letter-spacing:.02em;}
+.hscore span{color:var(--gold);}
+
+/* ── CHAPTER PROGRESS ON SPLASH ── */
+#ch2-unlock{display:none;margin-top:10px;}
+#ch2-unlock .start-btn{border-color:var(--gold);color:var(--gold);}
+
+/* ── MOBILE ── */
+@media(max-width:600px){
+  #cgrid{grid-template-columns:1fr;}
+  .choice{padding:.85rem 1rem;font-size:14px;}
+  #qpanel{padding:0 1rem 1.1rem;}
+  #ccontent{padding:1.5rem 1.25rem 5.5rem;}
+  .qprose{font-size:13px;}
+  #hud{padding:.75rem 1rem;}
+}
 </style>
 </head>
 <body>
@@ -200,11 +252,14 @@ body{font-family:'Crimson Text',Georgia,serif;color:var(--cream)}
     <div class="mi"><div class="n">~25</div><div class="l">Minutes</div></div>
   </div>
   <button class="start-btn" onclick="startGame()">Enter the Story</button>
-  <div class="snote">Illustrated in the style of Le Petit Journal, 1914 · Narrated by George · Audio included</div>
+  <div id="ch2-unlock"><button class="start-btn" onclick="location.href='chapter2.html'">Continue to Chapter II →</button></div>
+  <button class="start-btn" id="resume-btn" style="display:none;margin-top:9px;border-color:rgba(240,233,214,.3);color:rgba(240,233,214,.7)" onclick="resumeGame()"></button>
+  <div class="snote">Illustrated in the style of Le Petit Journal, 1914 · Narrated by George · Audio included<br><a href="credits.html" style="color:rgba(184,148,63,.6);font-size:10px;letter-spacing:.08em;text-decoration:none;border-bottom:1px solid rgba(184,148,63,.25)">Credits &amp; attributions</a></div>
 </div>
 
 <!-- GAME -->
 <div id="game">
+  <div id="qbg"></div><div id="qbg-overlay"></div>
   <div id="pbar"><div id="pfill" style="width:0%"></div></div>
   <div id="bg-layer">
     <div class="bg-slide" id="bg-a"></div>
@@ -221,14 +276,14 @@ body{font-family:'Crimson Text',Georgia,serif;color:var(--cream)}
       <div id="collage-label"></div>
       <div id="collage-title"></div>
       <div id="collage-sub"></div>
-      <button id="collage-btn" onclick="endCollage()">Begin Questions →</button>
+      <button id="collage-btn" class="pulse" onclick="endCollage()">Begin Questions →</button>
     </div>
   </div>
 
-  <div id="hud">
+  <div id="hud"><button id="home-btn" onclick="goHome()" title="Go home"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</button>
     <div class="hbrand">🪰 Fly on the Wall</div>
     <div class="hscene" id="hscene"></div>
-    <div class="hscore">Score: <span id="hscore">0</span> / <span id="htotal">0</span></div>
+    <div class="hscore">Score: <span id="hscore">0</span> / <span id="htotal">0</span> <button id="mute-btn" onclick="toggleMute()" title="Toggle sound">🔊</button></div>
   </div>
   <div id="sdots"></div>
   <div id="qpanel">
@@ -252,8 +307,8 @@ body{font-family:'Crimson Text',Georgia,serif;color:var(--cream)}
     </div>
     <div id="cdots"></div>
     <div id="cbtns">
-      <button class="cbtn" id="cskip" onclick="skipCin()">Skip</button>
-      <button class="cbtn" id="ccont" onclick="endCin()">Begin Scene →</button>
+      <button id="cin-back" onclick="goBackCinPanel()">← Back</button><button class="cbtn pulse" id="cskip" onclick="skipCin()">Skip</button>
+      <button class="cbtn pulse" id="ccont" onclick="endCin()">Begin Scene →</button>
     </div>
   </div>
 
@@ -262,7 +317,7 @@ body{font-family:'Crimson Text',Georgia,serif;color:var(--cream)}
   <div id="feedback-modal">
     <div id="feedback-box">
       <div class="fb-title">How was the experience?</div>
-      <div class="fb-sub">Your feedback shapes the next chapter</div>
+      <div class="fb-sub">Your feedback will help improve the game</div>
       <div class="star-row" id="star-row">
         <span class="star" data-v="1">★</span>
         <span class="star" data-v="2">★</span>
@@ -290,7 +345,7 @@ body{font-family:'Crimson Text',Georgia,serif;color:var(--cream)}
       <div class="ebtns">
         <button class="ebtn ebtn-g" onclick="restartGame()">Play again</button>
         <button class="ebtn ebtn-g" onclick="shareGame()">Share ↗</button>
-        <button class="ebtn ebtn-gold" onclick="alert('Chapter II — The Western Front — coming soon.')">Chapter II coming soon →</button>
+        <button class="ebtn ebtn-gold" onclick="location.href='chapter2.html'">Begin Chapter II →</button>
       </div>
     </div>
   </div>
@@ -508,6 +563,8 @@ const QS = [
 let qIdx=0, score=0, answered=false, cinAborted=false, cinCb=null, currentCinScene=0;
 let activeBgSlot='a';
 let currentAudio=null;
+let streak=0;
+let isMuted=false; try{isMuted=localStorage.getItem('fotw_muted')==='1';}catch(e){}
 
 // ── AUDIO — pre-generated MP3s from ElevenLabs (George voice) ───────────────────
 // Files live in audio/ folder, generated once via generate_audio.py
@@ -519,6 +576,12 @@ const AUDIO_FILES = {
   'cin_1_3': 'audio/cin_1_3.mp3',
   'cin_2_1': 'audio/cin_2_1.mp3',
   'cin_2_2': 'audio/cin_2_2.mp3',
+  'cin_3_1': 'audio/cin_3_1.mp3',
+  'cin_3_2': 'audio/cin_3_2.mp3',
+  'cin_4_1': 'audio/cin_4_1.mp3',
+  'cin_5_1': 'audio/cin_5_1.mp3',
+  'cin_6_1': 'audio/cin_6_1.mp3',
+  'cin_6_2': 'audio/cin_6_2.mp3',
   'cin_3_1': 'audio/cin_3_1.mp3',
   'cin_3_2': 'audio/cin_3_2.mp3',
   'cin_4_1': 'audio/cin_4_1.mp3',
@@ -569,6 +632,7 @@ function startAmbient(sceneIdx) {
   currentAmbientScene = sceneIdx;
   const a = new Audio(src);
   a.loop = true;
+  a.muted = isMuted;
   a.volume = 0;
   ambientAudio = a;
   a.play().then(() => fadeAmbientTo(AMB_VOL_NARRATION)).catch(() => {});
@@ -600,6 +664,7 @@ function speak(audioKey, text, onDone) {
   if (src) {
     console.log('[Audio] Loading:', src);
     const audio = new Audio(src);
+    audio.muted = isMuted;
     currentAudio = audio;
     audio.oncanplaythrough = function() { console.log('[Audio] Ready:', src); };
     audio.onended = function() { console.log('[Audio] Finished:', src); if (!cinAborted) onDone(); };
@@ -620,6 +685,7 @@ function speak(audioKey, text, onDone) {
 }
 
 function fallbackSpeak(text, onDone) {
+  if (isMuted) { setTimeout(()=>{ if(!cinAborted) onDone(); }, Math.max(2500, text.length*45)); return; }
   const synth = window.speechSynthesis;
   if (!synth) { onDone(); return; }
   synth.cancel();
@@ -765,6 +831,13 @@ function endCollage() {
 
 // ── SPLASH → GAME ─────────────────────────────────────────────────────────────────
 function startGame() {
+  // Reset feedback modal state for replays
+  feedbackRating = 0;
+  document.querySelectorAll('.star').forEach(s => { s.classList.remove('on'); s.style.opacity='.3'; });
+  const fc = document.getElementById('fb-comment'); if(fc) fc.value='';
+  document.querySelectorAll('.fb-btns, .star-row, #fb-comment, .fb-sub').forEach(el => el.style.display='');
+  document.getElementById('fb-thankyou').style.display='none';
+  document.getElementById('feedback-modal').classList.remove('active');
 
   // Audio files pre-generated — no key needed at runtime
   document.getElementById('splash').classList.remove('active');
@@ -794,6 +867,7 @@ function renderQ() {
   const sceneLabels = ['Scene 1 — The Assassination','Scene 2 — Mobilisation','Scene 3 — The Trenches','Scene 4 — The Wider War','Scene 5 — The Turning Point','Scene 6 — The Aftermath'];
   document.getElementById('hscene').textContent = sceneLabels[q.scene] || 'Scene '+(q.scene+1);
   document.getElementById('qcounter').textContent = 'Question ' + (qIdx+1) + ' of ' + QS.length;
+  setQBackground(q.img);
   document.getElementById('hscore').textContent = score;
   document.getElementById('htotal').textContent = qIdx;
   document.getElementById('pfill').style.width = (qIdx/QS.length*100)+'%';
@@ -805,10 +879,11 @@ function renderQ() {
 
   const grid = document.getElementById('cgrid');
   grid.innerHTML = '';
-  q.choices.forEach((c,i) => {
+  const _sh = shuffleChoices(q.choices, q.correct);
+  _sh.choices.forEach((c,i) => {
     const b = document.createElement('button');
     b.className = 'choice'; b.textContent = c;
-    b.onclick = () => pick(i);
+    b.onclick = () => pick(i, i === _sh.correct);
     grid.appendChild(b);
   });
   document.getElementById('fb').classList.remove('on');
@@ -830,17 +905,17 @@ function renderSDots(active) {
 }
 
 // ── ANSWER ────────────────────────────────────────────────────────────────────────
-function pick(idx) {
+function pick(idx, _preOk) {
   if (answered) return;
   answered = true;
   const q = QS[qIdx];
   const btns = document.querySelectorAll('.choice');
   btns.forEach(b => b.disabled=true);
-  const ok = idx===q.correct;
+  const ok = (_preOk !== undefined) ? _preOk : (idx === q.correct);
   btns[idx].classList.add(ok?'correct':'wrong');
-  if(!ok) btns[q.correct].classList.add('correct');
+  if(!ok) { const correctTxt = q.choices[q.correct]; btns.forEach(b=>{ if(b.textContent===correctTxt) b.classList.add('correct'); }); }
   if(ok) {
-    score++;
+    score++; streak++;
     // Correct answer: push in slightly closer
     const el = document.getElementById('bg-a');
     const cur = parseFloat(el.style.transform.match(/scale\(([^)]+)\)/)?.[1]||'1.1');
@@ -851,13 +926,15 @@ function pick(idx) {
   document.getElementById('htotal').textContent = qIdx+1;
   document.getElementById('fb').classList.add('on');
   const lbl = document.getElementById('fblabel');
-  lbl.textContent = ok?'Correct':'Not quite'; lbl.className=ok?'c':'w';
+  if(!ok) streak=0;
+  lbl.textContent = ok ? (streak>=3 ? 'Correct — '+streak+' in a row!' : 'Correct') : 'Not quite';
+  lbl.className = ok ? 'c' : 'w';
   document.getElementById('fbtext').textContent = ok?q.fc:q.fw;
   document.getElementById('nxtbtn').classList.add('on');
 }
 
 function handleNext() {
-  const prev = QS[qIdx].scene; qIdx++;
+  const prev = QS[qIdx].scene; qIdx++; saveProgress();
   if(qIdx>=QS.length) { showEnd(); return; }
   const nextScene = QS[qIdx].scene;
   if(nextScene !== prev) {
@@ -1027,6 +1104,7 @@ function submitFeedback() {
 
 function showEnd() {
   stopAmbient();
+  try{localStorage.removeItem('fotw_ch1_progress'); localStorage.setItem('fotw_ch1_complete','1');}catch(e){}
   document.getElementById('endsc').classList.add('active');
   setTimeout(showFeedback, 1200);
   document.getElementById('end-score').textContent=score;
@@ -1047,11 +1125,123 @@ function restartGame() {
 }
 function shareGame() {
   const url=window.location.href;
-  if(navigator.share){navigator.share({title:'Fly on the Wall — WWI History Game',text:'Can you beat my score? An immersive WWI quiz.',url});}
+  if(navigator.share){navigator.share({title:'Fly on the Wall — WWI History Game',text:'I scored '+score+'/'+QS.length+' on Fly on the Wall — an immersive WWI history game. Can you beat me?',url});}
   else{navigator.clipboard.writeText(url).then(()=>{const t=document.getElementById('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);});}
 }
 
 
+
+// ── PLAYABILITY: resume / mute / keyboard ────────────────────────────────────
+function saveProgress(){ try{localStorage.setItem('fotw_ch1_progress',JSON.stringify({qIdx:qIdx,score:score,ts:Date.now()}));}catch(e){} }
+
+function resumeGame(){
+  let save=null; try{save=JSON.parse(localStorage.getItem('fotw_ch1_progress'));}catch(e){}
+  if(!save){ startGame(); return; }
+  qIdx=Math.min(save.qIdx, QS.length-1); score=save.score||0; lastImg=null; streak=0;
+  document.getElementById('splash').classList.remove('active');
+  document.getElementById('game').style.display='block';
+  startAmbient(QS[qIdx].scene);
+  renderQ();
+}
+
+function checkResume(){
+  try{
+    const s=JSON.parse(localStorage.getItem('fotw_ch1_progress')||'null');
+    if(s && s.qIdx>0 && s.qIdx<QS.length){
+      const b=document.getElementById('resume-btn');
+      b.style.display='block';
+      b.textContent='Resume — Question '+(s.qIdx+1)+' of '+QS.length;
+    }
+  }catch(e){}
+  const mb=document.getElementById('mute-btn');
+  if(mb) mb.textContent = isMuted ? '🔇' : '🔊';
+}
+window.addEventListener('load', checkResume);
+
+function toggleMute(){
+  isMuted=!isMuted;
+  try{localStorage.setItem('fotw_muted',isMuted?'1':'0');}catch(e){}
+  document.getElementById('mute-btn').textContent=isMuted?'🔇':'🔊';
+  if(currentAudio)currentAudio.muted=isMuted;
+  if(ambientAudio)ambientAudio.muted=isMuted;
+  if(window.__bgMusic)window.__bgMusic.muted=isMuted;
+  if(window.speechSynthesis&&isMuted)window.speechSynthesis.cancel();
+}
+
+document.addEventListener('keydown',e=>{
+  const nb=document.getElementById('nxtbtn');
+  if((e.key==='Enter'||e.key===' ')&&nb&&nb.classList.contains('on')){e.preventDefault();handleNext();}
+});
+
+// ── BACK NAV ─────────────────────────────────────────────────────────────────
+let cinHistory = []; // stack of {panelIdx, sceneIdx}
+let currentPanelIdx = 0;
+
+function updateCinBack() {
+  const btn = document.getElementById('cin-back');
+  if (!btn) return;
+  btn.style.display = (cinHistory.length > 0) ? 'block' : 'none';
+}
+
+function goBackCinPanel() {
+  if (cinHistory.length === 0) return;
+  const prev = cinHistory.pop();
+  cinAborted = true;
+  stopAudio();
+  currentPanelIdx = prev.panelIdx;
+  const panels = CIN[prev.sceneIdx] ? CIN[prev.sceneIdx].panels : [];
+  if (panels.length > 0) runCinPanel(panels, prev.panelIdx);
+  updateCinBack();
+}
+
+// ── HOME BUTTON ──────────────────────────────────────────────────────────────
+function goHome() {
+  stopAudio();
+  stopAmbient();
+  cinAborted = true;
+  // Hide all screens
+  document.querySelectorAll('.screen,.screen-active').forEach(s => s.classList.remove('active'));
+  document.getElementById('game').style.display = 'none';
+  document.getElementById('endsc').classList.remove('active');
+  document.getElementById('cin').style.display = 'none';
+  document.getElementById('collage').style.display = 'none';
+  // Show splash
+  document.getElementById('splash').classList.add('active');
+  // Reset state
+  qIdx = 0; score = 0; streak = 0; answered = false;
+  checkResume();
+  checkChapterUnlock();
+}
+
+// ── CHAPTER UNLOCK (Ch1 complete → show Ch2 button) ─────────────────────────
+function checkChapterUnlock() {
+  try {
+    if (localStorage.getItem('fotw_ch1_complete') === '1') {
+      document.getElementById('ch2-unlock').style.display = 'block';
+    }
+  } catch(e) {}
+}
+window.addEventListener('load', checkChapterUnlock);
+
+// ── QUESTION BACKGROUND IMAGE ────────────────────────────────────────────────
+function setQBackground(imgKey) {
+  const bg = document.getElementById('qbg');
+  if (!bg || !imgKey) return;
+  const src = IMGS[imgKey];
+  if (src) bg.style.backgroundImage = 'url(' + src + ')';
+}
+
+// ── RANDOMISE ANSWER CHOICES ─────────────────────────────────────────────────
+function shuffleChoices(choices, correctIdx) {
+  const correctText = choices[correctIdx];
+  const arr = choices.map((c, i) => ({text: c, isCorrect: i === correctIdx}));
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  const newCorrect = arr.findIndex(a => a.isCorrect);
+  return { choices: arr.map(a => a.text), correct: newCorrect };
+}
 </script>
 </body>
 </html>
