@@ -187,11 +187,28 @@ body{font-family:'Crimson Text',Georgia,serif;color:var(--cream)}
 @keyframes pulse-gold{0%,100%{box-shadow:0 0 0 0 rgba(184,148,63,0);}50%{box-shadow:0 0 0 6px rgba(184,148,63,.45);border-color:var(--gold);color:var(--gold);}}
 .pulse{animation:pulse-gold 1.8s ease-in-out infinite;}
 
-/* ── QUESTION BACKGROUND IMAGE ── */
-#qbg{position:absolute;inset:0;z-index:0;background-size:cover;background-position:center;transition:background-image .5s ease;}
-#qbg-overlay{position:absolute;inset:0;z-index:1;background:linear-gradient(to bottom,rgba(10,8,6,.72) 0%,rgba(10,8,6,.80) 50%,rgba(10,8,6,.88) 100%);}
-#qpanel{position:relative;z-index:2;}
-#cgrid{position:relative;z-index:2;}
+/* ── QUESTION SPLIT-SCREEN ── */
+#qzone{display:flex;flex-direction:row;flex:1;min-height:0;}
+#qbg{flex:0 0 42%;background-size:cover;background-position:center;transition:background-image .6s ease;position:relative;min-height:0;}
+#qbg::after{content:'';position:absolute;inset:0;background:linear-gradient(to right,rgba(10,8,6,0) 55%,rgba(10,8,6,1) 100%);}
+#qbg-overlay{display:none;}
+#qright{flex:1;background:rgba(10,8,6,.97);display:flex;flex-direction:column;overflow-y:auto;}
+#sdots{padding:.6rem 2rem 0;}
+#qpanel{flex:1;padding:1rem 2rem .5rem;}
+#cgrid{padding:.5rem 2rem 1.5rem;display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.choice{font-size:13px;padding:.7rem .9rem;}
+#fb{padding:0 2rem;}
+#nxtbtn{margin:0 2rem 1.5rem;}
+@media(max-width:800px){
+  #qzone{flex-direction:column;}
+  #qbg{flex:0 0 180px;width:100%;}
+  #qbg::after{background:linear-gradient(to bottom,rgba(10,8,6,0) 40%,rgba(10,8,6,1) 100%);}
+  #sdots{padding:.4rem 1rem 0;}
+  #qpanel{padding:.75rem 1rem .25rem;}
+  #cgrid{grid-template-columns:1fr;padding:.5rem 1rem 1rem;}
+  #fb{padding:0 1rem;}
+  #nxtbtn{margin:0 1rem 1rem;}
+}
 
 /* ── BACK BUTTON IN CINEMATIC ── */
 #cin-back{position:absolute;bottom:1.5rem;left:1.5rem;font-family:'Source Sans 3',sans-serif;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;background:transparent;border:1px solid rgba(240,233,214,.25);color:rgba(240,233,214,.5);padding:8px 16px;cursor:pointer;transition:all .2s;z-index:10;display:none;}
@@ -247,7 +264,6 @@ body{font-family:'Crimson Text',Georgia,serif;color:var(--cream)}
 
 <!-- GAME -->
 <div id="game">
-  <div id="qbg"></div><div id="qbg-overlay"></div>
   <div id="pbar"><div id="pfill" style="width:0%"></div></div>
   <div id="bg-layer">
     <div class="bg-slide" id="bg-a"></div>
@@ -273,6 +289,7 @@ body{font-family:'Crimson Text',Georgia,serif;color:var(--cream)}
     <div class="hscene" id="hscene"></div>
     <div class="hscore">Score: <span id="hscore">0</span> / <span id="htotal">0</span> <button id="mute-btn" onclick="toggleMute()" title="Toggle sound">🔊</button></div>
   </div>
+  <div id="qzone"><div id="qbg"></div><div id="qbg-overlay"></div><div id="qright">
   <div id="sdots"></div>
   <div id="qpanel">
     <div style="display:flex;align-items:center;justify-content:space-between;max-width:620px;margin-bottom:.3rem"><div class="qloc" id="qloc"></div><div id="qcounter" style="font-family:'Source Sans 3',sans-serif;font-size:9px;font-weight:600;letter-spacing:.1em;color:rgba(240,233,214,.35)"></div></div>
@@ -284,7 +301,7 @@ body{font-family:'Crimson Text',Georgia,serif;color:var(--cream)}
       <div id="fblabel"></div><div id="fbtext"></div>
       <button id="nxtbtn" onclick="handleNext()">Continue →</button>
     </div>
-  </div>
+  </div></div><!-- /qright /qzone -->
 
   <!-- CINEMATIC -->
   <div id="cin">
