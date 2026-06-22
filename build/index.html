@@ -257,9 +257,19 @@ body{font-family:'Crimson Text',Georgia,serif;color:var(--cream)}
     <div class="mi"><div class="n">~25</div><div class="l">Minutes</div></div>
   </div>
   <button class="start-btn" onclick="startGame()">Enter the Story</button>
-  <div id="ch2-unlock"><button class="start-btn" onclick="location.href='chapter2.html'">Continue to Chapter II →</button></div>
+  <div id="ch2-unlock"><button class="start-btn" onclick="loadChapter2()">Continue to Chapter II →</button></div>
   <button class="start-btn" id="resume-btn" style="display:none;margin-top:9px;border-color:rgba(240,233,214,.3);color:rgba(240,233,214,.7)" onclick="resumeGame()"></button>
   <div class="snote">Illustrated in the style of Le Petit Journal, 1914 · Narrated by George · Audio included<br><a href="credits.html" style="color:rgba(184,148,63,.6);font-size:10px;letter-spacing:.08em;text-decoration:none;border-bottom:1px solid rgba(184,148,63,.25)">Credits &amp; attributions</a></div>
+</div>
+
+<!-- CH2 LOADER -->
+<div id="ch2-loader" style="display:none;position:fixed;inset:0;z-index:300;background:#0a0806;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;">
+  <div style="font-size:40px;filter:drop-shadow(0 0 30px rgba(184,148,63,.6))">🪰</div>
+  <div style="font-family:'Source Sans 3',sans-serif;font-size:10px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:rgba(184,148,63,.7)" id="ch2-loader-label">Preparing Chapter II</div>
+  <div style="width:200px;height:2px;background:rgba(240,233,214,.1);border-radius:2px;">
+    <div id="ch2-loader-fill" style="height:100%;width:0%;background:linear-gradient(to right,#b8943f,#d4af6a);border-radius:2px;transition:width .3s ease;box-shadow:0 0 8px rgba(184,148,63,.5)"></div>
+  </div>
+  <div style="font-family:'Crimson Text',serif;font-size:13px;font-style:italic;color:rgba(240,233,214,.3)" id="ch2-loader-sub">Loading assets...</div>
 </div>
 
 <!-- GAME -->
@@ -350,7 +360,7 @@ body{font-family:'Crimson Text',Georgia,serif;color:var(--cream)}
       <div class="ebtns">
         <button class="ebtn ebtn-g" onclick="restartGame()">Play again</button>
         <button class="ebtn ebtn-g" onclick="shareGame()">Share ↗</button>
-        <button class="ebtn ebtn-gold" onclick="location.href='chapter2.html'">Begin Chapter II →</button>
+        <button class="ebtn ebtn-gold" onclick="loadChapter2()">Begin Chapter II →</button>
       </div>
     </div>
   </div>
@@ -799,6 +809,7 @@ function endCollage() {
 
 // ── SPLASH → GAME ─────────────────────────────────────────────────────────────────
 function startGame() {
+  sessionStorage.setItem('fotw_interacted','1');
   feedbackRating = 0;
   document.querySelectorAll('.star').forEach(s => { s.classList.remove('on'); s.style.opacity='.3'; });
   const fc = document.getElementById('fb-comment'); if(fc) fc.value='';
@@ -1202,6 +1213,78 @@ function shuffleChoices(choices, correctIdx) {
   }
   const newCorrect = arr.findIndex(a => a.isCorrect);
   return { choices: arr.map(a => a.text), correct: newCorrect };
+}
+
+// ── CHAPTER 2 LOADER ──────────────────────────────────────────────────────────
+function loadChapter2() {
+  const loader = document.getElementById('ch2-loader');
+  const fill   = document.getElementById('ch2-loader-fill');
+  const label  = document.getElementById('ch2-loader-label');
+  const sub    = document.getElementById('ch2-loader-sub');
+  loader.style.display = 'flex';
+
+  // Chapter 2 assets to preload
+  const ch2Images = [
+    'images/boston_harbour.jpg','images/independence_hall.jpg',
+    'images/valley_forge.jpg','images/crossing_delaware.jpg',
+    'images/yorktown.jpg','images/constitution.jpg'
+  ];
+  const ch2Audio = [
+    'chapter2_audio/cin_1_1.mp3','chapter2_audio/cin_1_2.mp3','chapter2_audio/cin_1_3.mp3',
+    'chapter2_audio/cin_2_1.mp3','chapter2_audio/cin_2_2.mp3',
+    'chapter2_audio/cin_3_1.mp3','chapter2_audio/cin_3_2.mp3',
+    'chapter2_audio/cin_4_1.mp3','chapter2_audio/cin_5_1.mp3',
+    'chapter2_audio/cin_6_1.mp3','chapter2_audio/cin_6_2.mp3'
+  ];
+  const ch2Ambient = [
+    'audio/amb_boston.mp3','audio/amb_philadelphia.mp3','audio/amb_valley_forge.mp3',
+    'audio/amb_wider_war.mp3','audio/amb_yorktown.mp3','audio/amb_constitution.mp3'
+  ];
+  const all = [...ch2Images, ...ch2Audio, ...ch2Ambient];
+  const total = all.length;
+  let loaded = 0;
+
+  const labels = [
+    'Crossing to Philadelphia...','Lighting the torches...','Loading the muskets...',
+    'Unfurling the flags...','Setting the scene...','Almost there...'
+  ];
+  let labelIdx = 0;
+  const labelInterval = setInterval(() => {
+    labelIdx = (labelIdx + 1) % labels.length;
+    label.textContent = labels[labelIdx];
+  }, 1800);
+
+  function onLoad() {
+    loaded++;
+    const pct = Math.round((loaded / total) * 100);
+    fill.style.width = pct + '%';
+    sub.textContent = loaded + ' of ' + total + ' assets loaded';
+    if (loaded >= total) {
+      clearInterval(labelInterval);
+      label.textContent = 'Ready';
+      sessionStorage.setItem('fotw_interacted', '1');
+      setTimeout(() => { location.href = 'chapter2.html?from=ch1'; }, 600);
+    }
+  }
+
+  ch2Images.forEach(src => {
+    const img = new Image();
+    img.onload = img.onerror = onLoad;
+    img.src = src;
+  });
+  [...ch2Audio, ...ch2Ambient].forEach(src => {
+    const a = new Audio();
+    a.preload = 'auto';
+    a.oncanplaythrough = a.onerror = onLoad;
+    a.src = src;
+  });
+
+  // Fallback — navigate after 8 seconds regardless
+  setTimeout(() => {
+    clearInterval(labelInterval);
+    sessionStorage.setItem('fotw_interacted', '1');
+    location.href = 'chapter2.html?from=ch1';
+  }, 8000);
 }
 </script>
 </body>

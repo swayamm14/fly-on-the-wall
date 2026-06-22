@@ -540,12 +540,19 @@ const AMBIENT = {
 const AMB_VOL_NARRATION = 0.12;
 const AMB_VOL_QUESTIONS = 0.22;
 let ambientAudio = null;
-let userHasInteracted = false;
+// If arriving from Chapter 1 (or any previous interaction), mark as interacted
+let userHasInteracted = !!(
+  document.referrer.includes('index.html') ||
+  document.referrer.includes('fly-on-the-wall') ||
+  sessionStorage.getItem('fotw_interacted') === '1' ||
+  new URLSearchParams(location.search).get('from') === 'ch1'
+);
 let pendingAmbientScene = -1;
 
 function onUserInteraction() {
   if (userHasInteracted) return;
   userHasInteracted = true;
+  sessionStorage.setItem('fotw_interacted', '1');
   if (pendingAmbientScene >= 0) {
     startAmbient(pendingAmbientScene);
     pendingAmbientScene = -1;
@@ -554,6 +561,12 @@ function onUserInteraction() {
 ['click','keydown','touchstart'].forEach(e =>
   document.addEventListener(e, onUserInteraction, {once:false, passive:true})
 );
+// If already interacted (cross-chapter), trigger ambient immediately on load
+if (userHasInteracted) {
+  window.addEventListener('load', () => {
+    setTimeout(() => startAmbient(0), 300);
+  });
+}
 let currentAmbientScene = -1;
 
 function startAmbient(sceneIdx) {
