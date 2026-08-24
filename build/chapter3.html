@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Fly on the Wall — Chapter II: The Birth of a Nation. An immersive American Revolution history quiz.">
+<title>Fly on the Wall — Chapter III</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#f0e9d6;--ink:#1a140d;--gold:#b8943f;--gold-l:#d4af6a}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#0a0806;overflow:hidden}
+body{font-family:'Crimson Text',Georgia,serif;color:var(--cream)}
+
+/* ── SCREENS ── */
+.screen{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center}
+.screen.active{display:flex}
+
+/* ── SPLASH ── */
+#splash{background:radial-gradient(ellipse at 50% 55%,#1e180e,#0a0806 70%);text-align:center;padding:2rem;z-index:10}
+.fly{font-size:44px;margin-bottom:.75rem;filter:grayscale(1)brightness(.6)}
+.ch-label{font-family:'Source Sans 3',sans-serif;font-size:10px;font-weight:600;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem}
+.main-title{font-family:'Playfair Display',serif;font-size:clamp(26px,5vw,46px);font-weight:700;color:var(--cream);line-height:1.1;margin-bottom:.35rem}
+.main-sub{font-family:'Crimson Text',serif;font-size:17px;font-style:italic;color:rgba(240,233,214,.52);max-width:400px;line-height:1.65;margin-bottom:1.5rem}
+.rule{width:50px;height:1px;background:var(--gold);margin:0 auto 1.5rem}
+.meta-row{display:flex;gap:2.5rem;margin-bottom:1.75rem}
+.mi .n{font-family:'Playfair Display',serif;font-size:26px;color:var(--cream)}
+.mi .l{font-family:'Source Sans 3',sans-serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(240,233,214,.28);margin-top:2px}
+
+.start-btn{width:100%;max-width:340px;font-family:'Source Sans 3',sans-serif;font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;background:transparent;border:1px solid var(--gold);color:var(--gold);padding:13px 40px;cursor:pointer;transition:all .25s}
+.start-btn:hover{background:var(--gold);color:var(--ink)}
+.snote{font-family:'Source Sans 3',sans-serif;font-size:10px;color:rgba(240,233,214,.18);margin-top:1rem;max-width:340px;text-align:center;line-height:1.6}
+
+/* ── GAME ── */
+#game{background:#0a0806;display:none;position:absolute;inset:0}
+#game.active{display:block}
+
+/* ── BACKGROUND SYSTEM ── */
+/* Two image layers for cross-dissolve pan transitions */
+#bg-layer{position:absolute;inset:0;overflow:hidden}
+.bg-slide{position:absolute;inset:-20%;width:140%;height:140%;background-size:cover;background-position:center;transform-origin:center center}
+#bg-a{z-index:1}
+#bg-b{z-index:2;opacity:0}
+#bg-overlay{position:absolute;inset:0;z-index:3;background:linear-gradient(to bottom,rgba(10,8,6,.52)0%,rgba(10,8,6,.1)38%,rgba(10,8,6,.1)55%,rgba(10,8,6,.94)100%)}
+#bg-vignette{position:absolute;inset:0;z-index:4;box-shadow:inset 0 0 180px rgba(10,8,6,.85)}
+#bg-grain{position:absolute;inset:0;z-index:5;opacity:.18;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");mix-blend-mode:overlay}
+#bg-sepia{position:absolute;inset:0;z-index:6;background:rgba(80,50,15,.1);mix-blend-mode:multiply;pointer-events:none}
+
+/* ── COLLAGE RECAP ── */
+#collage{position:absolute;inset:0;z-index:45;display:none;background:#0a0806}
+#collage.active{display:block}
+.collage-grid{position:absolute;inset:0;display:grid;gap:3px;padding:3px}
+.collage-cell{background-size:cover;background-position:center;opacity:0;transition:opacity .5s ease;filter:sepia(.4)brightness(.7)}
+.collage-cell.on{opacity:1}
+#collage-overlay{position:absolute;inset:0;background:rgba(10,8,6,.55)}
+#collage-text{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:2;text-align:center;padding:2rem}
+#collage-label{font-family:'Source Sans 3',sans-serif;font-size:9px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem;opacity:0;transition:opacity .5s .4s}
+#collage-title{font-family:'Playfair Display',serif;font-size:clamp(20px,4vw,36px);font-weight:700;color:var(--cream);margin-bottom:.75rem;opacity:0;transform:translateY(12px);transition:opacity .6s .5s,transform .6s .5s}
+#collage-sub{font-family:'Crimson Text',serif;font-size:15px;font-style:italic;color:rgba(240,233,214,.65);margin-bottom:1.5rem;opacity:0;transition:opacity .6s .7s}
+#collage-btn{font-family:'Source Sans 3',sans-serif;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;background:transparent;border:1px solid var(--gold);color:var(--gold);padding:11px 28px;cursor:pointer;transition:all .2s;opacity:0;transition:opacity .5s .9s}
+#collage-btn:hover{background:var(--gold);color:var(--ink)}
+#collage-label.in,#collage-title.in,#collage-sub.in,#collage-btn.in{opacity:1;transform:translateY(0)}
+
+/* ── HUD / PROGRESS ── */
+#pbar{position:absolute;top:0;left:0;right:0;height:3px;background:rgba(240,233,214,.07);z-index:30}
+#pfill{height:100%;background:linear-gradient(to right,var(--gold),var(--gold-l));transition:width .5s ease;box-shadow:0 0 8px rgba(184,148,63,.35)}
+#hud{position:absolute;top:0;left:0;right:0;z-index:20;padding:.9rem 1.5rem;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(to bottom,rgba(10,8,6,.7),transparent)}
+#hud{flex-wrap:wrap;align-items:flex-start;padding-top:.3rem;}.hbrand{font-family:'Source Sans 3',sans-serif;font-size:10px;font-weight:300;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+.hscene{font-family:'Source Sans 3',sans-serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(240,233,214,.32)}
+.hscore{font-family:'Source Sans 3',sans-serif;font-size:11px;color:rgba(240,233,214,.4)}
+.hscore span{color:var(--cream);font-weight:600}
+#sdots{position:absolute;top:50px;left:50%;transform:translateX(-50%);display:flex;gap:7px;z-index:20}
+.sdot{width:5px;height:5px;border-radius:50%;background:rgba(240,233,214,.14);transition:all .3s}
+.sdot.done{background:rgba(184,148,63,.4)}
+.sdot.active{background:var(--gold);width:18px;border-radius:3px}
+
+/* ── QUESTION PANEL ── */
+#qpanel{position:absolute;bottom:0;left:0;right:0;z-index:20;padding:0 1.5rem 1.5rem;transition:opacity .35s,transform .35s}
+#qpanel.out{opacity:0;transform:translateY(10px);pointer-events:none}
+.qloc{font-family:'Source Sans 3',sans-serif;font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:.3rem}
+.qdate{font-family:'Playfair Display',serif;font-size:clamp(15px,2.5vw,22px);font-style:italic;color:var(--cream);margin-bottom:.5rem;line-height:1.2}
+.qprose{font-size:13.5px;line-height:1.78;color:rgba(240,233,214,.73);max-width:620px;margin-bottom:.85rem;text-shadow:0 1px 6px rgba(10,8,6,.95)}
+.qtext{font-family:'Playfair Display',serif;font-size:clamp(13px,2vw,16px);font-weight:600;color:var(--cream);margin-bottom:.8rem;max-width:620px;line-height:1.4;text-shadow:0 1px 8px rgba(10,8,6,1)}
+#cgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px;max-width:620px}
+.choice{background:rgba(5,3,1,.63);border:1px solid rgba(240,233,214,.14);padding:.65rem .9rem;font-family:'Crimson Text',serif;font-size:13.5px;color:rgba(240,233,214,.78);cursor:pointer;text-align:left;transition:border-color .13s,background .13s;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);line-height:1.4}
+.choice:hover:not(:disabled){border-color:var(--gold-l);background:rgba(184,148,63,.1);color:var(--cream)}
+.choice.correct{border-color:#4a9e5c;background:rgba(74,158,92,.15);color:#b8e8c0}
+.choice.wrong{border-color:#9e4a3a;background:rgba(158,74,58,.15);color:#e8b8b0}
+.choice:disabled{cursor:default}
+#fb{max-width:620px;margin-top:.6rem;background:rgba(5,3,1,.8);border-left:2px solid var(--gold);padding:.75rem 1rem;backdrop-filter:blur(12px);display:none}
+#fb.on{display:block}
+#fblabel{font-family:'Source Sans 3',sans-serif;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px}
+#fblabel.c{color:#4a9e5c}
+#fblabel.w{color:var(--gold-l)}
+#fbtext{font-size:13px;line-height:1.72;color:rgba(240,233,214,.76)}
+#nxtbtn{margin-top:.7rem;font-family:'Source Sans 3',sans-serif;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;background:transparent;border:1px solid rgba(240,233,214,.22);color:rgba(240,233,214,.82);padding:9px 22px;cursor:pointer;transition:all .2s;display:none}
+#nxtbtn.on{display:inline-block}
+#nxtbtn:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ── CINEMATIC ── */
+#cin{position:absolute;inset:0;z-index:50;background:#0a0806;display:none}
+#cin.active{display:block}
+#cpanels{position:absolute;inset:0}
+.cpanel{position:absolute;inset:-20%;width:140%;height:140%;opacity:0;transition:opacity 1.4s ease;background-size:cover;background-position:center;will-change:transform}
+.cpanel.on{opacity:1}
+/* Pan directions for transition feel */
+.cpanel.pan-left{animation:panL 18s linear forwards}
+.cpanel.pan-right{animation:panR 18s linear forwards}
+.cpanel.zoom-out{animation:zoomOut 12s ease-out forwards}
+@keyframes panL{from{transform:translateX(0) scale(1.15)}to{transform:translateX(-5%) scale(1.05)}}
+@keyframes panR{from{transform:translateX(-5%) scale(1.05)}to{transform:translateX(0) scale(1.15)}}
+@keyframes zoomOut{from{transform:scale(1.22)}to{transform:scale(1.05)}}
+.cpanel-dim{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(10,8,6,.35),rgba(10,8,6,.72))}
+#ccontent{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:2rem 2.5rem 4.5rem;z-index:5}
+#cscnum{font-family:'Source Sans 3',sans-serif;font-size:9px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:.35rem;opacity:0;transition:opacity .6s}
+#ctitle{font-family:'Playfair Display',serif;font-size:clamp(22px,5vw,50px);font-weight:700;color:var(--cream);line-height:1.1;margin-bottom:.8rem;opacity:0;transform:translateY(16px);transition:opacity .7s .15s,transform .7s .15s}
+#cnarr{font-family:'Crimson Text',serif;font-size:clamp(14px,2vw,19px);font-style:italic;color:rgba(240,233,214,.82);max-width:660px;line-height:1.82;min-height:70px}
+#ccursor{display:inline-block;width:2px;height:.9em;background:var(--gold);vertical-align:middle;animation:blink .75s step-end infinite;margin-left:2px}
+@keyframes blink{50%{opacity:0}}
+#cdots{position:absolute;bottom:1.75rem;left:50%;transform:translateX(-50%);display:flex;gap:7px;z-index:10}
+.cdot{width:5px;height:5px;border-radius:50%;background:rgba(240,233,214,.18)}
+.cdot.on{background:var(--gold)}
+#cbtns{position:absolute;bottom:1.5rem;right:1.5rem;display:flex;gap:9px;z-index:10}
+.cbtn{font-family:'Source Sans 3',sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:rgba(5,3,1,.6);border:1px solid rgba(240,233,214,.22);color:rgba(240,233,214,.58);padding:9px 18px;cursor:pointer;backdrop-filter:blur(4px);transition:all .2s;display:none}
+.cbtn.on{display:inline-block}
+.cbtn:hover{border-color:var(--gold);color:var(--gold)}
+#ccont{border-color:var(--gold);color:var(--gold)}
+#ccont:hover{background:var(--gold);color:var(--ink)}
+
+/* ── END ── */
+#endsc{position:absolute;inset:0;z-index:60;background:#0a0806;display:none;flex-direction:column;align-items:center;justify-content:center;padding:2rem}
+#endsc.active{display:flex}
+.einner{max-width:460px;text-align:center}
+.efly{font-size:34px;margin-bottom:.7rem;filter:grayscale(1)brightness(.55)}
+.ech{font-family:'Source Sans 3',sans-serif;font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:.4rem}
+.etitle{font-family:'Playfair Display',serif;font-size:30px;font-weight:700;color:var(--cream);margin-bottom:.2rem}
+.esub{font-size:16px;font-style:italic;color:rgba(240,233,214,.38);margin-bottom:1.5rem}
+.ering{width:104px;height:104px;border-radius:50%;border:1.5px solid var(--gold);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 1.1rem}
+.ebig{font-family:'Playfair Display',serif;font-size:34px;color:var(--cream);line-height:1}
+.eof{font-family:'Source Sans 3',sans-serif;font-size:10px;letter-spacing:.1em;color:rgba(240,233,214,.3)}
+.everdict{font-size:14px;line-height:1.75;color:rgba(240,233,214,.62);margin-bottom:1.5rem}
+.ebtns{display:flex;gap:9px;justify-content:center;flex-wrap:wrap}
+.ebtn{font-family:'Source Sans 3',sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:11px 26px;cursor:pointer;transition:all .2s}
+.ebtn-g{background:transparent;border:1px solid rgba(240,233,214,.22);color:rgba(240,233,214,.5)}
+.ebtn-g:hover{border-color:var(--gold);color:var(--gold)}
+.ebtn-gold{background:transparent;border:1px solid var(--gold);color:var(--gold)}
+.ebtn-gold:hover{background:var(--gold);color:var(--ink)}
+#toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(80px);background:rgba(184,148,63,.95);color:var(--ink);font-family:'Source Sans 3',sans-serif;font-size:12px;font-weight:600;padding:10px 20px;z-index:100;transition:transform .35s;pointer-events:none}
+#toast.show{transform:translateX(-50%) translateY(0)}
+
+/* ── INTRO VIDEO ── */
+#intro-skip{position:absolute;bottom:2rem;right:2rem;font-family:'Source Sans 3',sans-serif;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.25);background:rgba(0,0,0,.4);padding:9px 18px;cursor:pointer;transition:all .2s;backdrop-filter:blur(4px)}
+#intro-skip:hover{color:#fff;border-color:rgba(255,255,255,.6)}
+#intro-fly-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;transition:opacity .5s}
+#intro-fly-overlay span{font-size:80px;filter:drop-shadow(0 0 40px rgba(184,148,63,.8))}
+/* Feedback modal */
+#feedback-modal{position:fixed;inset:0;z-index:80;background:rgba(10,8,6,.85);display:none;align-items:center;justify-content:center;padding:1.5rem;backdrop-filter:blur(6px)}
+#feedback-modal.active{display:flex}
+#feedback-box{background:#121008;border:1px solid rgba(184,148,63,.3);border-radius:8px;padding:2rem;width:100%;max-width:420px;text-align:center}
+#feedback-box .fb-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--cream);margin-bottom:.3rem}
+#feedback-box .fb-sub{font-family:'Crimson Text',serif;font-size:14px;font-style:italic;color:rgba(240,233,214,.5);margin-bottom:1.5rem}
+.star-row{display:flex;justify-content:center;gap:10px;margin-bottom:1.5rem}
+.star{font-size:28px;cursor:pointer;opacity:.3;transition:opacity .15s,transform .15s;user-select:none}
+.star:hover,.star.on{opacity:1;transform:scale(1.15)}
+#fb-comment{width:100%;background:rgba(240,233,214,.05);border:1px solid rgba(240,233,214,.15);color:var(--cream);font-family:'Crimson Text',serif;font-size:14px;padding:.75rem 1rem;border-radius:4px;resize:none;height:80px;outline:none;margin-bottom:1.25rem}
+#fb-comment::placeholder{color:rgba(240,233,214,.25)}
+.fb-btns{display:flex;gap:10px;justify-content:center}
+.fb-skip{font-family:'Source Sans 3',sans-serif;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;background:transparent;border:1px solid rgba(240,233,214,.2);color:rgba(240,233,214,.45);padding:9px 20px;cursor:pointer;transition:all .2s}
+.fb-skip:hover{border-color:rgba(240,233,214,.4);color:rgba(240,233,214,.7)}
+.fb-submit{font-family:'Source Sans 3',sans-serif;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;background:transparent;border:1px solid var(--gold);color:var(--gold);padding:9px 24px;cursor:pointer;transition:all .2s}
+.fb-submit:hover{background:var(--gold);color:var(--ink)}
+.fb-thankyou{font-family:'Crimson Text',serif;font-size:15px;font-style:italic;color:rgba(240,233,214,.7);padding:1rem 0;display:none}
+#mute-btn{background:transparent;border:1px solid rgba(240,233,214,.2);color:var(--cream);font-size:12px;padding:3px 8px;cursor:pointer;margin-left:8px;vertical-align:middle;transition:border-color .2s}
+#mute-btn:hover{border-color:var(--gold)}
+.choice,.start-btn,.cbtn,.ebtn,#nxtbtn{touch-action:manipulation}
+@media (max-width:600px){
+  #cgrid{grid-template-columns:1fr}
+  .choice{padding:.85rem 1rem;font-size:14px}
+  #qpanel{padding:0 1rem 1.1rem}
+  #ccontent{padding:1.5rem 1.25rem 5.5rem}
+  .qprose{font-size:13px}
+  #hud{padding:.75rem 1rem}
+}
+
+/* ── PULSE ANIMATION ── */
+@keyframes pulse-gold{0%,100%{box-shadow:0 0 0 0 rgba(184,148,63,0);}50%{box-shadow:0 0 0 6px rgba(184,148,63,.45);border-color:var(--gold);color:var(--gold);}}
+.pulse{animation:pulse-gold 1.8s ease-in-out infinite;}
+
+/* ── QUESTION SPLIT-SCREEN ── */
+#qzone{display:flex;flex-direction:row;flex:1;min-height:0;}
+#qbg{flex:0 0 42%;background-size:cover;background-position:center;transition:background-image .6s ease;position:relative;min-height:0;}
+#qbg::after{content:'';position:absolute;inset:0;background:linear-gradient(to right,rgba(10,8,6,0) 55%,rgba(10,8,6,1) 100%);}
+#qbg-overlay{display:none;}
+#qright{flex:1;background:rgba(10,8,6,.97);display:flex;flex-direction:column;overflow-y:auto;}
+#sdots{padding:.6rem 2rem 0;}
+#qpanel{flex:1;padding:1rem 2rem .5rem;}
+#cgrid{padding:.5rem 2rem 1.5rem;display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.choice{font-size:13px;padding:.7rem .9rem;}
+#fb{padding:0 2rem;}
+#nxtbtn{margin:0 2rem 1.5rem;}
+@media(max-width:800px){
+  #qzone{flex-direction:column;}
+  #qbg{flex:0 0 180px;width:100%;}
+  #qbg::after{background:linear-gradient(to bottom,rgba(10,8,6,0) 40%,rgba(10,8,6,1) 100%);}
+  #sdots{padding:.4rem 1rem 0;}
+  #qpanel{padding:.75rem 1rem .25rem;}
+  #cgrid{grid-template-columns:1fr;padding:.5rem 1rem 1rem;}
+  #fb{padding:0 1rem;}
+  #nxtbtn{margin:0 1rem 1rem;}
+}
+
+/* ── BACK BUTTON IN CINEMATIC ── */
+#cin-back{position:absolute;bottom:1.5rem;left:1.5rem;font-family:'Source Sans 3',sans-serif;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;background:transparent;border:1px solid rgba(240,233,214,.25);color:rgba(240,233,214,.5);padding:8px 16px;cursor:pointer;transition:all .2s;z-index:10;display:none;}
+#cin-back:hover{border-color:rgba(240,233,214,.6);color:var(--cream);}
+
+/* ── HOME BUTTON ── */
+#home-btn{display:inline-flex;align-items:center;gap:5px;font-family:'Source Sans 3',sans-serif;font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(240,233,214,.5);cursor:pointer;background:transparent;border:1px solid rgba(240,233,214,.15);border-radius:3px;padding:4px 10px;transition:all .2s;}
+#home-btn:hover{color:var(--gold);}
+#home-btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ── PROMINENT MUTE ── */
+#mute-btn{background:transparent;border:1px solid rgba(240,233,214,.2);color:var(--cream);font-size:13px;padding:5px 10px;cursor:pointer;margin-left:6px;vertical-align:middle;transition:all .2s;border-radius:3px;}
+#mute-btn:hover{border-color:var(--gold);color:var(--gold);}
+
+/* ── SCORE DISPLAY ── */
+.hscore{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;letter-spacing:.02em;}
+.hscore span{color:var(--gold);}
+
+/* ── CHAPTER PROGRESS ON SPLASH ── */
+#ch2-unlock{display:none;margin-top:10px;}
+#ch2-unlock .start-btn{border-color:var(--gold);color:var(--gold);}
+
+/* ── MOBILE ── */
+@media(max-width:600px){
+  #cgrid{grid-template-columns:1fr;}
+  .choice{padding:.85rem 1rem;font-size:14px;}
+  #qpanel{padding:0 1rem 1.1rem;}
+  #ccontent{padding:1.5rem 1.25rem 5.5rem;}
+  .qprose{font-size:13px;}
+  #hud{padding:.75rem 1rem;}
+}
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div class="screen active" id="splash">
+  <div class="fly">🪰</div>
+  <div class="ch-label">Chapter III</div>
+  <div class="main-title">Liberty,<br>Equality, Terror</div>
+  <div class="main-sub">Versailles to Brumaire — experience the French Revolution from the inside</div>
+  <div class="rule"></div>
+  <div class="meta-row">
+    <div class="mi"><div class="n">50</div><div class="l">Questions</div></div>
+    <div class="mi"><div class="n">6</div><div class="l">Scenes</div></div>
+    <div class="mi"><div class="n">~25</div><div class="l">Minutes</div></div>
+  </div>
+  <button class="start-btn" onclick="startGame()">Enter the Story</button>
+  <div id="ch2-unlock"><button class="start-btn" onclick="alert('Chapter IV — coming soon!')">Chapter IV coming soon →</button></div>
+  <button class="start-btn" id="resume-btn" style="display:none;margin-top:9px;border-color:rgba(240,233,214,.3);color:rgba(240,233,214,.7)" onclick="resumeGame()"></button>
+  <div class="snote">Illustrated in the style of Le Petit Journal, 1789 · Narrated by George · Audio included<br><a href="credits.html" style="color:rgba(184,148,63,.6);font-size:10px;letter-spacing:.08em;text-decoration:none;border-bottom:1px solid rgba(184,148,63,.25)">Credits &amp; attributions</a></div>
+</div>
+
+<!-- GAME -->
+<div id="game">
+  <div id="pbar"><div id="pfill" style="width:0%"></div></div>
+  <div id="bg-layer">
+    <div class="bg-slide" id="bg-a"></div>
+    <div class="bg-slide" id="bg-b"></div>
+    <div id="bg-overlay"></div><div id="bg-vignette"></div>
+    <div id="bg-grain"></div><div id="bg-sepia"></div>
+  </div>
+
+  <!-- COLLAGE RECAP -->
+  <div id="collage">
+    <div class="collage-grid" id="collage-grid"></div>
+    <div id="collage-overlay"></div>
+    <div id="collage-text">
+      <div id="collage-label"></div>
+      <div id="collage-title"></div>
+      <div id="collage-sub"></div>
+      <button id="collage-btn" class="pulse" onclick="endCollage()">Begin Questions →</button>
+    </div>
+  </div>
+
+  <div id="hud"><button id="home-btn" onclick="goHome()" title="Go home"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</button>
+    <div class="hbrand">🪰 Fly on the Wall</div>
+    <div class="hscene" id="hscene"></div>
+    <div class="hscore">Score: <span id="hscore">0</span> / <span id="htotal">0</span> <button id="mute-btn" onclick="toggleMute()" title="Toggle sound">🔊</button></div>
+  </div>
+  <div id="qzone"><div id="qbg"></div><div id="qbg-overlay"></div><div id="qright">
+  <div id="sdots"></div>
+  <div id="qpanel">
+    <div style="display:flex;align-items:center;justify-content:space-between;max-width:620px;margin-bottom:.3rem"><div class="qloc" id="qloc"></div><div id="qcounter" style="font-family:'Source Sans 3',sans-serif;font-size:9px;font-weight:600;letter-spacing:.1em;color:rgba(240,233,214,.35)"></div></div>
+    <div class="qdate" id="qdate"></div>
+    <div class="qprose" id="qprose"></div>
+    <div class="qtext" id="qtext"></div>
+    <div id="cgrid"></div>
+    <div id="fb">
+      <div id="fblabel"></div><div id="fbtext"></div>
+      <button id="nxtbtn" onclick="handleNext()">Continue →</button>
+    </div>
+  </div></div><!-- /qright /qzone -->
+
+  <!-- CINEMATIC -->
+  <div id="cin">
+    <div id="cpanels"></div>
+    <div id="ccontent">
+      <div id="cscnum"></div><div id="ctitle"></div>
+      <div id="cnarr"><span id="cnarrtext"></span><span id="ccursor"></span></div>
+    </div>
+    <div id="cdots"></div>
+    <div id="cbtns">
+      <button id="mute-cin" onclick="toggleMute()" title="Toggle sound" style="font-size:13px;background:transparent;border:1px solid rgba(240,233,214,.2);color:var(--cream);padding:5px 10px;cursor:pointer;border-radius:3px;transition:all .2s">🔊</button>
+      <button id="cin-back" onclick="goBackCinPanel()">← Back</button><button class="cbtn pulse" id="cskip" onclick="skipCin()">Skip</button>
+      <button class="cbtn pulse" id="ccont" onclick="endCin()">Begin Scene →</button>
+    </div>
+  </div>
+
+  <!-- END -->
+  <!-- FEEDBACK MODAL -->
+  <div id="feedback-modal">
+    <div id="feedback-box">
+      <div class="fb-title">How was the experience?</div>
+      <div class="fb-sub">Your feedback will help improve the game</div>
+      <div class="star-row" id="star-row">
+        <span class="star" data-v="1">★</span>
+        <span class="star" data-v="2">★</span>
+        <span class="star" data-v="3">★</span>
+        <span class="star" data-v="4">★</span>
+        <span class="star" data-v="5">★</span>
+      </div>
+      <textarea id="fb-comment" placeholder="Any thoughts? (optional)"></textarea>
+      <div class="fb-btns">
+        <button class="fb-skip" onclick="skipFeedback()">Skip</button>
+        <button class="fb-submit" onclick="submitFeedback()">Submit →</button>
+      </div>
+      <div class="fb-thankyou" id="fb-thankyou">Thank you — it means a lot. ✦</div>
+    </div>
+  </div>
+
+  <div id="endsc">
+    <div class="einner">
+      <div class="efly">🪰</div>
+      <div class="ech">Chapter III Complete</div>
+      <div class="etitle">A republic, reborn as an empire</div>
+      <div class="esub">From the Bastille to Brumaire</div>
+      <div class="ering"><div class="ebig" id="end-score">0</div><div class="eof" id="end-of">/ 8</div></div>
+      <div class="everdict" id="end-verdict"></div>
+      <div class="ebtns">
+        <button class="ebtn ebtn-g" onclick="restartGame()">Play again</button>
+        <button class="ebtn ebtn-g" onclick="shareGame()">Share ↗</button>
+        <button class="ebtn ebtn-gold" onclick="alert('Chapter IV — coming soon.')">Chapter IV coming soon →</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="toast">Link copied!</div>
+
+<!-- Feedback via Google Sheets Apps Script -->
+
+<script>
+// Audio is pre-generated — see generate_audio.py to regenerate with a different voice
+
+// ── INTRO VIDEO ───────────────────────────────────────────────────────────────
+
+
+
+// ── IMAGES ───────────────────────────────────────────────────────────────────────
+const IMGS = {
+  bastille:          'images/swayamm_Storming_of_the_Bastille_Paris_July_1789_revolutionar_b656dc25-cc9a-4617-9377-174601c37ac7_2.png',
+  versailles_march:  'images/swayamm_Womens_March_on_Versailles_October_1789_armed_Parisia_5bbb42a1-f146-4cc6-8eb3-24ffa7099892_3.png',
+  execution_louis:   'images/swayamm_Execution_of_Louis_XVI_Paris_January_1793_guillotine__6e40b3fc-4b05-4618-88f9-6fbda323cd46_1.png',
+  reign_of_terror:   'images/swayamm_Reign_of_Terror_Paris_1793_Robespierre_and_Committee__0f040d52-021a-458f-95f2-0e3ef055099e_0.png',
+  thermidor:         'images/swayamm_Arrest_of_Robespierre_9_Thermidor_1794_National_Conve_69cae244-5724-4ae0-8ef7-3d6f932558b1_1.png',
+  napoleon_coup:     'images/swayamm_Napoleon_Bonaparte_coup_of_18_Brumaire_1799_soldiers__8a4a4a68-52ec-498c-bf89-1c20cc6a4c32_0.png',
+};
+const FB = {
+  bastille:          'linear-gradient(160deg,#1c1008,#3a2414 35%,#54341c 65%,#160c06)',
+  versailles_march:  'linear-gradient(158deg,#180e18,#302030 40%,#443044 65%,#100a10)',
+  execution_louis:   'linear-gradient(162deg,#1e0a0a,#3e1414 40%,#5c1e1e 65%,#160606)',
+  reign_of_terror:   'linear-gradient(165deg,#160808,#2e1010 40%,#481818 65%,#100404)',
+  thermidor:         'linear-gradient(158deg,#1a1206,#382810 40%,#523c18 65%,#120c04)',
+  napoleon_coup:     'linear-gradient(162deg,#0e0e18,#1e1e30 40%,#2c2c44 65%,#0a0a14)',
+};
+
+// Pan animations cycle for cinematic variety
+const PAN_CLASSES = ['zoom-out','pan-left','pan-right','zoom-out','pan-left'];
+
+// ── CINEMATIC DATA ──────────────────────────────────────────────────────────────
+const CIN = [
+  { sceneNum:"Scene I · 1789", title:"A Kingdom in Crisis",
+    collageLabel:"The old order cracks", collageTitle:"Versailles, 1789",
+    collageSub:"A bankrupt crown, a starving people, and a King who cannot decide.",
+    collageImgs:["bastille","versailles_march","execution_louis","reign_of_terror"],
+    panels:[
+      {img:"versailles_march",nar:"France, 1789. The royal treasury is empty, bled dry by wars and the extravagance of Versailles. While the nobility and clergy pay almost no tax, ordinary French citizens starve under crushing burdens. King Louis the Sixteenth, indecisive and out of his depth, has no idea how close his throne is to collapse."},
+      {img:"versailles_march",nar:"Desperate for money, the King summons the Estates-General — a body that hasn't met in over a century. Representatives of the clergy, the nobility, and the common people gather at Versailles. But the common people, who make up ninety-eight percent of France, refuse to be outvoted by the privileged few. They break away and declare themselves the true government of France: the National Assembly."},
+      {img:"bastille",nar:"On July 14th, 1789, fearing the King is massing troops to crush their new Assembly, a Parisian mob marches on the Bastille — a fortress prison that symbolises royal tyranny. After a bloody standoff, the garrison surrenders. The mob storms the fortress. The Revolution has drawn its first blood, and there is no turning back."},
+    ]},
+  { sceneNum:"Scene II · 1789-1792", title:"The Fall of the Monarchy",
+    collageLabel:"A king becomes a prisoner", collageTitle:"Paris, 1789-1792",
+    collageSub:"Rights are declared. A king tries to flee. A monarchy crumbles.",
+    collageImgs:["versailles_march","bastille","execution_louis","reign_of_terror"],
+    panels:[
+      {img:"versailles_march",nar:"In October, thousands of Parisian women — furious over the price of bread — march twelve miles to Versailles armed with pikes and kitchen knives. They force the royal family to return with them to Paris, where the King can be watched. Louis the Sixteenth is no longer just a monarch; he is effectively a prisoner of his own people."},
+      {img:"execution_louis",nar:"In June 1791, Louis attempts to flee France in disguise, hoping to rally foreign armies against the Revolution. He is recognised and captured at Varennes, just miles from the border. The attempted escape destroys what little trust remained. In September 1792, the monarchy is formally abolished. France is now a Republic — and the King is simply a prisoner named Citizen Capet."},
+    ]},
+  { sceneNum:"Scene III · January 1793", title:"The King Must Die",
+    collageLabel:"No going back", collageTitle:"Paris, January 1793",
+    collageSub:"A trial. A vote. A blade that falls on a King.",
+    collageImgs:["execution_louis","reign_of_terror","thermidor","bastille"],
+    panels:[
+      {img:"execution_louis",nar:"The National Convention puts the former King on trial for treason against the nation. The vote is close, but the verdict is death. On January 21st, 1793, Louis the Sixteenth is marched to the guillotine in what is now Place de la Concorde. His final words are cut short by the drums of his own executioners. Europe's monarchies watch in horror — and begin preparing for war against Revolutionary France."},
+    ]},
+  { sceneNum:"Scene IV · 1793-1794", title:"The Terror",
+    collageLabel:"Liberty devours its children", collageTitle:"Paris, 1793-1794",
+    collageSub:"To save the Revolution, its leaders decide, blood must flow.",
+    collageImgs:["reign_of_terror","thermidor","execution_louis","napoleon_coup"],
+    panels:[
+      {img:"reign_of_terror",nar:"With foreign armies invading and civil war erupting inside France, the Committee of Public Safety — led by the fanatically dedicated Maximilien Robespierre — seizes near-total power. Their justification is simple and terrifying: Terror is nothing more than justice, swift and severe. Anyone suspected of disloyalty, however slight, can be sent to the guillotine within days."},
+      {img:"reign_of_terror",nar:"Marie Antoinette, the widowed Queen, follows her husband to the scaffold in October. Over the following months, tens of thousands are executed across France — nobles and priests, but increasingly also ordinary citizens, and even revolutionaries who fall out of favour. The guillotine becomes so busy that the streets of Paris run red. The Revolution that promised liberty has begun devouring its own children."},
+    ]},
+  { sceneNum:"Scene V · July 1794", title:"Thermidor",
+    collageLabel:"The architect of Terror falls", collageTitle:"Paris, July 1794",
+    collageSub:"The man who sent thousands to the blade meets it himself.",
+    collageImgs:["thermidor","reign_of_terror","napoleon_coup","bastille"],
+    panels:[
+      {img:"thermidor",nar:"By the summer of 1794, even Robespierre's allies fear they might be next. On the 9th of Thermidor by the Revolutionary calendar, the National Convention turns on him. Robespierre is arrested, his jaw shattered by a gunshot during the struggle. The next day, the man who once controlled the guillotine is executed by it himself. The Terror ends as abruptly as it began."},
+    ]},
+  { sceneNum:"Scene VI · 1795-1799", title:"The Rise of Napoleon",
+    collageLabel:"A revolution finds its general", collageTitle:"France, 1795-1799",
+    collageSub:"Out of the chaos, an ambitious young artillery officer seizes power.",
+    collageImgs:["napoleon_coup","thermidor","reign_of_terror","execution_louis"],
+    panels:[
+      {img:"napoleon_coup",nar:"A weak new government called the Directory struggles to govern an exhausted, divided France. Into this vacuum steps Napoleon Bonaparte — a young Corsican artillery officer whose brilliant military campaigns in Italy and Egypt have made him wildly popular. Ambitious and supremely confident, he senses the Directory's days are numbered."},
+      {img:"napoleon_coup",nar:"On the 18th of Brumaire — November 9th, 1799 — Napoleon and his allies stage a coup, dissolving the legislature at gunpoint. He installs himself as First Consul, and within a few years, Emperor. The Revolution that began with the storming of a prison ends with a single man holding more power than Louis the Sixteenth ever had. France has traded one crown for another."},
+    ]},
+];
+
+// ── QUESTIONS ────────────────────────────────────────────────────────────────────
+const QS = [
+{scene:0,date:"1789",loc:"Versailles, France",prose:"France's monarchy is drowning in debt after decades of costly wars and royal extravagance — and the tax system makes the crisis almost impossible to fix.",q:"Why was the French monarchy in such severe financial crisis by 1789?",choices:["France had lost all its overseas colonies","The nobility and clergy were largely exempt from taxation, while the common people bore the burden","Gold reserves had been exhausted by a currency collapse","Britain had imposed crushing trade sanctions on France"],correct:1,img:"versailles_march",cam:{scale:1.2,tx:0,ty:0},fc:"Correct. France's tax system exempted the First Estate (clergy) and Second Estate (nobility) from most direct taxation, leaving the burden almost entirely on the Third Estate — the common people, who made up about 98% of the population but had the least ability to pay.",fw:"The core problem was an unfair tax system — the nobility and clergy paid little to no tax, leaving the common people to fund a bankrupt state after decades of expensive wars, including France's support for the American Revolution."},
+{scene:0,date:"May 1789",loc:"Versailles, France",prose:"Desperate for new revenue, King Louis XVI summons a body that had not convened in 175 years — a gathering of representatives from all three social classes of France.",q:"What was the name of the assembly Louis XVI convened in 1789 to address the financial crisis?",choices:["The Estates-General","The National Convention","The Committee of Public Safety","The Constituent Council"],correct:0,img:"versailles_march",cam:{scale:1.15,tx:-3,ty:2},fc:"The Estates-General — a body representing the three 'estates' of French society: the clergy, the nobility, and the commoners. It had not been called since 1614, and its structure heavily favoured the privileged first two estates over the vastly larger third.",fw:"The Estates-General, last convened in 1614. It brought together representatives of the clergy (First Estate), nobility (Second Estate), and commoners (Third Estate) — though its voting rules meant the two privileged estates could always outvote the third."},
+{scene:0,date:"June 1789",loc:"Versailles, France",prose:"Frustrated that their votes counted for nothing under the old rules, the representatives of the common people take a radical step — they simply declare themselves the legitimate government.",q:"What did the Third Estate do in June 1789 when they felt outvoted by the nobility and clergy?",choices:["They stormed the Bastille immediately","They declared themselves the National Assembly, the true representative body of France","They assassinated the King's ministers","They fled to England to seek support"],correct:1,img:"versailles_march",cam:{scale:1.18,tx:2,ty:-2},fc:"They declared themselves the National Assembly. This was a direct challenge to royal authority — a claim that the people, not the King, held the true sovereign power of France. It marked the true beginning of the Revolution, weeks before any violence occurred.",fw:"They broke away and formed the National Assembly, asserting that they — representing the vast majority of France — were the nation's legitimate government. This bloodless declaration was, in many ways, the Revolution's real opening act."},
+{scene:0,date:"June 20, 1789",loc:"Versailles, France",prose:"Locked out of their usual meeting hall, the newly formed National Assembly refuses to disband — and makes a dramatic collective vow.",q:"What famous oath did the National Assembly take on June 20th, 1789, after being locked out of their meeting hall?",choices:["The Oath of Liberty","The Tennis Court Oath","The Versailles Pledge","The Assembly Vow"],correct:1,img:"versailles_march",cam:{scale:1.2,tx:-2,ty:3},fc:"The Tennis Court Oath — sworn in a nearby indoor tennis court after the Assembly found their usual hall locked. They vowed not to disband until France had a written constitution, a direct and defiant challenge to the King's authority.",fw:"The Tennis Court Oath. Finding themselves locked out, the delegates gathered in an indoor tennis court and swore not to separate until France had a constitution — a pivotal moment of open defiance against Louis XVI."},
+{scene:0,date:"July 14, 1789",loc:"Paris, France",prose:"Fearing the King is preparing to use military force against the new National Assembly, the people of Paris arm themselves and march on a symbol of royal oppression.",q:"What did the Parisian mob storm on July 14th, 1789 — an event now celebrated as France's national day?",choices:["The Palace of Versailles","The Bastille","The Notre-Dame Cathedral","The Louvre Palace"],correct:1,img:"bastille",cam:{scale:1.22,tx:3,ty:-2},fc:"The Bastille — a fortress prison in Paris that symbolised royal tyranny. Although it held only seven prisoners at the time, its fall was hugely symbolic, representing the collapse of arbitrary royal power. July 14th is now France's national holiday, Bastille Day.",fw:"The Bastille, a fortress-prison that had come to symbolise the abuses of royal power. The storming was more symbolic than practical — only seven prisoners were freed — but it signalled that the people of Paris were now willing to use force against the crown."},
+{scene:0,date:"August 1789",loc:"Versailles, France",prose:"Weeks after the Bastille falls, the National Assembly issues a document that lays out the core principles the new France intends to be built on.",q:"What foundational document did the National Assembly adopt in August 1789?",choices:["The Constitution of France","The Declaration of the Rights of Man and of the Citizen","The Treaty of Versailles","The Bill of French Liberties"],correct:1,img:"versailles_march",cam:{scale:1.2,tx:-3,ty:3},fc:"The Declaration of the Rights of Man and of the Citizen. Influenced by Enlightenment philosophy and the American Declaration of Independence, it proclaimed liberty, property, security, and resistance to oppression as natural, universal rights.",fw:"The Declaration of the Rights of Man and of the Citizen — a sweeping statement of Enlightenment ideals, asserting that all men are born free and equal in rights. It became a foundational document not just for France, but for democratic movements worldwide."},
+{scene:0,date:"1789",loc:"France",prose:"The storming of the Bastille was as much about symbolism as substance — but it triggered something the monarchy could not control.",q:"What was the immediate practical outcome of the storming of the Bastille?",choices:["The King was captured and imprisoned","Only a handful of prisoners were freed, but royal authority in Paris collapsed","The entire French army defected to the revolutionaries","France declared war on Austria"],correct:1,img:"bastille",cam:{scale:1.18,tx:2,ty:2},fc:"Only seven prisoners were actually freed from the Bastille — its practical significance was minor. But the symbolic impact was enormous: it proved the people of Paris could successfully defy royal authority, and effective control of the city began slipping from the King's hands.",fw:"Practically, very little — just seven prisoners were released. But symbolically, it was seismic: royal authority in Paris effectively collapsed, and the King's ability to suppress the Revolution by force was permanently in doubt from that day forward."},
+{scene:0,date:"1789",loc:"France",prose:"News of the Bastille's fall spread across the French countryside, triggering a wave of fear and violence that historians later named for the panic that drove it.",q:"What name is given to the wave of rural panic and violence against the nobility that swept the French countryside in the summer of 1789?",choices:["The Great Fear","The Rural Terror","The Peasant Uprising","The Countryside Revolt"],correct:0,img:"versailles_march",cam:{scale:1.16,tx:-4,ty:3},fc:"The Great Fear — a period of widespread rural panic, fuelled by rumours that aristocrats were hiring bandits to destroy peasant crops in retaliation. It led to attacks on manor houses and the destruction of feudal records across the French countryside.",fw:"The Great Fear. Rumours spread that noble-hired brigands were coming to punish the peasantry, sparking panic and attacks on châteaux across rural France. It pushed the National Assembly to abolish feudal privileges shortly afterward."},
+{scene:1,date:"October 1789",loc:"Versailles, France",prose:"Furious over the price of bread and suspicious of the King's intentions, thousands of Parisian women take matters into their own hands.",q:"What triggered the Women's March on Versailles in October 1789?",choices:["The King's refusal to sign the Declaration of Rights","Anger over bread prices and shortages","News of the Bastille's fall","The arrest of a popular revolutionary leader"],correct:1,img:"versailles_march",cam:{scale:1.18,tx:0,ty:0},fc:"Anger over the price and scarcity of bread — the staple of the working poor's diet. Thousands of market women, armed with makeshift weapons, marched the twelve miles from Paris to Versailles to confront the King directly.",fw:"Bread shortages and soaring prices. Parisian women, who bore the brunt of feeding their families amid the crisis, marched to Versailles demanding action — and ended up forcing the royal family back to Paris with them."},
+{scene:1,date:"October 1789",loc:"Versailles to Paris",prose:"The march did not end with demands — it ended with the royal family itself being escorted back to the capital, whether they wished it or not.",q:"What was the outcome of the Women's March on Versailles?",choices:["The King fled to Austria","The royal family was forced to relocate to Paris, under close watch","The Estates-General was dissolved","Nothing changed — the King ignored the marchers"],correct:1,img:"versailles_march",cam:{scale:1.2,tx:-2,ty:2},fc:"The royal family was compelled to return to Paris with the marchers, taking up residence at the Tuileries Palace. From this point on, Louis XVI was, in effect, under the close watch of the revolutionary government and the Parisian populace.",fw:"The royal family was forced back to Paris, where they could be watched closely by the people and the Assembly. This effectively ended any independence Louis XVI had — he was now a monarch living under surveillance in his own capital."},
+{scene:1,date:"June 1791",loc:"Varennes, France",prose:"Desperate and increasingly fearful for his family's safety, Louis XVI makes a fateful decision — to flee France entirely.",q:"What happened when Louis XVI attempted to flee France in June 1791?",choices:["He successfully escaped to Austria","He was recognised and captured near the town of Varennes","He was killed while trying to escape","He voluntarily returned after having second thoughts"],correct:1,img:"execution_louis",cam:{scale:1.2,tx:2,ty:-2},fc:"Louis was recognised — reportedly from his resemblance to the image on French currency — and captured at Varennes, just short of the border. The failed escape, known as the Flight to Varennes, destroyed what remaining public trust he had.",fw:"He was captured at Varennes, close to the border he was trying to cross to reach loyalist troops. The failed flight was disastrous for Louis's reputation — it looked like open betrayal of the Revolution, and after this, serious talk of abolishing the monarchy began."},
+{scene:1,date:"1791",loc:"France",prose:"The Flight to Varennes fundamentally changed how the French public viewed their King — from a flawed but legitimate monarch, to someone who might actively be plotting against the nation.",q:"What was the broader political consequence of the Flight to Varennes?",choices:["It strengthened support for the monarchy","It severely damaged trust in the King and accelerated calls for a republic","It led to immediate peace with Austria","It caused the Estates-General to be reinstated"],correct:1,img:"execution_louis",cam:{scale:1.18,tx:-3,ty:2},fc:"Trust in Louis collapsed. Many French citizens now saw him as a traitor actively conspiring with foreign powers against the Revolution — a suspicion that would directly contribute to the monarchy's abolition and, eventually, his trial for treason.",fw:"It severely damaged what little trust remained in the King. Rather than a reluctant partner in reform, Louis now looked like an active conspirator against the Revolution — a perception that set the stage for the monarchy's abolition the following year."},
+{scene:1,date:"April 1792",loc:"France",prose:"As revolutionary fervour spreads, France's neighbours grow increasingly alarmed — and the new government decides to strike first.",q:"In April 1792, revolutionary France declared war on which power, largely out of fear it would intervene to restore the old monarchy?",choices:["Great Britain","Austria","Prussia","Spain"],correct:1,img:"versailles_march",cam:{scale:1.2,tx:3,ty:2},fc:"Austria — ruled by Marie Antoinette's own nephew, Emperor Francis II. France's revolutionary government feared Austria and other monarchies would invade to crush the Revolution and restore Louis to full power. The war would soon draw in Prussia as well, and go disastrously for France at first.",fw:"Austria. The revolutionary Assembly feared Austria, along with other European monarchies, intended to invade France to stamp out the Revolution and restore Louis to full power. The war would soon draw in Prussia as well, and go disastrously for France at first."},
+{scene:1,date:"August 1792",loc:"Paris, France",prose:"As war goes badly and fears of royal betrayal intensify, a Parisian mob and revolutionary forces storm the King's residence directly.",q:"What happened at the Tuileries Palace in August 1792?",choices:["The King voluntarily abdicated","Revolutionary forces stormed the palace, effectively ending the monarchy's power","The palace was destroyed by an Austrian attack","Marie Antoinette was captured trying to flee"],correct:1,img:"execution_louis",cam:{scale:1.22,tx:-2,ty:-2},fc:"Revolutionary forces and armed citizens stormed the Tuileries Palace on August 10th, 1792, overwhelming the King's Swiss Guard. Louis and his family fled to the Legislative Assembly for protection, but this event effectively ended royal power in France for good.",fw:"Revolutionary forces stormed the Tuileries Palace, in what's remembered as the August 10th uprising. The King's Swiss Guard was massacred defending it, and Louis's practical authority as monarch ended that day, even though his formal deposition came weeks later."},
+{scene:1,date:"September 1792",loc:"Paris, France",prose:"With the monarchy's power broken and a new governing body elected, France takes the final step — formally ending centuries of royal rule.",q:"What did the newly elected National Convention declare in September 1792?",choices:["A ceasefire with Austria","The abolition of the monarchy and the founding of the French Republic","Martial law across all of France","The reinstatement of Louis XVI with limited powers"],correct:1,img:"execution_louis",cam:{scale:1.2,tx:2,ty:3},fc:"The National Convention formally abolished the monarchy and declared France a Republic on September 21st, 1792. Louis XVI, stripped of his title, became simply 'Citizen Louis Capet' — a private citizen awaiting trial.",fw:"The National Convention declared France a Republic, formally abolishing the monarchy that had ruled for centuries. Louis was stripped of his royal title and became a private citizen — 'Citizen Capet' — pending trial for his actions."},
+{scene:1,date:"1789-1792",loc:"France",prose:"Over these three years, France transformed from an absolute monarchy into something entirely new — but the transformation was neither peaceful nor complete.",q:"Which best describes the trajectory of the monarchy's power between 1789 and 1792?",choices:["It remained largely unchanged throughout this period","It moved from absolute rule, to a constitutional monarchy under close watch, to complete abolition","It was strengthened after the Estates-General","It was abolished immediately after the Bastille fell"],correct:1,img:"versailles_march",cam:{scale:1.18,tx:-2,ty:2},fc:"The monarchy's power eroded in stages — first losing its absolute authority to the National Assembly, then coming under direct watch after being forced to Paris, then losing all practical power after the Tuileries was stormed, and finally being formally abolished in September 1792.",fw:"It was a gradual collapse, not a single event — absolute power gave way to a constrained, watched monarchy after October 1789, then to effective powerlessness after August 1792, and finally to formal abolition the following month."},
+{scene:2,date:"December 1792",loc:"Paris, France",prose:"With the monarchy abolished, the National Convention must decide what to do with the former King — a decision with no precedent in French history.",q:"What was Louis XVI put on trial for by the National Convention?",choices:["Corruption and embezzlement","Treason against the nation","Failure to pay royal debts","Religious heresy"],correct:1,img:"execution_louis",cam:{scale:1.2,tx:0,ty:0},fc:"Treason against the nation — largely based on evidence of his secret correspondence with foreign powers, including apparent attempts to solicit foreign invasion to restore his throne. The evidence, found in a hidden safe at the Tuileries, was damning.",fw:"Treason. Louis was accused of conspiring with foreign powers against the French nation, based partly on secret correspondence discovered in an iron safe hidden in the Tuileries Palace — correspondence that seemed to confirm his disloyalty to the Revolution."},
+{scene:2,date:"January 1793",loc:"Paris, France",prose:"The vote on Louis's fate is agonisingly close, splitting the Convention and setting deputy against deputy.",q:"What was the outcome of the National Convention's vote on Louis XVI's fate?",choices:["He was acquitted","He was sentenced to exile","He was sentenced to death by a narrow majority","He was sentenced to life imprisonment"],correct:2,img:"execution_louis",cam:{scale:1.18,tx:-3,ty:2},fc:"Louis was condemned to death by a narrow majority — with many deputies voting for death only 'with conditions' or delay, which were ultimately rejected. The final margin for immediate execution was extremely close, reflecting how divisive the decision was.",fw:"He was sentenced to death, though only by a narrow margin. The vote deeply divided the Convention, with some deputies favouring exile or a delayed sentence rather than immediate execution — but the majority for death, however slim, prevailed."},
+{scene:2,date:"January 21, 1793",loc:"Place de la Révolution, Paris",prose:"On a cold January morning, the former King of France is brought to a public square to face the machine that has come to symbolise the Revolution.",q:"By what method was Louis XVI executed?",choices:["Firing squad","Hanging","The guillotine","Beheading by sword"],correct:2,img:"execution_louis",cam:{scale:1.22,tx:2,ty:-2},fc:"The guillotine — a device designed, ironically, as a more humane and egalitarian method of execution, delivering a swift death regardless of the condemned's social rank. Louis's execution on January 21st, 1793, sent shockwaves through the monarchies of Europe.",fw:"The guillotine. Designed to provide a quick, equal death for all classes — a symbol of revolutionary equality even in execution — it became the defining, grim symbol of the entire Revolution, used on the King and, later, tens of thousands of others."},
+{scene:2,date:"January 1793",loc:"Europe",prose:"News of the King's execution didn't stay contained within France — it sent a political shockwave across the continent.",q:"What was the broader European reaction to the execution of Louis XVI?",choices:["Most monarchies expressed indifference","It provoked outrage among European monarchies and accelerated war against France","Other European kings praised the decision","It had no significant diplomatic impact"],correct:1,img:"execution_louis",cam:{scale:1.2,tx:-2,ty:3},fc:"European monarchies were horrified — the execution of an anointed king was seen as a direct threat to the entire concept of monarchical rule. It hardened resolve among France's enemies and helped draw more nations into the coalition arrayed against Revolutionary France.",fw:"It provoked deep outrage and alarm across monarchical Europe. Kings and emperors saw Louis's execution as an existential threat to their own thrones, which helped solidify and expand the coalition of European powers at war with France."},
+{scene:2,date:"1793",loc:"France",prose:"With the King dead and war raging on multiple fronts, the revolutionary government faced threats from nearly every direction at once.",q:"By early 1793, what combination of crises threatened the survival of Revolutionary France?",choices:["Foreign invasion only","Foreign invasion, internal civil war, and economic collapse simultaneously","Only economic problems","A naval blockade by Britain alone"],correct:1,img:"reign_of_terror",cam:{scale:1.18,tx:3,ty:-2},fc:"France faced foreign armies invading from multiple directions, a bloody civil war in regions like the Vendée where royalist and Catholic sympathies ran deep, and a collapsing economy — a genuine crisis of survival that the Committee of Public Safety used to justify extraordinary emergency powers.",fw:"France faced an extraordinary convergence of threats — foreign armies invading on multiple fronts, a brutal internal civil war (especially in the Vendée region), and severe economic strain. This combination of crises is what the Committee of Public Safety pointed to in justifying the Terror's harsh measures."},
+{scene:2,date:"1793",loc:"France",prose:"To meet these existential threats, the National Convention hands sweeping emergency powers to a small committee.",q:"What body was granted near-total emergency power to defend the Revolution in 1793?",choices:["The Committee of Public Safety","The Estates-General","The Directory","The Legislative Assembly"],correct:0,img:"reign_of_terror",cam:{scale:1.2,tx:-3,ty:2},fc:"The Committee of Public Safety — a body of around a dozen men given sweeping executive powers to defend France from its enemies, foreign and domestic. It would soon become the primary instrument of the Terror, dominated by the increasingly powerful Maximilien Robespierre.",fw:"The Committee of Public Safety, created to coordinate France's defence amid overwhelming crisis. Originally a wartime emergency measure, it quickly became the central engine of the Terror, wielding power far beyond what any single body in Revolutionary France had held before."},
+{scene:2,date:"1793",loc:"France",prose:"One name became inseparable from this period of the Revolution — a man whose unwavering belief in revolutionary virtue justified almost any measure.",q:"Which figure came to dominate the Committee of Public Safety and became most closely associated with the Terror?",choices:["Napoleon Bonaparte","Maximilien Robespierre","Georges Danton","Jean-Paul Marat"],correct:1,img:"reign_of_terror",cam:{scale:1.22,tx:2,ty:2},fc:"Maximilien Robespierre — a lawyer known as 'the Incorruptible' for his austere personal integrity and unwavering ideological commitment. He believed Terror was a necessary, even virtuous tool to defend the Republic, a philosophy that would ultimately consume even his own allies.",fw:"Maximilien Robespierre, nicknamed 'the Incorruptible'. His fervent belief that revolutionary virtue justified extreme measures against any perceived enemy of the Republic made him the era's defining — and most feared — figure."},
+{scene:2,date:"1793",loc:"France",prose:"Robespierre's justification for the Terror rested on a specific, chilling piece of revolutionary logic.",q:"How did Robespierre publicly justify the use of Terror against perceived enemies of the Revolution?",choices:["As temporary revenge against the nobility","As virtue itself — swift justice necessary to protect the Republic","As a religious duty","As a purely economic necessity"],correct:1,img:"reign_of_terror",cam:{scale:1.18,tx:-2,ty:-2},fc:"Robespierre famously argued that 'terror is nothing other than justice, prompt, severe, inflexible' — framing brutal repression not as a departure from revolutionary virtue, but as its purest expression, necessary to protect the fragile Republic from its many enemies.",fw:"He framed Terror as virtue itself — arguing that swift, severe justice against the Republic's enemies was a moral necessity, not a betrayal of revolutionary ideals. This chilling logic allowed the Terror's violence to escalate under the banner of protecting liberty."},
+{scene:2,date:"1793",loc:"France",prose:"The mechanisms of the Terror extended far beyond the guillotine in Paris — reaching into every corner of French life.",q:"What tool did revolutionary authorities use to identify and prosecute suspected enemies during the Terror?",choices:["The Law of Suspects, allowing arrest on vague suspicion of disloyalty","A national referendum on loyalty","Trial by the nobility","Direct appeals to the King"],correct:0,img:"reign_of_terror",cam:{scale:1.2,tx:3,ty:-3},fc:"The Law of Suspects, passed in September 1793, allowed authorities to arrest almost anyone on the vaguest suspicion of insufficient revolutionary zeal. It dramatically expanded the scope of the Terror, since 'disloyalty' could mean almost anything to almost anyone.",fw:"The Law of Suspects — legislation broad enough that almost any perceived lack of enthusiasm for the Revolution could lead to arrest. It turned the Terror from a tool against active enemies into a machine that could consume ordinary citizens on the flimsiest grounds."},
+{scene:3,date:"October 1793",loc:"Paris, France",prose:"Nine months after her husband's execution, the widowed Queen faces her own trial and the same fate.",q:"What happened to Marie Antoinette in October 1793?",choices:["She was exiled to Austria","She was executed by guillotine","She escaped to England","She was pardoned and imprisoned for life"],correct:1,img:"reign_of_terror",cam:{scale:1.2,tx:0,ty:0},fc:"Marie Antoinette was executed by guillotine on October 16th, 1793, following a trial on charges including treason. Once caricatured as extravagant and out of touch, she faced her execution with notable composure, according to contemporary accounts.",fw:"She was executed by guillotine, following her own trial for treason — accused, among other things, of conspiring with foreign powers, much like her husband had been. Her death came roughly nine months after Louis's."},
+{scene:3,date:"1793-1794",loc:"France",prose:"The Terror's violence was not confined to aristocrats and royalists — it increasingly turned inward, consuming revolutionaries themselves.",q:"Which of the following best describes who was executed during the Terror?",choices:["Only members of the former nobility","Almost exclusively foreign spies","A broad range including nobles, clergy, and increasingly ordinary citizens and even fellow revolutionaries","Only those who had actively fought against the Revolution"],correct:2,img:"reign_of_terror",cam:{scale:1.18,tx:-2,ty:2},fc:"The Terror's victims spanned a remarkably wide range — nobles and clergy initially, but increasingly ordinary citizens accused of insufficient revolutionary zeal, and eventually even prominent revolutionaries who fell out of favour with Robespierre and the Committee.",fw:"It was far broader than just the old aristocracy — ordinary citizens, and eventually even committed revolutionaries themselves, could be swept up on suspicion alone. This is part of why the period is remembered as the Revolution 'devouring its own children'."},
+{scene:3,date:"1793-1794",loc:"France",prose:"Historians have tried to quantify just how many people the Terror claimed — though exact figures remain debated.",q:"Approximately how many people are estimated to have been executed during the Terror across France?",choices:["Around 500","Around 5,000","Around 17,000 (with tens of thousands more dying in related violence)","Around 500,000"],correct:2,img:"reign_of_terror",cam:{scale:1.2,tx:2,ty:-2},fc:"Approximately 17,000 official executions are documented, though historians estimate the true death toll — including deaths in prison, summary executions, and the brutal suppression of revolts like the one in the Vendée — was significantly higher, likely in the tens of thousands.",fw:"Roughly 17,000 documented executions, though the true toll including related violence and prison deaths was almost certainly higher — likely reaching into the tens of thousands when the suppression of regional uprisings is included."},
+{scene:3,date:"1793",loc:"France",prose:"Beyond executions, the revolutionary government pursued a radical campaign to remake French society and culture itself.",q:"Which of these was part of the Committee of Public Safety's broader radical agenda during the Terror?",choices:["Restoring the Catholic Church to its former power","A campaign of de-Christianisation, including a new Revolutionary Calendar","Reinstating the nobility's privileges","Re-establishing the monarchy under a new dynasty"],correct:1,img:"reign_of_terror",cam:{scale:1.22,tx:-3,ty:2},fc:"A sweeping de-Christianisation campaign, including the introduction of a new Revolutionary Calendar that renamed months and restructured the week, and even attempts to replace Christianity with new secular or deist cults. It reflected the Revolution's ambition to remake not just government, but society itself.",fw:"A radical de-Christianisation campaign — churches were closed or repurposed, a new Revolutionary Calendar replaced the Gregorian calendar, and religious practice was actively suppressed. It was part of a broader attempt to build an entirely new secular society from scratch."},
+{scene:3,date:"1793-1794",loc:"The Vendée, France",prose:"Not all resistance to the Revolution came from foreign monarchies — some of the bloodiest fighting happened entirely within France's own borders.",q:"What was the Vendée uprising?",choices:["A worker's strike in Paris","A royalist and Catholic peasant revolt against the Revolutionary government in western France","A naval mutiny","A conspiracy among the nobility in exile"],correct:1,img:"reign_of_terror",cam:{scale:1.18,tx:2,ty:3},fc:"The Vendée uprising was a large-scale revolt by royalist, devoutly Catholic peasants in western France, who resented the Revolution's anti-clerical policies and conscription demands. Its brutal suppression by revolutionary forces was one of the deadliest episodes of the entire Revolutionary period.",fw:"A revolt centred in the Vendée region of western France, driven by royalist sympathy and Catholic devotion clashing with the Revolution's secular, centralising policies. Its suppression was extraordinarily brutal, with death tolls that some historians describe as amounting to a form of civil war-driven mass killing."},
+{scene:3,date:"1794",loc:"Paris, France",prose:"Even among the architects of the Terror, growing paranoia and rivalry meant that revolutionary credentials offered no real protection.",q:"What eventually happened to Georges Danton, one of the Revolution's early leading figures?",choices:["He fled to America and lived in exile","He became Robespierre's closest ally for life","He was arrested and executed on Robespierre's orders in 1794","He was elected King of France"],correct:2,img:"reign_of_terror",cam:{scale:1.2,tx:-2,ty:-2},fc:"Danton, once a towering figure of the early Revolution, was arrested and guillotined in April 1794 after clashing with Robespierre over the Terror's escalating brutality. His death demonstrated starkly that no one — however prominent — was safe from the machine they had helped build.",fw:"Danton was arrested and executed in April 1794, having fallen out with Robespierre over concerns that the Terror had gone too far. His death showed that even the Revolution's own founding figures were not immune to the paranoia and violence they had helped unleash."},
+{scene:3,date:"1794",loc:"Paris, France",prose:"As executions accelerated through the spring of 1794, a new law removed even the pretence of a fair trial.",q:"What did the Law of 22 Prairial (June 1794) do?",choices:["It abolished the death penalty","It stripped away legal protections, allowing conviction with little to no defence","It reinstated the monarchy temporarily","It ended food rationing in Paris"],correct:1,img:"reign_of_terror",cam:{scale:1.18,tx:3,ty:2},fc:"The Law of 22 Prairial dramatically expanded the Terror's reach by removing most legal protections for the accused — no defence counsel, minimal evidence required, and only two possible verdicts: acquittal or death. Executions accelerated sharply in the weeks that followed, a period historians call the 'Great Terror'.",fw:"It stripped away nearly all legal safeguards for those accused before the Revolutionary Tribunal — defendants had little to no right to a defence, and only two verdicts were possible: full acquittal or execution. The law triggered a dramatic spike in executions in its final weeks."},
+{scene:3,date:"1793-1794",loc:"France",prose:"The sheer intensity and unpredictability of the Terror eventually created the very conditions that would bring it to an end.",q:"What growing sentiment among the members of the National Convention eventually set the stage for the Terror's collapse?",choices:["Growing support for restoring the monarchy","Growing fear among deputies that they themselves could be next","A sudden loss of interest in politics","Widespread agreement that the Terror should be expanded further"],correct:1,img:"reign_of_terror",cam:{scale:1.2,tx:-3,ty:-2},fc:"As the circle of potential victims widened to include prominent revolutionaries themselves, fear spread among the Convention's own deputies that no one — regardless of past loyalty — was truly safe. This paranoia would soon turn even Robespierre's allies against him.",fw:"A creeping fear among the Convention's own members that they could be arrested next, regardless of their revolutionary credentials. This self-preservation instinct would soon drive a group of deputies to move against Robespierre himself, ending the Terror."},
+{scene:4,date:"July 1794",loc:"Paris, France",prose:"By the summer of 1794, Robespierre's grip on power seemed absolute — but cracks were forming that would bring him down within days.",q:"What date, on the Revolutionary Calendar, gives its name to the coup that ended Robespierre's rule?",choices:["18 Brumaire","9 Thermidor","14 Juillet","21 Prairial"],correct:1,img:"thermidor",cam:{scale:1.2,tx:0,ty:0},fc:"9 Thermidor — corresponding to July 27th, 1794 on the standard calendar. On this date, the National Convention turned against Robespierre, leading to his arrest and, the following day, his execution. The event gave its name to the broader 'Thermidorian Reaction' that followed.",fw:"9 Thermidor (July 27th, 1794). This was the day the National Convention finally turned against Robespierre, fearing they themselves might be his next targets — leading directly to his fall from power within 24 hours."},
+{scene:4,date:"July 27-28, 1794",loc:"Paris, France",prose:"The man who had sent so many to the guillotine now faced the same machine himself, in a chaotic and violent final act.",q:"What happened to Robespierre immediately after his arrest on 9 Thermidor?",choices:["He was pardoned and exiled","He was shot in the jaw during the struggle to arrest him, then guillotined the next day","He escaped to Switzerland","He died of natural causes in prison"],correct:1,img:"thermidor",cam:{scale:1.18,tx:-2,ty:2},fc:"During the chaotic attempt to arrest him, Robespierre was shot in the jaw — whether by his own hand in a failed suicide attempt, or by a soldier, remains debated by historians. Badly wounded, he was guillotined the following day, on July 28th, 1794, without even the formal trial he had denied so many others.",fw:"He was shot in the jaw during his arrest — accounts differ on whether this was a suicide attempt or came from a soldier's shot — and was executed by guillotine the very next day, ending his rule with brutal, almost poetic symmetry."},
+{scene:4,date:"After July 1794",loc:"France",prose:"Robespierre's fall did not end the Revolution — but it did end its most violent phase, and ushered in a very different political climate.",q:"What is the period immediately following Robespierre's execution commonly known as?",choices:["The Directory Period","The Thermidorian Reaction","The Second Terror","The Bourbon Restoration"],correct:1,img:"thermidor",cam:{scale:1.2,tx:2,ty:-2},fc:"The Thermidorian Reaction — a period marked by a swing away from radical revolutionary policies, the dismantling of the Terror's machinery, and a general backlash against the extremism of the preceding years. Many former revolutionaries who had survived the Terror now sought moderation.",fw:"The Thermidorian Reaction. This period saw a significant political swing away from radicalism — the Terror's mechanisms were dismantled, the Law of Suspects was repealed, and there was a broad public and political reaction against the violence of the preceding year."},
+{scene:4,date:"1794-1795",loc:"France",prose:"With Robespierre gone, French politics needed a new governing structure — one deliberately designed to prevent any single person from ever holding that much power again.",q:"What new governing body was established in France in 1795, following the Thermidorian Reaction?",choices:["The Directory","The Second Republic","The Consulate","The Estates-General"],correct:0,img:"thermidor",cam:{scale:1.18,tx:-3,ty:2},fc:"The Directory — a five-member executive body deliberately designed to prevent any one person from accumulating dictatorial power, as Robespierre effectively had. It governed France from 1795 until Napoleon's coup in 1799, though it proved chronically unstable.",fw:"The Directory, a five-person executive council established specifically to avoid concentrating power in a single individual again. Despite this design, it struggled with corruption, economic instability, and ongoing political violence throughout its existence."},
+{scene:4,date:"1795",loc:"France",prose:"Though the Terror had ended, the Directory inherited a nation still deeply scarred by years of revolution, war, and internal violence.",q:"Which of these challenges did the Directory struggle with most during its rule (1795-1799)?",choices:["Overwhelming public support and stability","Chronic political instability, economic hardship, and continued warfare","A total absence of any political opposition","Complete peace with all of France's neighbours"],correct:1,img:"thermidor",cam:{scale:1.2,tx:2,ty:2},fc:"The Directory was plagued by chronic instability — coups and attempted coups, rampant inflation and economic hardship, corruption, and continued war against a coalition of European powers. This weakness would eventually make it vulnerable to Napoleon's seizure of power.",fw:"Chronic instability on nearly every front — economic hardship, political corruption, continued foreign war, and a series of internal power struggles and attempted coups. This ongoing weakness is largely what allowed Napoleon to seize power so easily in 1799."},
+{scene:4,date:"1795",loc:"France",prose:"The Terror's end also meant a reversal of some of its most extreme policies — though not a full return to the way things had been before 1789.",q:"Which of these describes a genuine policy change during the Thermidorian Reaction?",choices:["The monarchy was fully restored","The Law of Suspects was repealed and the Revolutionary Tribunal's powers were curbed","Religious freedom was permanently banned","Slavery was reintroduced in French colonies"],correct:1,img:"thermidor",cam:{scale:1.18,tx:-2,ty:-2},fc:"The Law of Suspects was repealed, and the Revolutionary Tribunal's sweeping powers to convict with minimal evidence were curtailed. This represented a genuine, deliberate rollback of the Terror's most extreme legal machinery — though France remained a Republic, not a restored monarchy.",fw:"The Law of Suspects was repealed and the Revolutionary Tribunal's powers were significantly reined in — real, concrete rollbacks of the Terror's legal apparatus. However, the monarchy was not restored; France remained committed, at least officially, to being a Republic."},
+{scene:4,date:"1795",loc:"France",prose:"The Thermidorian Reaction also produced a backlash of its own — with some former revolutionaries and radical sympathisers facing new persecution.",q:"What term describes the informal wave of retaliatory violence against former radical revolutionaries following Robespierre's fall?",choices:["The White Terror","The Grey Revolution","The Second Bastille","The Purple Reaction"],correct:0,img:"thermidor",cam:{scale:1.2,tx:3,ty:-2},fc:"The White Terror — a period of informal, often vigilante violence targeting former Jacobins and radical revolutionaries in the aftermath of Robespierre's fall. It reflected how deeply the cycle of revolutionary and counter-revolutionary violence had embedded itself in French political life.",fw:"The White Terror — a wave of retaliatory, often extralegal violence against former radicals and Jacobin sympathisers. It's a reminder that Robespierre's fall didn't end political violence in France, so much as redirect who it was aimed at."},
+{scene:4,date:"1795-1799",loc:"France",prose:"Despite the Directory's many struggles, one area of French life continued to produce spectacular, unexpected successes.",q:"Despite its political instability, what was the Directory's government notably successful at during this period?",choices:["Ending all foreign wars immediately","Achieving major military victories abroad, particularly through a rising young general","Restoring the aristocracy's privileges","Balancing the national budget"],correct:1,img:"napoleon_coup",cam:{scale:1.18,tx:-4,ty:2},fc:"Despite chaos at home, French armies achieved striking military successes abroad — most spectacularly under a young general named Napoleon Bonaparte, whose brilliant campaigns in Italy made him a national hero and set the stage for his eventual seizure of political power.",fw:"Military success abroad, even amid domestic chaos — largely thanks to a talented young general, Napoleon Bonaparte, whose victories in the Italian campaign made him enormously popular and politically dangerous to the fragile Directory."},
+{scene:5,date:"1795-1797",loc:"Italy",prose:"A young, relatively unknown artillery officer is given command of France's army in Italy — and proceeds to win an extraordinary string of victories.",q:"Where did Napoleon Bonaparte first rise to national prominence through a series of brilliant military victories?",choices:["Egypt","The Italian campaign","Austria","Russia"],correct:1,img:"napoleon_coup",cam:{scale:1.2,tx:0,ty:0},fc:"The Italian campaign of 1796-1797. Given command at just 26 years old, Napoleon won a remarkable series of victories against Austrian and Sardinian forces, transforming him from a relatively obscure officer into a national hero back in France.",fw:"The Italian campaign, where his tactical brilliance against Austrian and Sardinian forces turned him into a household name across France almost overnight — a level of fame that would prove essential to his later political rise."},
+{scene:5,date:"1798",loc:"Egypt",prose:"Riding high on his Italian success, Napoleon convinces the Directory to back an ambitious — and ultimately troubled — expedition to the Middle East.",q:"What was the primary strategic goal of Napoleon's 1798 campaign in Egypt?",choices:["To convert the population to Christianity","To disrupt British trade routes to India","To search for ancient treasures","To ally with the Ottoman Empire against Russia"],correct:1,img:"napoleon_coup",cam:{scale:1.18,tx:-2,ty:2},fc:"To disrupt British trade and communication routes to India, striking at Britain's colonial interests indirectly since a direct invasion of Britain itself was impractical. The campaign had mixed results militarily, but it did produce major scientific and archaeological discoveries, including the Rosetta Stone.",fw:"To strike at British interests indirectly, by threatening trade routes to India — since France couldn't realistically invade Britain itself at the time. While militarily inconclusive and ultimately unsuccessful in the long run, the expedition famously led to the discovery of the Rosetta Stone."},
+{scene:5,date:"1798",loc:"Egypt",prose:"Despite Napoleon's efforts on land, a decisive naval defeat effectively stranded the French army in Egypt.",q:"Which British admiral decisively defeated the French fleet at the Battle of the Nile in 1798?",choices:["Admiral Horatio Nelson","Admiral Francis Drake","Admiral John Jervis","Admiral Cuthbert Collingwood"],correct:0,img:"napoleon_coup",cam:{scale:1.2,tx:2,ty:-2},fc:"Admiral Horatio Nelson delivered a devastating defeat to the French fleet at the Battle of the Nile, destroying or capturing most of Napoleon's ships. This effectively cut off Napoleon's army from resupply or reinforcement, stranding it in Egypt.",fw:"Admiral Horatio Nelson, whose victory at the Battle of the Nile devastated the French fleet and left Napoleon's army isolated in Egypt with no secure route home — a serious strategic setback, even as Napoleon's personal reputation in France remained remarkably intact."},
+{scene:5,date:"1799",loc:"France",prose:"With his army stuck in Egypt and the political situation back home deteriorating, Napoleon makes a bold and controversial decision.",q:"What did Napoleon do in 1799 while his army was still in Egypt?",choices:["He surrendered to the British","He secretly abandoned his army and returned to France","He was recalled officially by the Directory","He declared himself Pharaoh of Egypt"],correct:1,img:"napoleon_coup",cam:{scale:1.22,tx:-3,ty:2},fc:"Napoleon left his army behind in Egypt and secretly returned to France, sensing greater political opportunity at home amid the Directory's mounting instability. Though technically an act of abandoning his command, it was largely overlooked back in France, where he was welcomed as a triumphant hero.",fw:"He quietly abandoned his stranded army in Egypt and sailed back to France — a move that could have been seen as desertion, but was instead largely forgiven given his continued popularity and the political chaos unfolding back home."},
+{scene:5,date:"November 1799",loc:"Paris, France",prose:"Sensing the Directory's weakness, Napoleon and a group of political allies make their move to seize control of the French government.",q:"What was the coup that brought Napoleon to power in November 1799 known as?",choices:["The Coup of 18 Brumaire","The Thermidorian Coup","The Consulate Revolution","The Directory Purge"],correct:0,img:"napoleon_coup",cam:{scale:1.2,tx:2,ty:3},fc:"The Coup of 18 Brumaire, named for the date on the Revolutionary Calendar (November 9th, 1799). Napoleon and his allies used a mix of political manoeuvring and military intimidation to dissolve the legislature and dismantle the Directory.",fw:"The Coup of 18 Brumaire — named after its date on the Revolutionary Calendar. Napoleon and his co-conspirators forced the dissolution of the legislative councils, in part by having troops surround the meeting hall, effectively ending the Directory's rule by force and intimidation."},
+{scene:5,date:"1799",loc:"France",prose:"With the Directory dissolved, a new form of government was hastily assembled — one that placed an extraordinary amount of power in Napoleon's hands.",q:"What position did Napoleon establish for himself immediately after the Coup of 18 Brumaire?",choices:["King of France","Emperor","First Consul","President of the Republic"],correct:2,img:"napoleon_coup",cam:{scale:1.18,tx:-2,ty:-2},fc:"First Consul — nominally one of three consuls governing France, but in practice holding vastly more power than his two colleagues combined. This new government, the Consulate, gave Napoleon near-total control while maintaining a republican facade.",fw:"First Consul. While the new Consulate government technically included two other consuls, Napoleon held overwhelmingly more actual power — a deliberate structure that gave him near-total control while still nominally preserving the appearance of a Republic."},
+{scene:5,date:"1804",loc:"Paris, France",prose:"Five years after seizing power as First Consul, Napoleon takes the final step in his transformation from revolutionary general to absolute ruler.",q:"What title did Napoleon assume for himself in 1804?",choices:["King of France","Emperor of the French","Consul for Life only","Dictator of the Republic"],correct:1,img:"napoleon_coup",cam:{scale:1.2,tx:3,ty:2},fc:"Emperor of the French — a title Napoleon assumed in a lavish coronation ceremony in December 1804, notably crowning himself rather than allowing the Pope to do it, a symbolic assertion that his power derived from his own achievements rather than divine or papal sanction.",fw:"Emperor of the French. In a deliberately symbolic move at his coronation, Napoleon took the crown from the Pope's hands and placed it on his own head — asserting that his authority came from his own accomplishments, not from any external religious or traditional legitimacy."},
+{scene:5,date:"1789-1799",loc:"France",prose:"Looking back across the full decade, the French Revolution's trajectory reveals something historians have long debated.",q:"Which best summarises the overall arc of the French Revolution from 1789 to 1799?",choices:["A brief uprising quickly and cleanly resolved with minimal change","A gradual, entirely peaceful transition to democracy","A radical transformation — from absolute monarchy, through republic and terror, ultimately to a new form of one-man rule under Napoleon","A conflict that ended with the complete restoration of the old order"],correct:2,img:"napoleon_coup",cam:{scale:1.18,tx:-3,ty:-2},fc:"The Revolution's arc was extraordinary and, in some ways, paradoxical — it began by overthrowing absolute monarchy in the name of liberty, passed through a period of republican government and brutal Terror, and ultimately concluded with Napoleon establishing a new form of centralised, autocratic rule. Many of the Revolution's core ideals — legal equality, secular government, a unified national identity — endured, even as its political structure cycled back toward one-man rule.",fw:"The Revolution moved from absolute monarchy, through a genuine republic, through the Terror's extreme violence, and ultimately back to concentrated power in a single ruler under Napoleon. Yet many of its core achievements — the end of feudal privilege, legal equality, and a new sense of national citizenship — proved lasting, even as the political structure came full circle."},
+{scene:5,date:"1799 onward",loc:"France and Europe",prose:"Napoleon's rise marked the formal end of the Revolutionary period — but his ambitions were only just beginning.",q:"What is generally considered to mark the formal end of the French Revolution?",choices:["The execution of Louis XVI","The fall of Robespierre","Napoleon's coup of 18 Brumaire in 1799","The Battle of Waterloo in 1815"],correct:2,img:"napoleon_coup",cam:{scale:1.2,tx:2,ty:-3},fc:"Napoleon's Coup of 18 Brumaire in November 1799 is generally taken as the formal endpoint of the French Revolution — the moment revolutionary, republican government gave way to what would become Napoleonic rule. What followed — the Napoleonic Wars and his eventual Empire — is considered a distinct, subsequent era of French and European history.",fw:"The Coup of 18 Brumaire in 1799 is the conventional endpoint historians use — the moment the revolutionary republic effectively ended, giving way to Napoleon's consulate and, soon after, his empire. Everything that follows belongs to the story of Napoleonic France, a new chapter entirely."},
+];
+
+// ── STATE ─────────────────────────────────────────────────────────────────────────
+let qIdx=0, score=0, answered=false, cinAborted=false, cinCb=null, currentCinScene=0;
+let activeBgSlot='a';
+let currentAudio=null;
+let streak=0;
+let isMuted=false; try{isMuted=localStorage.getItem('fotw_muted')==='1';}catch(e){}
+
+// ── AUDIO — pre-generated MP3s from ElevenLabs (George voice) ───────────────────
+// Files live in audio/ folder, generated once via generate_audio.py
+// Falls back to browser speech if audio files are missing
+
+const AUDIO_FILES = {
+  'cin_1_1': 'chapter3_audio/cin_1_1.mp3',
+  'cin_1_2': 'chapter3_audio/cin_1_2.mp3',
+  'cin_1_3': 'chapter3_audio/cin_1_3.mp3',
+  'cin_2_1': 'chapter3_audio/cin_2_1.mp3',
+  'cin_2_2': 'chapter3_audio/cin_2_2.mp3',
+  'cin_3_1': 'chapter3_audio/cin_3_1.mp3',
+  'cin_4_1': 'chapter3_audio/cin_4_1.mp3',
+  'cin_4_2': 'chapter3_audio/cin_4_2.mp3',
+  'cin_5_1': 'chapter3_audio/cin_5_1.mp3',
+  'cin_6_1': 'chapter3_audio/cin_6_1.mp3',
+  'cin_6_2': 'chapter3_audio/cin_6_2.mp3',
+};
+const CIN_AUDIO_MAP = [
+  ['cin_1_1','cin_1_2','cin_1_3'],
+  ['cin_2_1','cin_2_2'],
+  ['cin_3_1'],
+  ['cin_4_1','cin_4_2'],
+  ['cin_5_1'],
+  ['cin_6_1','cin_6_2'],
+];
+
+// ── AMBIENT AUDIO ────────────────────────────────────────────────────────────
+// One looping ambient track per scene, plays under narration and questions.
+// Download files from freesound.org and place in build/audio/ — see README.
+const AMBIENT = {
+  0: 'audio/amb_versailles.wav',
+  1: 'audio/amb_paris_crowd.wav',
+  2: 'audio/amb_guillotine.flac',
+  3: 'audio/amb_terror.wav',
+  4: 'audio/amb_thermidor.wav',
+  5: 'audio/amb_napoleon.wav',
+};
+// Ambient volume levels: lower during narration so voice is clear, raise for questions
+const AMB_VOL_NARRATION = 0.12;
+const AMB_VOL_QUESTIONS = 0.22;
+let ambientAudio = null;
+// If arriving from Chapter 1 (or any previous interaction), mark as interacted
+let userHasInteracted = !!(
+  document.referrer.includes('index.html') ||
+  document.referrer.includes('fly-on-the-wall') ||
+  sessionStorage.getItem('fotw_interacted') === '1' ||
+  new URLSearchParams(location.search).get('from') === 'ch1'
+);
+let pendingAmbientScene = -1;
+
+function onUserInteraction() {
+  if (userHasInteracted) return;
+  userHasInteracted = true;
+  sessionStorage.setItem('fotw_interacted', '1');
+  if (pendingAmbientScene >= 0) {
+    startAmbient(pendingAmbientScene);
+    pendingAmbientScene = -1;
+  }
+}
+['click','keydown','touchstart'].forEach(e =>
+  document.addEventListener(e, onUserInteraction, {once:false, passive:true})
+);
+// If already interacted (cross-chapter), trigger ambient immediately on load
+if (userHasInteracted) {
+  window.addEventListener('load', () => {
+    setTimeout(() => startAmbient(0), 300);
+  });
+}
+let currentAmbientScene = -1;
+
+function startAmbient(sceneIdx) {
+  const src = AMBIENT[sceneIdx];
+  if (!src) return;
+  // Already playing the right scene — just adjust volume
+  if (currentAmbientScene === sceneIdx && ambientAudio) {
+    fadeAmbientTo(AMB_VOL_NARRATION);
+    return;
+  }
+  // Fade out old ambient
+  if (ambientAudio) {
+    const old = ambientAudio;
+    fadeAmbientTo(0, () => { old.pause(); old.src = ''; });
+    ambientAudio = null;
+  }
+  currentAmbientScene = sceneIdx;
+  const a = new Audio(src);
+  a.loop = true;
+  a.muted = isMuted;
+  a.volume = 0;
+  ambientAudio = a;
+  if (!userHasInteracted) {
+    pendingAmbientScene = sceneIdx;
+    return;
+  }
+  a.play().then(() => fadeAmbientTo(AMB_VOL_NARRATION)).catch(() => {});
+}
+
+function fadeAmbientTo(targetVol, onDone) {
+  if (!ambientAudio) { if(onDone) onDone(); return; }
+  const audio = ambientAudio;
+  const step = (targetVol - audio.volume) / 20;
+  let count = 0;
+  const iv = setInterval(() => {
+    count++;
+    audio.volume = Math.max(0, Math.min(1, audio.volume + step));
+    if (count >= 20) {
+      clearInterval(iv);
+      audio.volume = targetVol;
+      if (onDone) onDone();
+    }
+  }, 50);
+}
+
+function setAmbientForQuestions() { fadeAmbientTo(AMB_VOL_QUESTIONS); }
+function setAmbientForNarration() { fadeAmbientTo(AMB_VOL_NARRATION); }
+function stopAmbient() { fadeAmbientTo(0, () => { if(ambientAudio){ ambientAudio.pause(); ambientAudio=null; } currentAmbientScene=-1; }); }
+
+function speak(audioKey, text, onDone) {
+  stopAudio();
+  const src = audioKey ? AUDIO_FILES[audioKey] : null;
+  if (src) {
+    console.log('[Audio] Loading:', src);
+    const audio = new Audio(src);
+    audio.muted = isMuted;
+    currentAudio = audio;
+    audio.oncanplaythrough = function() { console.log('[Audio] Ready:', src); };
+    audio.onended = function() { console.log('[Audio] Finished:', src); if (!cinAborted) onDone(); };
+    audio.onerror = function(e) {
+      console.warn('[Audio] Failed to load:', src, e);
+      fallbackSpeak(text, onDone);
+    };
+    audio.play().then(function() {
+      console.log('[Audio] Playing:', src);
+    }).catch(function(e) {
+      console.warn('[Audio] play() blocked:', e);
+      fallbackSpeak(text, onDone);
+    });
+  } else {
+    console.log('[Audio] No key, using browser speech');
+    fallbackSpeak(text, onDone);
+  }
+}
+
+function fallbackSpeak(text, onDone) {
+  if (isMuted) { setTimeout(()=>{ if(!cinAborted) onDone(); }, Math.max(2500, text.length*45)); return; }
+  const synth = window.speechSynthesis;
+  if (!synth) { onDone(); return; }
+  synth.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.rate=.87; u.pitch=.94; u.volume=.88;
+  const vs = synth.getVoices();
+  const v = vs.find(v=>v.name.includes('Daniel')||v.name.includes('Arthur')||v.name.includes('George'))
+         || vs.find(v=>v.lang==='en-GB') || vs.find(v=>v.lang.startsWith('en'));
+  if(v) u.voice=v;
+  u.onend = () => { if(!cinAborted) onDone(); };
+  synth.speak(u);
+}
+
+function stopAudio() {
+  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
+}
+
+// ── BACKGROUND SYSTEM ─────────────────────────────────────────────────────────────
+// Two slides (bg-a, bg-b) cross-dissolve for panning transitions
+// Each slide starts zoomed in and slowly zooms out (reverse Ken Burns)
+
+let bgKBInterval = null;
+
+function setBG(imgKey, cam, animate=true) {
+  const el = document.getElementById('bg-a');
+  const url = IMGS[imgKey];
+  el.style.backgroundImage = `url('${url}')`;
+  el.style.background = '';
+  // Start zoomed in, zoom out via CSS transition
+  const s = cam.scale + 0.15; // start more zoomed
+  const tx = cam.tx; const ty = cam.ty;
+  el.style.transition = 'none';
+  el.style.transform = `scale(${(s).toFixed(2)}) translate(${tx}%,${ty}%)`;
+  if (animate) {
+    requestAnimationFrame(() => {
+      el.style.transition = 'transform 12s ease-out';
+      el.style.transform = `scale(${cam.scale.toFixed(2)}) translate(${tx}%,${ty}%)`;
+    });
+  }
+}
+
+function crossDissolveTo(imgKey, cam) {
+  // Ping-pong between bg-a (z-index 1) and bg-b (z-index 2)
+  const incoming = document.getElementById('bg-b');
+  const outgoing = document.getElementById('bg-a');
+
+  const url = IMGS[imgKey];
+  // Set new image on incoming layer, start zoomed in
+  incoming.style.backgroundImage = `url('${url}')`;
+  incoming.style.background = '';
+  const s = cam.scale + 0.15;
+  incoming.style.transition = 'none';
+  incoming.style.transform = `scale(${s.toFixed(2)}) translate(${cam.tx}%,${cam.ty}%)`;
+  incoming.style.opacity = '0';
+  incoming.style.zIndex = '2';
+  outgoing.style.zIndex = '1';
+
+  requestAnimationFrame(() => {
+    // Start zoom-out on incoming
+    incoming.style.transition = 'opacity 1.2s ease, transform 12s ease-out';
+    incoming.style.opacity = '1';
+    incoming.style.transform = `scale(${cam.scale.toFixed(2)}) translate(${cam.tx}%,${cam.ty}%)`;
+    // Fade out outgoing
+    outgoing.style.transition = 'opacity 1.2s ease';
+    outgoing.style.opacity = '0';
+  });
+
+  // After dissolve, swap slots: copy bg-b state to bg-a, reset bg-b
+  setTimeout(() => {
+    document.getElementById('bg-a').style.backgroundImage = incoming.style.backgroundImage;
+    document.getElementById('bg-a').style.transform = incoming.style.transform;
+    document.getElementById('bg-a').style.opacity = '1';
+    document.getElementById('bg-a').style.zIndex = '1';
+    incoming.style.opacity = '0';
+    incoming.style.zIndex = '2';
+  }, 1400);
+}
+
+// ── COLLAGE RECAP ─────────────────────────────────────────────────────────────────
+let collageCb = null;
+
+function showCollage(sceneIdx, cb) {
+  collageCb = cb;
+  const data = CIN[sceneIdx];
+  // If no collage defined for this scene, skip straight to callback
+  if (!data || !data.collageImgs) { collageCb = cb; endCollage(); return; }
+  const imgs = data.collageImgs;
+  const el = document.getElementById('collage');
+  const grid = document.getElementById('collage-grid');
+  grid.innerHTML = '';
+
+  // Responsive grid columns based on image count
+  const cols = imgs.length <= 2 ? 2 : imgs.length <= 4 ? 2 : 3;
+  grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+  grid.style.gridTemplateRows = `repeat(${Math.ceil(imgs.length/cols)}, 1fr)`;
+
+  const cells = imgs.map(imgKey => {
+    const div = document.createElement('div');
+    div.className = 'collage-cell';
+    div.style.backgroundImage = `url('${IMGS[imgKey]}')`;
+    grid.appendChild(div);
+    return div;
+  });
+
+  // Reset text elements
+  ['collage-label','collage-title','collage-sub','collage-btn'].forEach(id => {
+    const e = document.getElementById(id);
+    e.classList.remove('in');
+  });
+  document.getElementById('collage-label').textContent = data.collageLabel;
+  document.getElementById('collage-title').textContent = data.collageTitle;
+  document.getElementById('collage-sub').textContent = data.collageSub;
+
+  // Hide question panel so collage sits cleanly on top
+  document.getElementById('qpanel').classList.add('out');
+  el.classList.add('active');
+  setAmbientForNarration();
+
+  // Stagger cells in
+  cells.forEach((c, i) => setTimeout(() => c.classList.add('on'), i * 120));
+
+  // Animate text in
+  setTimeout(() => document.getElementById('collage-label').classList.add('in'), 400);
+  setTimeout(() => document.getElementById('collage-title').classList.add('in'), 600);
+  setTimeout(() => document.getElementById('collage-sub').classList.add('in'), 800);
+  setTimeout(() => document.getElementById('collage-btn').classList.add('in'), 1000);
+}
+
+function endCollage() {
+  const el = document.getElementById('collage');
+  el.style.opacity = '0';
+  el.style.transition = 'opacity .5s';
+  setTimeout(() => {
+    el.classList.remove('active');
+    el.style.opacity = '';
+    el.style.transition = '';
+    // Restore question panel visibility
+    document.getElementById('qpanel').classList.remove('out');
+    if (collageCb) collageCb();
+  }, 500);
+}
+
+// ── SPLASH → GAME ─────────────────────────────────────────────────────────────────
+function startGame() {
+  qIdx = 0; score = 0; streak = 0; answered = false;
+  try{ localStorage.removeItem('fotw_ch3_progress'); }catch(e){}
+  sessionStorage.setItem('fotw_interacted','1');
+  feedbackRating = 0;
+  document.querySelectorAll('.star').forEach(s => { s.classList.remove('on'); s.style.opacity='.3'; });
+  const fc = document.getElementById('fb-comment'); if(fc) fc.value='';
+  document.querySelectorAll('.fb-btns, .star-row, #fb-comment, .fb-sub').forEach(el => el.style.display='');
+  document.getElementById('fb-thankyou').style.display='none';
+  document.getElementById('feedback-modal').classList.remove('active');
+
+  // Audio files pre-generated — no key needed at runtime
+  document.getElementById('splash').classList.remove('active');
+  document.getElementById('game').style.display = 'block';
+  // Start cinematic, then collage, then questions
+  showCin(0, () => showCollage(0, () => renderQ()));
+}
+
+// ── RENDER QUESTION ──────────────────────────────────────────────────────────────
+let lastImg = null;
+
+function renderQ() {
+  const q = QS[qIdx];
+  answered = false;
+
+  // Cross-dissolve if image changed, else just zoom update
+  if (q.img !== lastImg) {
+    crossDissolveTo(q.img, q.cam);
+    lastImg = q.img;
+  } else {
+    // Same image — just update the zoom/pan on bg-a
+    const el = document.getElementById('bg-a');
+    el.style.transition = 'transform 1.8s ease';
+    el.style.transform = `scale(${q.cam.scale}) translate(${q.cam.tx}%,${q.cam.ty}%)`;
+  }
+
+  const sceneLabels = ['Scene 1 — The Assassination','Scene 2 — Mobilisation','Scene 3 — The Trenches','Scene 4 — The Wider War','Scene 5 — The Turning Point','Scene 6 — The Aftermath'];
+  document.getElementById('hscene').textContent = sceneLabels[q.scene] || 'Scene '+(q.scene+1);
+  document.getElementById('qcounter').textContent = 'Question ' + (qIdx+1) + ' of ' + QS.length;
+  setQBackground(q.img);
+  document.getElementById('hscore').textContent = score;
+  document.getElementById('htotal').textContent = qIdx;
+  document.getElementById('pfill').style.width = (qIdx/QS.length*100)+'%';
+  renderSDots(q.scene);
+  document.getElementById('qloc').textContent = q.loc.toUpperCase();
+  document.getElementById('qdate').textContent = q.date;
+  document.getElementById('qprose').textContent = q.prose;
+  document.getElementById('qtext').textContent = q.q;
+
+  const grid = document.getElementById('cgrid');
+  grid.innerHTML = '';
+  const _sh = shuffleChoices(q.choices, q.correct);
+  _sh.choices.forEach((c,i) => {
+    const b = document.createElement('button');
+    b.className = 'choice'; b.textContent = c;
+    b.onclick = () => pick(i, i === _sh.correct);
+    grid.appendChild(b);
+  });
+  document.getElementById('fb').classList.remove('on');
+  document.getElementById('nxtbtn').classList.remove('on');
+  const panel = document.getElementById('qpanel');
+  panel.classList.add('out');
+  requestAnimationFrame(() => requestAnimationFrame(() => panel.classList.remove('out')));
+  setAmbientForQuestions();
+}
+
+function renderSDots(active) {
+  const el = document.getElementById('sdots'); el.innerHTML='';
+  const sceneCount = [...new Set(QS.map(q=>q.scene))].length;
+  Array.from({length:sceneCount},(_,i)=>i).forEach(i => {
+    const d = document.createElement('div');
+    d.className = 'sdot'+(i<active?' done':i===active?' active':'');
+    el.appendChild(d);
+  });
+}
+
+// ── ANSWER ────────────────────────────────────────────────────────────────────────
+function pick(idx, _preOk) {
+  if (answered) return;
+  answered = true;
+  const q = QS[qIdx];
+  const btns = document.querySelectorAll('.choice');
+  btns.forEach(b => b.disabled=true);
+  const ok = (_preOk !== undefined) ? _preOk : (idx === q.correct);
+  btns[idx].classList.add(ok?'correct':'wrong');
+  if(!ok) { const correctTxt = q.choices[q.correct]; btns.forEach(b=>{ if(b.textContent===correctTxt) b.classList.add('correct'); }); }
+  if(ok) {
+    score++; streak++;
+    // Correct answer: push in slightly closer
+    const el = document.getElementById('bg-a');
+    const cur = parseFloat(el.style.transform.match(/scale\(([^)]+)\)/)?.[1]||'1.1');
+    el.style.transition = 'transform 1.2s ease';
+    el.style.transform = el.style.transform.replace(/scale\([^)]+\)/,`scale(${(cur+.06).toFixed(2)})`);
+  }
+  document.getElementById('hscore').textContent = score;
+  document.getElementById('htotal').textContent = qIdx+1;
+  document.getElementById('fb').classList.add('on');
+  const lbl = document.getElementById('fblabel');
+  if(!ok) streak=0;
+  lbl.textContent = ok ? (streak>=3 ? 'Correct — '+streak+' in a row!' : 'Correct') : 'Not quite';
+  lbl.className = ok ? 'c' : 'w';
+  document.getElementById('fbtext').textContent = ok?q.fc:q.fw;
+  document.getElementById('nxtbtn').classList.add('on');
+}
+
+function handleNext() {
+  const prev = QS[qIdx].scene; qIdx++; saveProgress();
+  if(qIdx>=QS.length) { showEnd(); return; }
+  const nextScene = QS[qIdx].scene;
+  if(nextScene !== prev) {
+    // Always start ambient for new scene even if no cinematic
+    startAmbient(nextScene);
+    showCin(nextScene, () => showCollage(nextScene, () => renderQ()));
+  } else {
+    renderQ();
+  }
+}
+
+// ── CINEMATIC ─────────────────────────────────────────────────────────────────────
+function showCin(si, cb) {
+  currentCinScene=si; cinAborted=false; cinCb=cb;
+  startAmbient(si);
+  setAmbientForNarration();
+
+  // If no cinematic defined for this scene, skip straight to callback
+  const data = CIN[si];
+  if (!data || !data.panels || data.panels.length === 0) {
+    cb();
+    return;
+  }
+
+  const cin = document.getElementById('cin'); cin.classList.add('active');
+  const sn=document.getElementById('cscnum'); sn.style.opacity='0'; sn.textContent='';
+  const st=document.getElementById('ctitle'); st.style.opacity='0'; st.style.transform='translateY(16px)'; st.textContent='';
+  document.getElementById('cnarrtext').textContent='';
+  document.getElementById('cskip').classList.remove('on');
+  document.getElementById('ccont').classList.remove('on');
+
+  const cpEl = document.getElementById('cpanels'); cpEl.innerHTML='';
+  data.panels.forEach((p,i) => {
+    const div = document.createElement('div');
+    div.className = 'cpanel '+(i===0?'on ':'')+(PAN_CLASSES[i]||'zoom-out');
+    div.style.backgroundImage = `url('${IMGS[p.img]}')`;
+    div.innerHTML += '<div class="cpanel-dim"></div>';
+    cpEl.appendChild(div);
+  });
+
+  const dotsEl = document.getElementById('cdots'); dotsEl.innerHTML='';
+  data.panels.forEach((_,i) => { const d=document.createElement('div'); d.className='cdot'+(i===0?' on':''); dotsEl.appendChild(d); });
+
+  setTimeout(()=>document.getElementById('cskip').classList.add('on'), 800);
+  setTimeout(()=>{ if(!cinAborted){sn.textContent=data.sceneNum; sn.style.opacity='1';}}, 500);
+  setTimeout(()=>{ if(!cinAborted){st.textContent=data.title; st.style.opacity='1'; st.style.transform='translateY(0)';}}, 900);
+
+  runCinPanel(data.panels, 0);
+}
+
+function runCinPanel(panels, panelIdx) {
+  if (cinAborted) return;
+  if (panelIdx >= panels.length) { finishCin(); return; }
+
+  const allP = document.querySelectorAll('.cpanel');
+  const allD = document.querySelectorAll('.cdot');
+
+  if (panelIdx > 0) {
+    allP.forEach((p, i) => {
+      if (i === panelIdx) {
+        p.classList.remove('pan-left','pan-right','zoom-out');
+        void p.offsetWidth;
+        p.classList.add(PAN_CLASSES[panelIdx] || 'zoom-out');
+        p.classList.add('on');
+        p.style.opacity = '0';
+        requestAnimationFrame(() => { p.style.transition = 'opacity 1.4s ease'; p.style.opacity = '1'; });
+      } else if (i === panelIdx - 1) {
+        p.style.transition = 'opacity 1.4s ease';
+        p.style.opacity = '0';
+        setTimeout(() => p.classList.remove('on'), 1400);
+      }
+    });
+  }
+  allD.forEach((d, i) => d.classList.toggle('on', i === panelIdx));
+
+  const text = panels[panelIdx].nar;
+
+  // Typewriter — runs independently, doesn't gate progression
+  const el = document.getElementById('cnarrtext');
+  el.textContent = '';
+  let charIdx = 0;
+  const spd = Math.max(16, Math.min(30, Math.floor(text.length / 55) + 16));
+  const iv = setInterval(() => {
+    if (cinAborted) { clearInterval(iv); return; }
+    if (charIdx < text.length) el.textContent += text[charIdx++];
+    else clearInterval(iv);
+  }, spd);
+
+  // Speech drives timing — when audio ends, advance to next panel
+  const audioKey = (CIN_AUDIO_MAP[currentCinScene] || [])[panelIdx] || null;
+  speak(audioKey, text, () => {
+    if (!cinAborted) setTimeout(() => runCinPanel(panels, panelIdx + 1), 700);
+  });
+}
+
+function finishCin() {
+  document.getElementById('ccont').classList.add('on');
+  document.getElementById('cskip').classList.remove('on');
+}
+function endCin() {
+  stopAudio(); cinAborted=false;
+  const el=document.getElementById('cin');
+  el.style.opacity='0'; el.style.transition='opacity .5s';
+  setTimeout(()=>{ el.classList.remove('active'); el.style.opacity=''; el.style.transition=''; if(cinCb)cinCb(); },500);
+}
+function skipCin() {
+  cinAborted=true; stopAudio();
+  const el=document.getElementById('cin');
+  el.style.opacity='0'; el.style.transition='opacity .35s';
+  setTimeout(()=>{ el.classList.remove('active'); el.style.opacity=''; el.style.transition=''; if(cinCb)cinCb(); },350);
+}
+
+// ── END ───────────────────────────────────────────────────────────────────────────
+// ── FEEDBACK ─────────────────────────────────────────────────────────────────────
+let feedbackRating = 0;
+
+document.querySelectorAll('.star').forEach(star => {
+  star.addEventListener('click', () => {
+    feedbackRating = parseInt(star.dataset.v);
+    document.querySelectorAll('.star').forEach((s,i) => {
+      s.classList.toggle('on', i < feedbackRating);
+    });
+  });
+  star.addEventListener('mouseover', () => {
+    const v = parseInt(star.dataset.v);
+    document.querySelectorAll('.star').forEach((s,i) => s.style.opacity = i < v ? '1' : '.3');
+  });
+  star.addEventListener('mouseout', () => {
+    document.querySelectorAll('.star').forEach((s,i) => s.style.opacity = i < feedbackRating ? '1' : '.3');
+  });
+});
+
+function showFeedback() {
+  document.getElementById('feedback-modal').classList.add('active');
+}
+
+function skipFeedback() {
+  document.getElementById('feedback-modal').classList.remove('active');
+}
+
+function submitFeedback() {
+  const comment = document.getElementById('fb-comment').value.trim();
+  const payload = {
+    timestamp: new Date().toISOString(),
+    rating: feedbackRating,
+    score: score,
+    total: QS.length,
+    chapter: 'Chapter III — Liberty, Equality, Terror',
+    comment: comment
+  };
+
+  // Submit to Google Sheets via Apps Script
+  fetch('https://script.google.com/macros/s/AKfycbysN0KOPUTfnqk_vuOZ-BoSHEiP_s77EHoiuBb1zB3lL6n9kTWxACZ79IbmMNamIfodEA/exec', {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+  .then(() => console.log('[Feedback] Submitted to Google Sheets'))
+  .catch(e => console.warn('[Feedback] Submission failed:', e));
+
+  // Show thank you immediately
+  document.querySelectorAll('.fb-btns, .star-row, #fb-comment, .fb-sub').forEach(el => el.style.display='none');
+  document.getElementById('fb-thankyou').style.display = 'block';
+  setTimeout(() => document.getElementById('feedback-modal').classList.remove('active'), 2200);
+}
+
+function showEnd() {
+  stopAmbient();
+  try{localStorage.removeItem('fotw_ch3_progress'); localStorage.setItem('fotw_ch3_complete','1');}catch(e){}
+  document.getElementById('endsc').classList.add('active');
+  setTimeout(showFeedback, 1200);
+  document.getElementById('end-score').textContent=score;
+  document.getElementById('end-of').textContent='/ '+QS.length;
+  const p=score/QS.length;
+  document.getElementById('end-verdict').textContent =
+    p===1  ? "Perfect — all fifty. From the Estates-General to Napoleon's coronation, you missed nothing." :
+    p>=.9  ? "Exceptional. You traced the Revolution's full arc — liberty, terror, and the empire that followed." :
+    p>=.75 ? "Strong. You understood the shape of the Revolution — a monarchy's fall, a republic's terror, and its final reversal." :
+    p>=.6  ? "Solid. The details you missed are the most interesting ones — history rewards a second visit." :
+    p>=.4  ? "You witnessed it. From the Bastille to Robespierre's fall to Napoleon's rise. Go back and look closer." :
+             "The Revolution devoured itself in ways few expected. But you were there. Go back. History rewards attention.";
+}
+function restartGame() {
+  qIdx=0; score=0; answered=false; lastImg=null;
+  document.getElementById('endsc').classList.remove('active');
+  showCin(0, ()=>showCollage(0, ()=>renderQ()));
+}
+function shareGame() {
+  const url=window.location.href;
+  if(navigator.share){navigator.share({title:'Fly on the Wall — WWI History Game',text:'I scored '+score+'/'+QS.length+' on Fly on the Wall — an immersive WWI history game. Can you beat me?',url});}
+  else{navigator.clipboard.writeText(url).then(()=>{const t=document.getElementById('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);});}
+}
+
+
+
+// ── PLAYABILITY: resume / mute / keyboard ────────────────────────────────────
+function saveProgress(){ try{localStorage.setItem('fotw_ch3_progress',JSON.stringify({qIdx:qIdx,score:score,ts:Date.now()}));}catch(e){} }
+
+function resumeGame(){
+  let save=null; try{save=JSON.parse(localStorage.getItem('fotw_ch3_progress'));}catch(e){}
+  if(!save){ startGame(); return; }
+  qIdx=Math.min(save.qIdx, QS.length-1); score=save.score||0; lastImg=null; streak=0;
+  document.getElementById('splash').classList.remove('active');
+  document.getElementById('game').style.display='block';
+  // Resume directly at question — no cinematic replay
+  startAmbient(QS[qIdx].scene);
+  document.getElementById('hud').style.display='flex';
+  renderQ();
+}
+
+function checkResume(){
+  try{
+    const s=JSON.parse(localStorage.getItem('fotw_ch3_progress')||'null');
+    if(s && s.qIdx>0 && s.qIdx<QS.length){
+      const b=document.getElementById('resume-btn');
+      b.style.display='block';
+      b.textContent='Resume — Question '+(s.qIdx+1)+' of '+QS.length;
+    }
+  }catch(e){}
+  const mb=document.getElementById('mute-btn');
+  if(mb) mb.textContent = isMuted ? '🔇' : '🔊';
+}
+window.addEventListener('load', checkResume);
+
+function toggleMute(){
+  isMuted=!isMuted;
+  try{localStorage.setItem('fotw_muted',isMuted?'1':'0');}catch(e){}
+  document.getElementById('mute-btn').textContent=isMuted?'🔇':'🔊';
+  const mc=document.getElementById('mute-cin');if(mc)mc.textContent=isMuted?'🔇':'🔊';
+  if(currentAudio)currentAudio.muted=isMuted;
+  if(ambientAudio)ambientAudio.muted=isMuted;
+  if(window.__bgMusic)window.__bgMusic.muted=isMuted;
+  if(window.speechSynthesis&&isMuted)window.speechSynthesis.cancel();
+}
+
+document.addEventListener('keydown',e=>{
+  const nb=document.getElementById('nxtbtn');
+  if((e.key==='Enter'||e.key===' ')&&nb&&nb.classList.contains('on')){e.preventDefault();handleNext();}
+});
+
+// ── BACK NAV ─────────────────────────────────────────────────────────────────
+let cinHistory = []; // stack of {panelIdx, sceneIdx}
+let currentPanelIdx = 0;
+
+function updateCinBack() {
+  const btn = document.getElementById('cin-back');
+  if (!btn) return;
+  btn.style.display = (cinHistory.length > 0) ? 'block' : 'none';
+}
+
+function goBackCinPanel() {
+  if (cinHistory.length === 0) return;
+  const prev = cinHistory.pop();
+  cinAborted = true;
+  stopAudio();
+  currentPanelIdx = prev.panelIdx;
+  const panels = CIN[prev.sceneIdx] ? CIN[prev.sceneIdx].panels : [];
+  if (panels.length > 0) runCinPanel(panels, prev.panelIdx);
+  updateCinBack();
+}
+
+// ── HOME BUTTON ──────────────────────────────────────────────────────────────
+function goHome() {
+  stopAudio();
+  stopAmbient();
+  cinAborted = true;
+  // Hide all screens
+  document.querySelectorAll('.screen,.screen-active').forEach(s => s.classList.remove('active'));
+  document.getElementById('game').style.display = 'none';
+  document.getElementById('endsc').classList.remove('active');
+  document.getElementById('cin').style.display = 'none';
+  document.getElementById('collage').style.display = 'none';
+  // Show splash
+  document.getElementById('splash').classList.add('active');
+  // Reset state
+  qIdx = 0; score = 0; streak = 0; answered = false;
+  checkResume();
+  checkChapterUnlockCh2();
+}
+
+// ── CHAPTER UNLOCK (Ch1 complete → show Ch2 button) ─────────────────────────
+function checkChapterUnlockCh2() { /* Ch3 not yet built */ }
+window.addEventListener('load', checkChapterUnlockCh2);
+
+// ── QUESTION BACKGROUND IMAGE ────────────────────────────────────────────────
+function setQBackground(imgKey) {
+  const bg = document.getElementById('qbg');
+  if (!bg) return;
+  // Use question image, or pick a random one from the library
+  const keys = Object.keys(IMGS);
+  const key = (imgKey && IMGS[imgKey]) ? imgKey : keys[Math.floor(Math.random()*keys.length)];
+  const src = IMGS[key];
+  if (src) bg.style.backgroundImage = 'url(' + src + ')';
+}
+
+// ── RANDOMISE ANSWER CHOICES ─────────────────────────────────────────────────
+function shuffleChoices(choices, correctIdx) {
+  const correctText = choices[correctIdx];
+  const arr = choices.map((c, i) => ({text: c, isCorrect: i === correctIdx}));
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  const newCorrect = arr.findIndex(a => a.isCorrect);
+  return { choices: arr.map(a => a.text), correct: newCorrect };
+}
+</script>
+</body>
+</html>
